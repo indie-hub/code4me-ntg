@@ -1,0 +1,16 @@
+{
+  "name": "code4me-ntg",
+  "version": "0.1.0",
+  "description": "Minimal one-worker engineering orchestration with correlated results.",
+  "author": {
+    "name": "Bruno"
+  },
+  "repository": "https://github.com/indie-hub/code4me-ntg",
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "orchestration",
+    "multi-agent"
+  ]
+}
+

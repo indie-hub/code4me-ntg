@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code4Me Next Gen"
+  short_description: "Delegate one coding task and validate its result"
+  default_prompt: "Use Code4Me to hand this task to one suitable worker."
