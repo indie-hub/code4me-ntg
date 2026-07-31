@@ -3,9 +3,9 @@
 The smallest useful Code4Me: one producer delegates one engineering task to
 one suitable worker and accepts one correlated result.
 
-The first version is deliberately only a plugin containing two skills. On use,
-the producer records dispatch and result events in the client project's local
-`.code4me/events.jsonl`, and Status reads that trail without changing it.
+The plugin contains three focused skills. On use, the producer records dispatch
+and result events in the client project's local `.code4me/events.jsonl`; Status
+and Housekeeping read that trail without changing it.
 
 ## Current scope
 
@@ -15,5 +15,6 @@ the producer records dispatch and result events in the client project's local
 - Validate one matching result.
 - Preserve the two-event audit trail.
 - Report awaiting tasks, recent results, and malformed or unmatched events.
+- Audit task closure, worktree scope, checks, and release consistency.
 
-The plugin currently contains two skills and no additional integrations.
+The plugin contains no additional integrations.

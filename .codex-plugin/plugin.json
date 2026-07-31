@@ -1,6 +1,6 @@
 {
   "name": "code4me-ntg",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Minimal one-worker engineering orchestration with correlated results.",
   "author": {
     "name": "Bruno"
@@ -16,7 +16,7 @@
   "interface": {
     "displayName": "Code4Me Next Gen",
     "shortDescription": "One worker, one correlated result.",
-    "longDescription": "Code4Me delegates an engineering task to one suitable worker when delegation adds value, validates the correlated result, and records a minimal event trail.",
+    "longDescription": "Code4Me delegates one engineering task when useful, validates the correlated result, and provides read-only status and housekeeping over its minimal event trail.",
     "developerName": "Bruno",
     "category": "Productivity",
     "capabilities": [

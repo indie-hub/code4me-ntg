@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code4Me Housekeeping"
+  short_description: "Audit task and worktree readiness"
+  default_prompt: "Use $code4me-housekeeping to audit whether this project is ready to commit or leave."
