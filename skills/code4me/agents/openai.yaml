@@ -1,4 +1,4 @@
 interface:
   display_name: "Code4Me Next Gen"
-  short_description: "Delegate one coding task and validate its result"
-  default_prompt: "Use Code4Me to hand this task to one suitable worker."
+  short_description: "Delegate one coding task with Basic Memory"
+  default_prompt: "Use $code4me to hand this task and its relevant Basic Memory references to one suitable worker."

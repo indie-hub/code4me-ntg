@@ -18,6 +18,10 @@ the same user request explicitly authorizes that action.
    - each result has a preceding dispatch with the same `task_id` and `worker`;
    - each dispatch has at most one terminal result;
    - terminal outcomes are `complete`, `blocked`, or `failed`.
+   For dispatches with `memory`, verify status is `used`, `empty`, or
+   `unavailable`, `used` references are `memory://` URLs, and accepted result
+   `memory_candidates` have corresponding `memory_writes` unless Basic Memory
+   was unavailable.
    Report dispatches without results as `awaiting result`. If the file is
    absent, report `no local Code4Me task history`; do not create it.
 4. Review check evidence recorded in relevant result events. Run only the

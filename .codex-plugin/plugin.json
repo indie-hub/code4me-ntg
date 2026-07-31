@@ -1,7 +1,7 @@
 {
   "name": "code4me-ntg",
-  "version": "0.3.0",
-  "description": "Minimal one-worker engineering orchestration with correlated results.",
+  "version": "0.4.0",
+  "description": "Minimal one-worker engineering orchestration with Basic Memory and toolbox routing.",
   "author": {
     "name": "Bruno"
   },
@@ -13,10 +13,11 @@
     "multi-agent"
   ],
   "skills": "./skills/",
+  "hooks": "./.codex-plugin/hooks.json",
   "interface": {
     "displayName": "Code4Me Next Gen",
-    "shortDescription": "One worker, one correlated result.",
-    "longDescription": "Code4Me delegates one engineering task when useful, validates the correlated result, and provides read-only status and housekeeping over its minimal event trail.",
+    "shortDescription": "One worker with shared Basic Memory.",
+    "longDescription": "Code4Me delegates one engineering task when useful, shares durable Basic Memory context, routes toolbox use by question shape, validates the correlated result, and provides read-only status and housekeeping over its minimal event trail.",
     "developerName": "Bruno",
     "category": "Productivity",
     "capabilities": [

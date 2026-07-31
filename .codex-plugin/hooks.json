@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/hooks/nudge.mjs\" envelope"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "local_shell|shell|shell_command|exec_command|Bash|Read|Grep|Glob|grep_files|read_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/hooks/nudge.mjs\" source"
+          }
+        ]
+      }
+    ]
+  }
+}
