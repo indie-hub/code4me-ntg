@@ -17,7 +17,8 @@ processing.
 ## Current scope
 
 - Decide whether a task benefits from delegation.
-- Select one available worker without a vendor preference.
+- Discover Crowded's live roster and prefer one ready agent room without a
+  fixed vendor or room-number assumption; retain native workers as fallbacks.
 - Route questions to Basic Memory, CodeGraph, CCC, Context Mode, or a narrow
   native read according to the shape of the question.
 - Send one task envelope.
@@ -48,4 +49,4 @@ source = "https://github.com/indie-hub/code4me-ntg.git"
 adapters = true
 ```
 
-Run the hook checks with `node --test tests/hooks.test.mjs`.
+Run the checks with `node --test tests/*.test.mjs`.

@@ -26,9 +26,10 @@ Use the smallest workflow that completes the task.
 3. Decide whether delegation adds value. Work directly when the current agent
    can complete the task safely and an independent worker would add only
    ceremony.
-4. When delegation helps, choose exactly one available worker by capability and
-   readiness. Do not prefer or require a vendor. If no suitable worker exists,
-   work directly and say so.
+4. When delegation helps, follow the Communication rules to discover candidates
+   and choose exactly one ready worker. Do not require a vendor. If candidates
+   are equally suitable, prefer a different guest for useful diversity. If no
+   suitable worker exists, work directly and say so.
 5. Create a unique `task_id` and append one dispatch event to
    `.code4me/events.jsonl` before sending the task.
 6. Choose a communication route and send the task envelope with an explicit
@@ -64,12 +65,25 @@ what the source currently does, and optional tooling must degrade gracefully.
 
 ## Communication
 
-Use the host's native worker tool when it is available. The tool call delivers
-the task and returns the worker's response directly; set `reply_to.transport`
-to `native`.
-
 Inside Crowded, `CROWDED_BIN` and `CROWDED_ROOM` identify the Doorbell command
-and the producer's room. Send the task to a known room with:
+and the producer's numeric room. Discover the current topology before selecting
+a worker:
+
+```sh
+"$CROWDED_BIN" roster --json
+```
+
+Use only a room whose numeric `room` differs from `CROWDED_ROOM`, whose
+`transport` is `raw`, and whose `state` is `ready`. Never guess a room number or
+select a room omitted from the response. Treat `name` and `guest` as selection
+hints, not permanent roles or proof of capability. Represent the selected
+worker as `room-N` in the envelope and event log, where `N` is its numeric room.
+If the roster command fails, its JSON is malformed, or it has no eligible peer,
+fall back to a host-native worker tool. Native tool calls return the worker's
+response directly; set `reply_to.transport` to `native`. If neither route has a
+suitable worker, work directly.
+
+Send a Crowded task with:
 
 ```sh
 "$CROWDED_BIN" send WORKER_ROOM_NUMBER --task TASK_ID --role worker -- 'TASK_ENVELOPE'
@@ -93,7 +107,6 @@ that room and do not hand it to another worker. Before planning, read every
 supplied Basic Memory reference. The worker may search Basic Memory for further
 relevant context and may return durable `memory_candidates`; it must never write
 the producer's event log.
-If neither a native worker tool nor a Crowded room is available, work directly.
 
 ## Task envelope
 

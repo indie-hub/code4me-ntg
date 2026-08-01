@@ -7,6 +7,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-01
+
+### Added
+
+- Discover Crowded's authenticated live roster before dispatch and select only
+  a ready raw peer with a numeric `room-N` identity.
+
+### Changed
+
+- Prefer a suitable existing Crowded room over a host-native worker, while
+  retaining native workers and direct execution as graceful fallbacks.
+
 ## [0.4.0] - 2026-07-31
 
 ### Added
