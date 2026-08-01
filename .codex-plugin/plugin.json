@@ -1,7 +1,7 @@
 {
   "name": "code4me-ntg",
-  "version": "0.7.0",
-  "description": "Minimal bounded engineering orchestration with Basic Memory and fresh-context verification.",
+  "version": "0.8.0",
+  "description": "Minimal bounded engineering orchestration with evidence-backed code audits.",
   "author": {
     "name": "Bruno"
   },
@@ -17,7 +17,7 @@
   "interface": {
     "displayName": "Code4Me Next Gen",
     "shortDescription": "Bounded delegation with shared Basic Memory.",
-    "longDescription": "Code4Me delegates one engineering task when useful, optionally adds one independent or fresh-context verifier, shares durable Basic Memory context, routes toolbox use by question shape, validates correlated results, and provides read-only status and housekeeping over its minimal event trail.",
+    "longDescription": "Code4Me delegates one engineering task when useful, optionally adds one independent or fresh-context verifier, shares durable Basic Memory context, audits code without applying fixes, and provides read-only status and housekeeping over its minimal event trail.",
     "developerName": "Bruno",
     "category": "Productivity",
     "capabilities": [

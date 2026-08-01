@@ -4,7 +4,7 @@ The smallest useful Code4Me: one producer uses shared project memory, delegates
 one engineering task to one suitable worker, and adds one independent or
 fresh-context verifier only when it materially reduces risk.
 
-The plugin contains three focused skills. On use, the producer records dispatch
+The plugin contains four focused skills. On use, the producer records dispatch
 and result events in the client project's local `.code4me/events.jsonl`; Status
 and Housekeeping read that trail without changing it.
 
@@ -28,6 +28,7 @@ processing.
   room, or clear and recycle the completed worker when only two rooms exist.
 - Persist durable, evidenced lessons through Basic Memory.
 - Preserve one dispatch/result pair for every delegated stage.
+- Audit code read-only for ranked, evidence-backed risks without applying fixes.
 - Report awaiting tasks, recent results, and malformed or unmatched events.
 - Audit task closure, worktree scope, checks, and release consistency.
 

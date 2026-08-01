@@ -176,7 +176,7 @@ expected_return:
   checks: [<check and result>]
   blocker: <reason or null>
   verdict: pass | changes_requested | null
-  findings: [<verification finding>]
+  findings: [<audit or verification finding>]
   memory_candidates:
     - kind: decision | preference | lesson | bug-pattern | convention
       summary: <durable reusable knowledge>

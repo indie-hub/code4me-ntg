@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code4Me Audit"
+  short_description: "Find evidence-backed code risks"
+  default_prompt: "Use $code4me-audit to audit this code without changing it."

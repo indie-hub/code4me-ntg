@@ -1,7 +1,7 @@
 {
   "name": "code4me-ntg",
-  "version": "0.7.0",
-  "description": "Minimal bounded engineering orchestration with Basic Memory and fresh-context verification.",
+  "version": "0.8.0",
+  "description": "Minimal bounded engineering orchestration with evidence-backed code audits.",
   "author": {
     "name": "Bruno"
   },

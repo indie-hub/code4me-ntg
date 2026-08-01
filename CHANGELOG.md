@@ -7,6 +7,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-08-01
+
+### Added
+
+- Add a read-only `code4me-audit` skill for ranked, evidence-backed bugs,
+  security, performance, maintainability, and test-gap findings.
+- Reuse bounded Code4Me orchestration to verify serious audit findings without
+  applying fixes.
+
 ## [0.7.0] - 2026-08-01
 
 ### Added
