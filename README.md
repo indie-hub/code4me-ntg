@@ -1,13 +1,16 @@
 # Code4Me Next Gen
 
-The smallest useful Code4Me: one producer uses shared project memory, delegates
-one engineering task to one suitable worker, and adds one independent or
-fresh-context verifier only when it materially reduces risk. Audits deliberately
-use two blind model-vendor passes when available.
+The smallest useful Code4Me: one producer turns an engineering request into a
+lightweight milestone of independently validatable tasks. Each task gets a
+temporary team, the smallest capable model and effort for each role, and
+mandatory independent validation. Audits deliberately use two blind
+model-vendor passes when available.
 
-The plugin contains four focused skills. On use, the producer records dispatch
-and result events in the client project's local `.code4me/events.jsonl`; Status
-and Housekeeping read that trail without changing it.
+The plugin contains four focused skills. The producer records classification,
+team, dispatch, result, validation, and checkpoint events in the client
+project's local `.code4me/events.jsonl`; Status and Housekeeping derive the live
+state from that trail without changing it. The newest checkpoint is the compact
+resume surface—there are no copied project templates or tracker forests.
 
 For non-trivial work, Code4Me searches the shared Basic Memory project before
 planning and carries relevant `memory://` references in the worker envelope.
@@ -18,21 +21,37 @@ processing.
 
 ## Current scope
 
-- Decide whether a task benefits from delegation.
+- Open one lightweight milestone and split only where work can be validated
+  independently.
+- Classify tasks as light, standard, or critical; the weight changes validation
+  rigor, not ceremony.
+- Assign one producer, one implementer, and one independent validator per task,
+  adding specialists only when the work needs them.
+- Pick a fast, balanced, or deep model tier and appropriate effort per role;
+  apply an exact vendor model only when a reviewed mapping exists.
 - Discover Crowded's live roster, including normalized model-vendor identity,
   without fixed room-number assumptions; retain native workers as fallbacks.
 - Route questions to Basic Memory, CodeGraph, CCC, Context Mode, or a narrow
   native read according to the shape of the question.
-- Send one work envelope and, when selected, one verification envelope.
+- Send one work envelope and one mandatory validation envelope for every
+  engineering change.
 - Validate one matching result for every delegated stage.
-- Optionally dispatch one read-only verification stage; prefer an independent
-  room, or clear and recycle the completed worker when only two rooms exist.
+- Prefer an independent room for validation; for light or standard work only,
+  clear and recycle the completed worker as a fresh-context fallback when two
+  rooms are all that exist.
+- Allow one bounded repair and one revalidation, then stop rather than loop.
 - Persist durable, evidenced lessons through Basic Memory.
-- Preserve one dispatch/result pair for every delegated stage.
+- Preserve lifecycle events and an append-only checkpoint for reliable resume.
 - Audit code read-only through two blind vendor-distinct passes, synthesize
   agreement honestly, and never apply fixes automatically.
-- Report awaiting tasks, recent results, and malformed or unmatched events.
-- Audit task closure, worktree scope, checks, and release consistency.
+- Report milestones, teams, model choices, validation, checkpoints, and event
+  integrity.
+- Audit lifecycle closure, validation independence, checkpoint freshness,
+  worktree scope, checks, and release consistency.
+
+Two optional checklists live under `skills/code4me/references/`: use the design
+brief only when a task truly needs design, and the validation checklist for the
+independent review. They are guidance, not files to copy into every project.
 
 ## Advisory hooks
 

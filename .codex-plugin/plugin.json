@@ -1,7 +1,7 @@
 {
   "name": "code4me-ntg",
-  "version": "0.9.0",
-  "description": "Minimal bounded engineering orchestration with blind cross-vendor code audits.",
+  "version": "0.10.0",
+  "description": "Lightweight milestone orchestration with mandatory validation and cross-vendor audits.",
   "author": {
     "name": "Bruno"
   },
@@ -16,8 +16,8 @@
   "hooks": "./.codex-plugin/hooks.json",
   "interface": {
     "displayName": "Code4Me Next Gen",
-    "shortDescription": "Bounded delegation with shared Basic Memory.",
-    "longDescription": "Code4Me delegates one engineering task when useful, optionally adds one independent or fresh-context verifier, shares durable Basic Memory context, synthesizes blind cross-vendor code audits without applying fixes, and provides read-only status and housekeeping.",
+    "shortDescription": "Lightweight teams with mandatory validation.",
+    "longDescription": "Code4Me coordinates lightweight milestones through task-scoped teams, chooses model tier and effort per role, requires independent validation, shares durable Basic Memory context, and synthesizes blind cross-vendor code audits without applying fixes.",
     "developerName": "Bruno",
     "category": "Productivity",
     "capabilities": [
@@ -25,7 +25,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Delegate this task with Code4Me."
+      "Coordinate this milestone with Code4Me."
     ],
     "brandColor": "#2563EB"
   }

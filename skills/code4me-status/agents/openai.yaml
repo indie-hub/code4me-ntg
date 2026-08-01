@@ -1,4 +1,4 @@
 interface:
   display_name: "Code4Me Status"
-  short_description: "Summarize Code4Me task activity"
-  default_prompt: "Use $code4me-status to summarize current delegated task activity."
+  short_description: "Summarize milestones teams and validation"
+  default_prompt: "Use $code4me-status to summarize current milestones, teams, tasks, and validation state."

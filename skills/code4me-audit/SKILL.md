@@ -23,9 +23,11 @@ Audit project code without changing it. Finding nothing is a valid result.
    style preferences, generic hardening advice, or possibilities without an
    affected input, sequence, boundary, or maintenance consequence.
 5. Read the sibling [Code4Me skill](../code4me/SKILL.md) and use its current
-   roster, envelope, event-log, and memory rules. Inside Crowded, always dispatch
-   at least one eligible peer auditor. Treat the roster's normalized `vendor`
-   field as model-provider identity; never infer it from room name or guest.
+   classification, roster, envelope, event-log, checkpoint, and memory rules.
+   Record the audit as one milestone task with a producer-synthesizer and up to
+   two auditor roles. Inside Crowded, always dispatch at least one eligible peer
+   auditor. Treat the roster's normalized `vendor` field as model-provider
+   identity; never infer it from room name or guest.
 6. Run exactly two blind passes when possible:
    - Prefer two ready peer rooms with distinct, known `vendor` values.
    - With one suitable peer whose vendor differs from the producer, dispatch
@@ -35,8 +37,8 @@ Audit project code without changing it. Finding nothing is a valid result.
    - If no peer exists, perform one local pass and label it `single-vendor` or
      `unknown`; do not pretend the audit was cross-vendor.
 7. Give every delegated pass the same scope, categories, acceptance criteria,
-   context references, and memory references. Use stage IDs `<root>-audit-1` and
-   `<root>-audit-2`, `stage: audit`, Doorbell role `auditor`,
+   context references, memory references, model tier, and effort. Use stage IDs
+   `<root>-audit-1` and `<root>-audit-2`, `stage: audit`, Doorbell role `auditor`,
    `delegation: forbidden`, and an explicit read-only constraint. Dispatch both
    peer passes before accepting either result. Never include one auditor's
    findings in the other's envelope. The operational event log and validated
@@ -47,7 +49,11 @@ Audit project code without changing it. Finding nothing is a valid result.
    `vendors_checked` and `vendors_agreed`; silence is not an explicit rejection.
    Independent convergence raises confidence but never replaces source evidence.
    Do not replace a blind pass with a primed verification pass.
-9. Rank accepted findings by severity, then confidence. Do not edit source,
+9. When two blind passes complete with distinct known vendors, append
+   `task_validated` after synthesis; the cross-vendor passes are the independent
+   validation. For degraded single-vendor or unknown coverage, checkpoint the
+   audit as `unvalidated` instead of claiming full completion.
+10. Rank accepted findings by severity, then confidence. Do not edit source,
    tests, configuration, or documentation, and do not create patches. A later
    user request may hand a selected finding to the normal Code4Me workflow.
 

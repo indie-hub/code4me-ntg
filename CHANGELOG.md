@@ -7,6 +7,25 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-08-01
+
+### Added
+
+- Add lightweight milestones, independently validatable tasks, temporary task
+  teams, and compact append-only checkpoints.
+- Select a fast, balanced, or deep model tier and suitable effort for each task
+  role, applying exact vendor models only from reviewed mappings.
+- Add lean optional design and independent-validation checklists.
+
+### Changed
+
+- Require independent validation for every engineering change, with one bounded
+  repair and revalidation before blocking.
+- Reduce task weights to light, standard, and critical; weights now control
+  validation rigor rather than fixed teams or documentation.
+- Derive Status and Housekeeping from lifecycle events and the latest checkpoint
+  instead of requiring copied trackers, handoff manifests, or template trees.
+
 ## [0.9.0] - 2026-08-01
 
 ### Added
