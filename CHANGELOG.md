@@ -7,6 +7,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-08-01
+
+### Added
+
+- Recycle the completed worker as a fresh-context verifier when no independent
+  Crowded room is available and that room explicitly allows control.
+
+### Changed
+
+- Persist the accepted work result before any context clear, require an applied
+  control response, and rediscover readiness before verification dispatch.
+
 ## [0.6.0] - 2026-08-01
 
 ### Added

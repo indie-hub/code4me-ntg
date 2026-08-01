@@ -1,4 +1,4 @@
 interface:
   display_name: "Code4Me Next Gen"
   short_description: "Delegate one task with optional verification"
-  default_prompt: "Use $code4me to delegate this task to one suitable worker and add independent verification only when it reduces risk."
+  default_prompt: "Use $code4me to delegate this task to one suitable worker and add verification only when it reduces risk."
