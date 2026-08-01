@@ -9,12 +9,12 @@ test("Code4Me Audit stays read-only and evidence-backed", () => {
   for (const rule of [
     "Finding nothing is a valid result",
     "Prefer precision over recall",
-    "Dispatch at most one auditor",
+    "always dispatch at least one eligible peer auditor",
     "audited project files are not",
     "do not create patches",
     "bugs | security | performance | maintainability | test_gaps",
     "CRITICAL | MAJOR | MINOR",
-    "confirmed | rejected | needs_context | not_run",
+    "vendor_coverage",
     "No supported findings",
   ]) {
     assert.ok(normalizedAudit.includes(rule), `missing audit rule: ${rule}`);
@@ -22,13 +22,19 @@ test("Code4Me Audit stays read-only and evidence-backed", () => {
   assert.ok(!audit.includes("TODO"), "audit skill still contains template text");
 });
 
-test("Code4Me Audit verifies serious findings once", () => {
+test("Code4Me Audit runs blind cross-vendor passes", () => {
   for (const rule of [
-    "Batch all",
-    "into the single optional verification stage",
-    "mark each finding `confirmed`, `rejected`, or `needs_context`",
-    "do not ask for fixes",
+    "Run exactly two blind passes when possible",
+    "distinct, known `vendor` values",
+    "complete the producer's own pass before accepting its result",
+    "A recycled context is not a new vendor",
+    "Dispatch both peer passes before accepting either result",
+    "Never include one auditor's findings in the other's envelope",
+    "silence is not an explicit rejection",
+    "Do not replace a blind pass with a primed verification pass",
+    "two completed blind passes have distinct, non-`unknown` vendors",
+    "Never count a room name, guest program, model name, or cleared context",
   ]) {
-    assert.ok(normalizedAudit.includes(rule), `missing audit verification rule: ${rule}`);
+    assert.ok(normalizedAudit.includes(rule), `missing cross-vendor rule: ${rule}`);
   }
 });

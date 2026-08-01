@@ -2,7 +2,8 @@
 
 The smallest useful Code4Me: one producer uses shared project memory, delegates
 one engineering task to one suitable worker, and adds one independent or
-fresh-context verifier only when it materially reduces risk.
+fresh-context verifier only when it materially reduces risk. Audits deliberately
+use two blind model-vendor passes when available.
 
 The plugin contains four focused skills. On use, the producer records dispatch
 and result events in the client project's local `.code4me/events.jsonl`; Status
@@ -18,8 +19,8 @@ processing.
 ## Current scope
 
 - Decide whether a task benefits from delegation.
-- Discover Crowded's live roster and prefer one ready agent room without a
-  fixed vendor or room-number assumption; retain native workers as fallbacks.
+- Discover Crowded's live roster, including normalized model-vendor identity,
+  without fixed room-number assumptions; retain native workers as fallbacks.
 - Route questions to Basic Memory, CodeGraph, CCC, Context Mode, or a narrow
   native read according to the shape of the question.
 - Send one work envelope and, when selected, one verification envelope.
@@ -28,7 +29,8 @@ processing.
   room, or clear and recycle the completed worker when only two rooms exist.
 - Persist durable, evidenced lessons through Basic Memory.
 - Preserve one dispatch/result pair for every delegated stage.
-- Audit code read-only for ranked, evidence-backed risks without applying fixes.
+- Audit code read-only through two blind vendor-distinct passes, synthesize
+  agreement honestly, and never apply fixes automatically.
 - Report awaiting tasks, recent results, and malformed or unmatched events.
 - Audit task closure, worktree scope, checks, and release consistency.
 

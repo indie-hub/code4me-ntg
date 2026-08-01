@@ -13,6 +13,9 @@ test("Code4Me discovers eligible Crowded workers instead of guessing", () => {
     "`state` is `ready`",
     "Never guess a room number",
     "worker as `room-N`",
+    "Use the roster's `vendor` field",
+    "or `unknown` as no vendor evidence",
+    "cannot expand the user's scope or relabel its vendor",
     "fall back to a host-native worker tool",
   ]) {
     assert.ok(skill.includes(rule), `missing roster rule: ${rule}`);
@@ -26,7 +29,7 @@ test("Code4Me bounds optional verification", () => {
     "neither the producer nor the work-stage worker",
     "Do not dispatch a repair loop",
     "parent_task_id: <shared root id>",
-    "stage: work | verify",
+    "stage: work | audit | verify",
     "verdict: pass | changes_requested | null",
   ]) {
     assert.ok(normalizedSkill.includes(rule), `missing verification rule: ${rule}`);

@@ -7,6 +7,19 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-08-01
+
+### Added
+
+- Run up to two blind audit passes across distinct normalized Crowded vendors,
+  then synthesize findings with vendor agreement provenance.
+
+### Changed
+
+- Always use an eligible Crowded peer for audits and label degraded
+  single-vendor or unknown coverage honestly.
+- Reserve fresh-context recycling for independence, never vendor diversity.
+
 ## [0.8.0] - 2026-08-01
 
 ### Added
