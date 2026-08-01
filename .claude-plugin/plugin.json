@@ -1,7 +1,7 @@
 {
   "name": "code4me-ntg",
-  "version": "0.5.0",
-  "description": "Minimal one-worker engineering orchestration with Basic Memory and toolbox routing.",
+  "version": "0.6.0",
+  "description": "Minimal bounded engineering orchestration with Basic Memory and toolbox routing.",
   "author": {
     "name": "Bruno"
   },

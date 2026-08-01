@@ -1,7 +1,8 @@
 # Code4Me Next Gen
 
 The smallest useful Code4Me: one producer uses shared project memory, delegates
-one engineering task to one suitable worker, and accepts one correlated result.
+one engineering task to one suitable worker, and adds one independent verifier
+only when it materially reduces risk.
 
 The plugin contains three focused skills. On use, the producer records dispatch
 and result events in the client project's local `.code4me/events.jsonl`; Status
@@ -21,10 +22,11 @@ processing.
   fixed vendor or room-number assumption; retain native workers as fallbacks.
 - Route questions to Basic Memory, CodeGraph, CCC, Context Mode, or a narrow
   native read according to the shape of the question.
-- Send one task envelope.
-- Validate one matching result.
+- Send one work envelope and, when selected, one verification envelope.
+- Validate one matching result for every delegated stage.
+- Optionally dispatch one independent read-only verification stage; never loop.
 - Persist durable, evidenced lessons through Basic Memory.
-- Preserve the two-event audit trail.
+- Preserve one dispatch/result pair for every delegated stage.
 - Report awaiting tasks, recent results, and malformed or unmatched events.
 - Audit task closure, worktree scope, checks, and release consistency.
 

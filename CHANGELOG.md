@@ -7,6 +7,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-01
+
+### Added
+
+- Add an optional independent verification stage with a shared parent task ID,
+  fresh roster discovery, and correlated work and verification events.
+
+### Changed
+
+- Bound orchestration to direct work, one worker, or one worker plus one
+  verifier; repair findings remain the producer's responsibility.
+
 ## [0.5.0] - 2026-08-01
 
 ### Added
