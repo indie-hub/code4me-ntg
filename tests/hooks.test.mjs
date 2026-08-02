@@ -18,7 +18,7 @@ function run(mode, payload) {
 
 const envelope = `protocol: code4me-ntg/v2
 required_skill: code4me
-delivery: crowded_async
+delivery: asynchronous
 wait_policy: passive
 task_id: C4M-1
 producer: room-1

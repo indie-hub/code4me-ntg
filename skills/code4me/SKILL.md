@@ -234,13 +234,13 @@ state `unvalidated`; do not self-approve or declare completion.
 
 ## Task envelope
 
-Use `crowded_async` with `passive` only for Crowded Doorbell delivery. Use
+Use `asynchronous` with `passive` only for Crowded Doorbell delivery. Use
 `native_managed` with `join` only for a host-native subagent.
 
 ```yaml
 protocol: code4me-ntg/v2
 required_skill: code4me
-delivery: crowded_async | native_managed
+delivery: asynchronous | native_managed
 wait_policy: passive | join
 milestone_id: <stable milestone id>
 task_id: <unique stage id>

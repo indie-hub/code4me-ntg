@@ -7,6 +7,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.12.2] - 2026-08-02
+
+### Fixed
+
+- Preserve the existing `asynchronous` delivery value for Crowded v2 envelopes
+  while keeping native subagent delivery explicitly managed and joined.
+
 ## [0.12.1] - 2026-08-02
 
 ### Fixed

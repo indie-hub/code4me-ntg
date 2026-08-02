@@ -37,9 +37,9 @@ test("Code4Me enforces its worker contract across rooms", () => {
 
 test("Code4Me distinguishes Crowded yielding from native joins", () => {
   for (const rule of [
-    "delivery: crowded_async | native_managed",
+    "delivery: asynchronous | native_managed",
     "wait_policy: passive | join",
-    "Use `crowded_async` with `passive` only for Crowded Doorbell delivery",
+    "Use `asynchronous` with `passive` only for Crowded Doorbell delivery",
     "Use `native_managed` with `join` only for a host-native subagent",
     "host-native subagent",
     "normal dispatch and wait or join mechanism",
