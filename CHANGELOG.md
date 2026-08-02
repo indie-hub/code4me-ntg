@@ -7,6 +7,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-08-02
+
+### Added
+
+- Mark every cross-room envelope as a mandatory Code4Me work order and require
+  truthful toolbox evidence in completed results.
+
+### Changed
+
+- Strengthen Claude, Codex, and OpenCode incoming-envelope adapters to require
+  the installed Code4Me workflow or return blocked when it is unavailable.
+- End producer and worker turns after Doorbell sends instead of polling or
+  launching background waiters that prevent queued PTY delivery.
+
 ## [0.10.0] - 2026-08-01
 
 ### Added

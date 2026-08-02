@@ -35,6 +35,10 @@ processing.
   native read according to the shape of the question.
 - Send one work envelope and one mandatory validation envelope for every
   engineering change.
+- Mark every cross-room delivery as a mandatory Code4Me work order and reject a
+  completed result that lacks truthful toolbox evidence.
+- Treat Doorbell delivery as asynchronous: checkpoint after dispatch and leave
+  both producer and worker rooms idle instead of running background waiters.
 - Validate one matching result for every delegated stage.
 - Prefer an independent room for validation; for light or standard work only,
   clear and recycle the completed worker as a fresh-context fallback when two
@@ -53,12 +57,15 @@ Two optional checklists live under `skills/code4me/references/`: use the design
 brief only when a task truly needs design, and the validation checklist for the
 independent review. They are guidance, not files to copy into every project.
 
-## Advisory hooks
+## Worker-contract hooks
 
 When vendor adapters are enabled, Claude and Codex receive two non-blocking
-nudges: one on an incoming Code4Me task envelope and one on broad source fallback
-attempts. The hooks only add context; they never invoke tools, write memory,
-block a call, or grant permission. There is deliberately no SessionStart hook.
+context injections: a mandatory Code4Me workflow reminder on incoming task
+envelopes and an advisory nudge on broad source fallback attempts. The worker
+must return blocked when Code4Me is unavailable, and the producer rejects
+completed results without toolbox evidence. Hooks never invoke tools, write
+memory, block a call, or grant permission. There is deliberately no SessionStart
+hook.
 
 OpenCode receives the incoming-envelope nudge through
 `.opencode/plugins/code4me.mjs`. Its current pre-tool hook exposes mutable tool

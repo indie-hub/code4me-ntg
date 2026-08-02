@@ -16,6 +16,8 @@ the same user request explicitly authorizes it.
    - each line is valid JSON;
    - each result has a preceding dispatch with matching stage ID, worker, and
      vendor, and each dispatch has at most one terminal result;
+   - every `complete` v2 result contains non-empty truthful `tool_evidence` with
+     tool, action, and concise result or unavailable reason;
    - each v2 task belongs to an opened milestone, is classified before team
      assignment, and is assigned before a delegated stage;
    - assigned implementers, validators, and specialists record mode, model tier,

@@ -21,6 +21,34 @@ test("Code4Me discovers real Crowded members without guessing", () => {
   }
 });
 
+test("Code4Me enforces its worker contract across rooms", () => {
+  for (const rule of [
+    "protocol: code4me-ntg/v2",
+    "required_skill: code4me",
+    "mandatory Code4Me work order",
+    "return `blocked` if the skill is unavailable",
+    "non-empty `tool_evidence`",
+    "Never claim a tool call that did not occur",
+    "reject it as malformed otherwise",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing worker contract: ${rule}`);
+  }
+});
+
+test("Code4Me leaves rooms idle for asynchronous delivery", () => {
+  for (const rule of [
+    "delivery: asynchronous",
+    "wait_policy: passive",
+    "checkpoint with state `awaiting_result`",
+    "end the current turn",
+    "Do not start a background waiter",
+    "Resume only when the Doorbell result is injected",
+    "without waiting for acknowledgement",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing passive wait rule: ${rule}`);
+  }
+});
+
 test("Code4Me keeps lightweight milestones tasks and teams", () => {
   for (const rule of [
     "one `milestone_id`",

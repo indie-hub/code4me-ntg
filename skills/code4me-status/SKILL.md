@@ -29,9 +29,9 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
    including producer-inline `verify` stages. Derive applied control state from
    `task_assigned` plus later matching `task_controlled` events.
    Flag malformed JSON, duplicate stage dispatches, unmatched results,
-   validation predating the latest implementation result, tasks without
-   classification or team assignment, and closed milestones containing an
-   unvalidated task.
+   `complete` v2 results without non-empty `tool_evidence`, validation predating
+   the latest implementation result, tasks without classification or team
+   assignment, and closed milestones containing an unvalidated task.
 6. For v1-only history, retain the legacy view: awaiting dispatches and five
    most recent terminal results.
 

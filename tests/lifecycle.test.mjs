@@ -19,6 +19,7 @@ test("Status derives milestone and task state from events", () => {
     "model tier or exact model",
     "later matching `task_controlled` events",
     "Never call a task complete merely because implementation returned `complete`",
+    "`complete` v2 results without non-empty `tool_evidence`",
   ]) {
     assert.ok(status.includes(rule), `missing status rule: ${rule}`);
   }
@@ -32,6 +33,7 @@ test("Housekeeping checks validation and checkpoint integrity", () => {
     "critical tasks use distinct known implementer and validator vendors",
     "latest work or repair result",
     "matching `verify` dispatch/result pair",
+    "non-empty truthful `tool_evidence`",
     "resume state stale",
     "latest checkpoint is current",
     "Do not write a handoff manifest",

@@ -16,7 +16,11 @@ function run(mode, payload) {
   return JSON.parse(result.stdout);
 }
 
-const envelope = `task_id: C4M-1
+const envelope = `protocol: code4me-ntg/v2
+required_skill: code4me
+delivery: asynchronous
+wait_policy: passive
+task_id: C4M-1
 producer: room-1
 worker: room-2
 delegation: forbidden
@@ -25,12 +29,18 @@ memory:
   status: used
   refs: [memory://project/parser]`;
 
-test("incoming envelopes receive advisory Basic Memory guidance", () => {
+test("incoming envelopes enforce the Code4Me worker contract", () => {
   const output = run("envelope", { prompt: envelope });
   const hookOutput = output.hookSpecificOutput;
   assert.equal(hookOutput.hookEventName, "UserPromptSubmit");
   assert.match(hookOutput.additionalContext, /Basic Memory/);
   assert.match(hookOutput.additionalContext, /delegation is forbidden/);
+  assert.match(hookOutput.additionalContext, /load and follow the installed code4me skill/i);
+  assert.match(hookOutput.additionalContext, /Incoming worker contract/);
+  assert.match(hookOutput.additionalContext, /return blocked/i);
+  assert.match(hookOutput.additionalContext, /tool_evidence/);
+  assert.match(hookOutput.additionalContext, /wait passively/);
+  assert.match(hookOutput.additionalContext, /do not launch a background waiter/i);
   assert.equal("permissionDecision" in hookOutput, false);
   assert.deepEqual(run("envelope", { prompt: "fix the parser" }), {});
 });
