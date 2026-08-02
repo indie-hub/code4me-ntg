@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
+const producer = read("../skills/code4me/SKILL.md").replace(/\s+/g, " ");
 const status = read("../skills/code4me-status/SKILL.md").replace(/\s+/g, " ");
 const housekeeping = read("../skills/code4me-housekeeping/SKILL.md").replace(/\s+/g, " ");
 const design = read("../skills/code4me/references/design-brief.md");
@@ -18,6 +19,8 @@ test("Status derives milestone and task state from events", () => {
     "role-to-member team map",
     "model tier or exact model",
     "later matching `task_controlled` events",
+    "ready-to-resume brief",
+    "`handover stale`",
     "Never call a task complete merely because implementation returned `complete`",
     "`complete` v2 results without non-empty `tool_evidence`",
   ]) {
@@ -25,7 +28,7 @@ test("Status derives milestone and task state from events", () => {
   }
 });
 
-test("Housekeeping checks validation and checkpoint integrity", () => {
+test("Housekeeping audits and writes one resumable handover checkpoint", () => {
   for (const rule of [
     "classified before team assignment",
     "implementer and validator are not the same implementation context",
@@ -36,9 +39,35 @@ test("Housekeeping checks validation and checkpoint integrity", () => {
     "non-empty truthful `tool_evidence`",
     "resume state stale",
     "latest checkpoint is current",
+    "append exactly one compact checkpoint line",
+    '"state":"handover"',
+    '"root":"<absolute repository root>"',
+    '"ahead":0,"behind":0',
+    '"excluded":[{"path":".code4me/events.jsonl","reason":"bookkeeping"}]',
+    "checkpoint does not make itself stale",
+    "only validated, durable decisions",
+    "Never store branch, worktree, pending task",
+    "Use `unavailable` only when",
+    "Use logical task IDs in `completed` and `active_tasks`",
+    "Record worktree paths relative to the repository root",
+    "does not close a milestone or supersede unresolved lifecycle events",
+    "existing log contains malformed JSON",
+    "handover checkpoint appended: yes | no",
     "Do not write a handoff manifest",
   ]) {
     assert.ok(housekeeping.includes(rule), `missing housekeeping rule: ${rule}`);
+  }
+});
+
+test("Producer resumes from the latest handover before opening work", () => {
+  for (const rule of [
+    "Before opening or reusing a milestone",
+    "compare its recorded branch, HEAD, upstream sync, and worktree paths",
+    "Read linked Basic Memory references",
+    "use the handover as context, not authority",
+    "Housekeeping may append one closeout checkpoint",
+  ]) {
+    assert.ok(producer.includes(rule), `missing resume rule: ${rule}`);
   }
 });
 

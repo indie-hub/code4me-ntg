@@ -8,9 +8,9 @@ model-vendor passes when available.
 
 The plugin contains four focused skills. The producer records classification,
 team, dispatch, result, validation, and checkpoint events in the client
-project's local `.code4me/events.jsonl`; Status and Housekeeping derive the live
-state from that trail without changing it. The newest checkpoint is the compact
-resume surface—there are no copied project templates or tracker forests.
+project's local `.code4me/events.jsonl`. Housekeeping audits product state and
+appends one compact handover checkpoint; Status and the producer resume from it.
+There are no copied project templates or tracker forests.
 
 For non-trivial work, Code4Me searches the shared Basic Memory project before
 planning and carries relevant `memory://` references in the worker envelope.
@@ -45,7 +45,8 @@ processing.
   rooms are all that exist.
 - Allow one bounded repair and one revalidation, then stop rather than loop.
 - Persist durable, evidenced lessons through Basic Memory.
-- Preserve lifecycle events and an append-only checkpoint for reliable resume.
+- Preserve lifecycle events and an append-only housekeeping handover for
+  reliable future-agent resume.
 - Audit code read-only through two blind vendor-distinct passes, synthesize
   agreement honestly, and never apply fixes automatically.
 - Report milestones, teams, model choices, validation, checkpoints, and event

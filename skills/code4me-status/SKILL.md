@@ -1,6 +1,6 @@
 ---
 name: code4me-status
-description: Read and summarize lightweight Code4Me milestones, tasks, task-scoped teams, validation state, checkpoints, and legacy delegated-task events without changing the project. Use when the user asks for Code4Me status, active milestones, task progress, team assignments, blockers, validation, resume context, or event-log problems.
+description: Read and summarize lightweight Code4Me milestones, tasks, teams, validation state, checkpoints, resumable handovers, and legacy delegated-task events without changing the project. Use when the user asks for Code4Me status, active milestones, task progress, team assignments, blockers, validation, resume context, or event-log problems.
 ---
 
 # Code4Me Status
@@ -15,6 +15,9 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
    events and legacy v1 dispatch/result pairs.
 3. Use the newest valid `checkpoint` as the canonical resume summary, then apply
    every later event. Never let a checkpoint hide subsequent work.
+   When its state is `handover`, treat its repository identity, worktree scope,
+   completed and active tasks, blockers, memory references, and exact next action
+   as the ready-to-resume brief.
 4. Group v2 events by `milestone_id`, then logical task ID. Derive task state:
    - `classified`: classified but not assigned;
    - `assigned`: team assigned but work not started;
@@ -34,12 +37,18 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
    assignment, and closed milestones containing an unvalidated task.
 6. For v1-only history, retain the legacy view: awaiting dispatches and five
    most recent terminal results.
+7. For a handover checkpoint, compare recorded HEAD, branch, upstream sync, and
+   worktree paths with the current repository. Report `handover stale` when they
+   differ; do not silently present recorded state as current state. Exclude the
+   bookkeeping path `.code4me/events.jsonl` from product-worktree drift because
+   appending the checkpoint necessarily changes it.
 
 ## Report
 
 Return:
 
-- latest checkpoint state, pending items, and exact next action;
+- latest checkpoint state, repository identity, worktree scope and exclusions,
+  completed and active tasks, blockers, memory references, and exact next action;
 - every active milestone with goal and acceptance summary;
 - each active task with kind, weight, state, and role-to-member team map;
 - each assigned member's mode, model tier or exact model, requested effort, and

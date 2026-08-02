@@ -7,6 +7,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-08-02
+
+### Added
+
+- Let Housekeeping append one structured handover checkpoint and promote only
+  validated durable lessons to Basic Memory.
+
+### Changed
+
+- Make Code4Me and Status consume the latest handover before work resumes and
+  report repository drift instead of presenting stale state as current.
+
 ## [0.11.0] - 2026-08-02
 
 ### Added
