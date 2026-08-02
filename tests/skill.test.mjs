@@ -35,13 +35,19 @@ test("Code4Me enforces its worker contract across rooms", () => {
   }
 });
 
-test("Code4Me leaves rooms idle for asynchronous delivery", () => {
+test("Code4Me distinguishes Crowded yielding from native joins", () => {
   for (const rule of [
-    "delivery: asynchronous",
-    "wait_policy: passive",
+    "delivery: crowded_async | native_managed",
+    "wait_policy: passive | join",
+    "Use `crowded_async` with `passive` only for Crowded Doorbell delivery",
+    "Use `native_managed` with `join` only for a host-native subagent",
+    "host-native subagent",
+    "normal dispatch and wait or join mechanism",
+    "Collect its result before validation or milestone closure",
     "checkpoint with state `awaiting_result`",
     "end the current turn",
-    "Do not start a background waiter",
+    "Only for an accepted `$CROWDED_BIN send`",
+    "does not apply to host-native subagent wait or join tools",
     "Resume only when the Doorbell result is injected",
     "without waiting for acknowledgement",
   ]) {

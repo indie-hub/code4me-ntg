@@ -38,7 +38,8 @@ processing.
 - Mark every cross-room delivery as a mandatory Code4Me work order and reject a
   completed result that lacks truthful toolbox evidence.
 - Treat Doorbell delivery as asynchronous: checkpoint after dispatch and leave
-  both producer and worker rooms idle instead of running background waiters.
+  both producer and worker rooms idle instead of running background waiters;
+  join host-native subagents normally and collect their results.
 - Validate one matching result for every delegated stage.
 - Prefer an independent room for validation; for light or standard work only,
   clear and recycle the completed worker as a fresh-context fallback when two

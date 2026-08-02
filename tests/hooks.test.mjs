@@ -18,13 +18,15 @@ function run(mode, payload) {
 
 const envelope = `protocol: code4me-ntg/v2
 required_skill: code4me
-delivery: asynchronous
+delivery: crowded_async
 wait_policy: passive
 task_id: C4M-1
 producer: room-1
 worker: room-2
 delegation: forbidden
 goal: fix the parser
+reply_to:
+  transport: crowded
 memory:
   status: used
   refs: [memory://project/parser]`;
@@ -39,8 +41,10 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /Incoming worker contract/);
   assert.match(hookOutput.additionalContext, /return blocked/i);
   assert.match(hookOutput.additionalContext, /tool_evidence/);
-  assert.match(hookOutput.additionalContext, /wait passively/);
+  assert.match(hookOutput.additionalContext, /reply_to\.transport is crowded/i);
   assert.match(hookOutput.additionalContext, /do not launch a background waiter/i);
+  assert.match(hookOutput.additionalContext, /reply_to\.transport is native/i);
+  assert.match(hookOutput.additionalContext, /producer must join the native subagent/i);
   assert.equal("permissionDecision" in hookOutput, false);
   assert.deepEqual(run("envelope", { prompt: "fix the parser" }), {});
 });

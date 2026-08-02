@@ -7,6 +7,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-08-02
+
+### Fixed
+
+- Limit passive waiting to accepted Crowded Doorbell sends and require producers
+  to join host-native subagents and collect their results.
+
 ## [0.12.0] - 2026-08-02
 
 ### Added

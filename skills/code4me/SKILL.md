@@ -41,9 +41,11 @@ Use the smallest team and evidence that can complete the milestone safely.
    read [references/design-brief.md](references/design-brief.md) and carry only
    the relevant answers in the task envelope or a user-requested artifact. Do
    not create a document merely to fill a checklist.
-7. Dispatch the `work` stage when another room is the implementer; otherwise
-   implement directly as the assigned producer-implementer. Every engineering
-   change still requires validation by the assigned independent context.
+7. Dispatch the `work` stage when another room or a host-native subagent is the
+   implementer; otherwise implement directly as the assigned
+   producer-implementer. Join native subagents and collect their result before
+   continuing. Every engineering change still requires validation by the
+   assigned independent context.
 8. Accept only a result whose stage ID, worker, and dispatched vendor match and
    whose outcome is `complete`, `blocked`, or `failed`. A `complete` result must
    contain non-empty, truthful `tool_evidence` showing the Code4Me toolbox route;
@@ -135,6 +137,16 @@ source, and optional tooling must degrade gracefully.
 
 ## Communication
 
+### Native subagents
+
+For a host-native subagent, use the platform's normal dispatch and wait or join
+mechanism. Collect its result before validation or milestone closure. Do not
+abandon an outstanding native task merely because Crowded uses passive delivery.
+The producer may wait on native orchestration tools; that does not keep a
+Crowded PTY busy.
+
+### Crowded Doorbell
+
 Inside Crowded, `CROWDED_BIN` and `CROWDED_ROOM` identify Doorbell and the
 producer's numeric room. Discover current topology before assigning the team:
 
@@ -168,11 +180,13 @@ reply_to:
 
 Crowded delivery is asynchronous. After `send` returns an accepted `injected`
 or `queued` status, append a checkpoint with state `awaiting_result` and end the
-current turn so the producer room becomes idle. Do not start a background
-waiter, call a wait tool, poll the roster or terminal, sleep, or keep sampling;
-those actions keep the PTY busy and delay result delivery. Resume only when the
-Doorbell result is injected. After a worker sends its result, it likewise ends
-its turn without waiting for acknowledgement.
+current turn so the producer room becomes idle. Only for an accepted
+`$CROWDED_BIN send`, do not start a background waiter, call a wait tool, poll the
+roster or terminal, sleep, or keep sampling; those actions keep the PTY busy and
+delay result delivery. This prohibition does not apply to host-native subagent
+wait or join tools. Resume only when the Doorbell result is injected. After a
+worker sends its Crowded result, it likewise ends its turn without waiting for
+acknowledgement.
 
 ### Incoming worker contract
 
@@ -220,11 +234,14 @@ state `unvalidated`; do not self-approve or declare completion.
 
 ## Task envelope
 
+Use `crowded_async` with `passive` only for Crowded Doorbell delivery. Use
+`native_managed` with `join` only for a host-native subagent.
+
 ```yaml
 protocol: code4me-ntg/v2
 required_skill: code4me
-delivery: asynchronous
-wait_policy: passive
+delivery: crowded_async | native_managed
+wait_policy: passive | join
 milestone_id: <stable milestone id>
 task_id: <unique stage id>
 parent_task_id: <logical task id>
