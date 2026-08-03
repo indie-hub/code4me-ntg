@@ -27,6 +27,12 @@ processing.
   rigor, not ceremony.
 - Assign one producer, one implementer, and one independent validator per task,
   adding specialists only when the work needs them.
+- Recommend architect, researcher, security-reviewer, or QA stages only for a
+  bounded task need; never bind those roles permanently to a room or vendor.
+- Carry relevant root and scoped `AGENTS.md` / `CLAUDE.md` files into task
+  context without creating, merging, or synchronizing project instructions.
+- Load only the language and platform references matched by the task's paths,
+  manifests, or explicit deployment target.
 - Pick a fast, balanced, or deep model tier and appropriate effort per role;
   apply an exact vendor model only when a reviewed mapping exists.
 - Discover Crowded's live roster, including normalized model-vendor identity,
@@ -55,9 +61,11 @@ processing.
 - Audit lifecycle closure, validation independence, checkpoint freshness,
   worktree scope, checks, and release consistency.
 
-Two optional checklists live under `skills/code4me/references/`: use the design
-brief only when a task truly needs design, and the validation checklist for the
-independent review. They are guidance, not files to copy into every project.
+Two optional workflow checklists live under `skills/code4me/references/`: use
+the design brief only when a task truly needs design, and the validation
+checklist for the independent review. Compact language and platform baselines
+are selected conditionally and project instructions always override them. None
+of these references are files to copy into every project.
 
 ## Worker-contract hooks
 

@@ -7,6 +7,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-08-03
+
+### Added
+
+- Carry relevant root and scoped `AGENTS.md` / `CLAUDE.md` files into task
+  context without taking ownership of project instructions.
+- Select compact language and platform references from the task's actual paths,
+  manifests, or deployment target.
+- Recommend architect, researcher, security-reviewer, and QA specialists only
+  for bounded task needs, with a recorded reason.
+
+### Changed
+
+- Require incoming workers to read supplied project and conditional context
+  references before planning.
+
 ## [0.12.2] - 2026-08-02
 
 ### Fixed

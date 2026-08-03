@@ -40,6 +40,8 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /load and follow the installed code4me skill/i);
   assert.match(hookOutput.additionalContext, /Incoming worker contract/);
   assert.match(hookOutput.additionalContext, /return blocked/i);
+  assert.match(hookOutput.additionalContext, /every supplied context_refs entry/i);
+  assert.match(hookOutput.additionalContext, /conditional language or platform guidance/i);
   assert.match(hookOutput.additionalContext, /tool_evidence/);
   assert.match(hookOutput.additionalContext, /reply_to\.transport is crowded/i);
   assert.match(hookOutput.additionalContext, /do not launch a background waiter/i);

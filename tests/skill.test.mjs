@@ -4,6 +4,10 @@ import test from "node:test";
 
 const skill = readFileSync(new URL("../skills/code4me/SKILL.md", import.meta.url), "utf8");
 const normalizedSkill = skill.replace(/\s+/g, " ");
+const contextSelection = readFileSync(
+  new URL("../skills/code4me/references/context-selection.md", import.meta.url),
+  "utf8",
+);
 
 test("Code4Me discovers real Crowded members without guessing", () => {
   for (const rule of [
@@ -120,5 +124,64 @@ test("Code4Me selects task-scoped model and effort", () => {
     "`task_controlled`",
   ]) {
     assert.ok(normalizedSkill.includes(rule), `missing model policy: ${rule}`);
+  }
+});
+
+test("Code4Me carries project instructions without owning them", () => {
+  for (const rule of [
+    "project-root `AGENTS.md` and `CLAUDE.md`",
+    "nearest scoped instruction file",
+    "Do not create, overwrite, merge, or synchronize",
+    "Put the selected paths in `context_refs`",
+    "project-instruction, conditional, and Basic Memory references",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing project-guidance rule: ${rule}`);
+  }
+  for (const rule of [
+    "The user's current request wins",
+    "Project instructions win over the generic references",
+    "materially disagree",
+    "Their absence is not an error",
+  ]) {
+    assert.ok(contextSelection.includes(rule), `missing instruction precedence: ${rule}`);
+  }
+});
+
+test("Code4Me recommends specialists without permanent roles", () => {
+  for (const rule of [
+    "Recommend a specialist only when a bounded question needs expertise",
+    "`architect`",
+    "`researcher`",
+    "`security-reviewer`",
+    "`qa`",
+    "Announce each recommendation and its reason",
+    "never replaces the validator",
+    "never permanently bound to a room, model, or vendor",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing specialist rule: ${rule}`);
+  }
+});
+
+test("Code4Me loads only matching language and environment references", () => {
+  const references = [
+    "rust.md",
+    "javascript-typescript.md",
+    "python.md",
+    "swift.md",
+    "csharp.md",
+    "cpp.md",
+    "windows.md",
+    "unix.md",
+  ];
+  assert.match(contextSelection, /Do not load every reference/i);
+  assert.match(contextSelection, /If no signal matches[\s\S]*do not guess/i);
+  for (const path of references) {
+    assert.ok(contextSelection.includes(`\`${path}\``), `missing conditional map: ${path}`);
+    assert.ok(skill.includes(`references/${path}`), `skill does not link reference: ${path}`);
+    const content = readFileSync(
+      new URL(`../skills/code4me/references/${path}`, import.meta.url),
+      "utf8",
+    );
+    assert.match(content, /Project instructions override this baseline/);
   }
 });
