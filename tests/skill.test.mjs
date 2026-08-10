@@ -8,6 +8,14 @@ const contextSelection = readFileSync(
   new URL("../skills/code4me/references/context-selection.md", import.meta.url),
   "utf8",
 );
+const validation = readFileSync(
+  new URL("../skills/code4me/references/validation.md", import.meta.url),
+  "utf8",
+).replace(/\s+/g, " ");
+const toolbox = readFileSync(
+  new URL("../skills/code4me/references/toolbox.md", import.meta.url),
+  "utf8",
+).replace(/\s+/g, " ");
 
 test("Code4Me discovers real Crowded members without guessing", () => {
   for (const rule of [
@@ -27,7 +35,7 @@ test("Code4Me discovers real Crowded members without guessing", () => {
 
 test("Code4Me enforces its worker contract across rooms", () => {
   for (const rule of [
-    "protocol: code4me-ntg/v2",
+    "protocol: code4me-ntg/v3",
     "required_skill: code4me",
     "mandatory Code4Me work order",
     "return `blocked` if the skill is unavailable",
@@ -63,6 +71,8 @@ test("Code4Me keeps lightweight milestones tasks and teams", () => {
   for (const rule of [
     "one `milestone_id`",
     "smallest independently validatable task",
+    "Keep one task when one implementer can make one coherent change",
+    "Never split merely to create roles or bookkeeping",
     "`kind`: `feature | bug | refactor | spike | incident | maintenance`",
     "`weight`: `light | standard | critical`",
     "one producer, one implementer, one validator",
@@ -78,6 +88,45 @@ test("Code4Me keeps lightweight milestones tasks and teams", () => {
   ]) {
     assert.ok(normalizedSkill.includes(rule), `missing lifecycle rule: ${rule}`);
   }
+});
+
+test("Code4Me keeps project management out of source comments", () => {
+  for (const rule of [
+    "Source comments explain code only",
+    "Never put task or milestone IDs",
+    "TODO/FIXME items",
+    "comment_policy: >",
+    "deferred_work: [<follow-up item or empty>]",
+    "task_id: <logical task id>",
+    "stage_id: <unique dispatch stage id>",
+    "milestone_id: <same milestone id>",
+    "stage_id: <same dispatch stage id>",
+    "Accept incoming v2 envelopes for compatibility",
+    "send it through the bounded repair path",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing comment policy: ${rule}`);
+  }
+  assert.ok(validation.includes("project-management source comments"));
+  assert.ok(validation.includes("`changes_requested` even when runtime behavior passes"));
+  assert.match(skill, /expected_return:\n  milestone_id:[\s\S]*\n  findings:[^\n]*\n  deferred_work:/);
+});
+
+test("Code4Me makes Basic Memory use observable", () => {
+  for (const rule of [
+    "actually search shared **Basic Memory**",
+    "Do not merely mention memory or rely on recollection",
+    "`used` and `empty` require a completed search",
+    "searched: true | false",
+    "require a `Basic Memory` evidence entry",
+    "Actually open every supplied `memory://` reference",
+    "must return `memory_candidates`, using `[]`",
+    "- tool: Basic Memory",
+    '"tool":"Basic Memory"',
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing memory rule: ${rule}`);
+  }
+  assert.ok(toolbox.includes("searches relevant gaps when memory is available"));
+  assert.ok(toolbox.includes("reports truthful `Basic Memory` tool evidence"));
 });
 
 test("Code4Me requires bounded independent validation", () => {

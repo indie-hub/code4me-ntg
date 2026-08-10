@@ -16,11 +16,13 @@ function run(mode, payload) {
   return JSON.parse(result.stdout);
 }
 
-const envelope = `protocol: code4me-ntg/v2
+const envelope = `protocol: code4me-ntg/v3
 required_skill: code4me
 delivery: asynchronous
 wait_policy: passive
-task_id: C4M-1
+milestone_id: M1
+task_id: M1-T1
+stage_id: M1-T1-work-1
 producer: room-1
 worker: room-2
 delegation: forbidden
@@ -47,7 +49,23 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /do not launch a background waiter/i);
   assert.match(hookOutput.additionalContext, /reply_to\.transport is native/i);
   assert.match(hookOutput.additionalContext, /producer must join the native subagent/i);
+  assert.match(hookOutput.additionalContext, /Source comments explain code only/);
+  assert.match(hookOutput.additionalContext, /deferred_work in the result envelope/);
+  assert.match(hookOutput.additionalContext, /same milestone, task, and stage IDs/);
+  assert.match(hookOutput.additionalContext, /Actually open every supplied memory:\/\/ reference/);
+  assert.match(hookOutput.additionalContext, /search Basic Memory for relevant gaps/);
+  assert.match(hookOutput.additionalContext, /memory\.searched true/);
+  assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
   assert.equal("permissionDecision" in hookOutput, false);
+  assert.equal(
+    run("envelope", {
+      prompt: envelope
+        .replace("code4me-ntg/v3", "code4me-ntg/v2")
+        .replace("milestone_id: M1\n", "")
+        .replace("task_id: M1-T1\nstage_id: M1-T1-work-1", "task_id: M1-T1-work-1\nparent_task_id: M1-T1"),
+    }).hookSpecificOutput.hookEventName,
+    "UserPromptSubmit",
+  );
   assert.deepEqual(run("envelope", { prompt: "fix the parser" }), {});
 });
 
@@ -69,6 +87,10 @@ test("OpenCode appends guidance only to incoming envelopes", async () => {
   const message = { parts: [{ type: "text", text: envelope }] };
   await plugin["chat.message"]({}, message);
   assert.match(message.parts[0].text, /Code4Me task envelope detected/);
+  assert.match(message.parts[0].text, /Source comments explain code only/);
+  assert.match(message.parts[0].text, /deferred_work in the result envelope/);
+  assert.match(message.parts[0].text, /Actually open every supplied memory:\/\/ reference/);
+  assert.match(message.parts[0].text, /Always return memory_candidates/);
 
   const ordinary = { parts: [{ type: "text", text: "fix the parser" }] };
   await plugin["chat.message"]({}, ordinary);

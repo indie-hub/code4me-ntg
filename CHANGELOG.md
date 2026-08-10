@@ -7,6 +7,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-08-10
+
+### Added
+
+- Carry an explicit source-comment policy and deferred work in task envelopes.
+- Give v3 envelopes distinct milestone, logical-task, and dispatch-stage IDs
+  while preserving v2 event-log compatibility.
+
+### Changed
+
+- Split milestones into multiple tasks only for independently valuable or
+  validatable slices.
+- Reject project-management bookkeeping introduced in source comments.
+- Require observable Basic Memory search/read evidence and explicit empty or
+  unavailable outcomes for non-trivial work.
+
 ## [0.13.0] - 2026-08-03
 
 ### Added

@@ -23,6 +23,8 @@ processing.
 
 - Open one lightweight milestone and split only where work can be validated
   independently.
+- Keep coherent work in one task; split only for independent evidence, hard
+  dependencies, distinct specialist context, or safe parallel value.
 - Classify tasks as light, standard, or critical; the weight changes validation
   rigor, not ceremony.
 - Assign one producer, one implementer, and one independent validator per task,
@@ -47,11 +49,16 @@ processing.
   both producer and worker rooms idle instead of running background waiters;
   join host-native subagents normally and collect their results.
 - Validate one matching result for every delegated stage.
+- Keep tasks, milestones, status, plans, TODO/FIXME items, deferred work, and
+  handovers out of source comments; carry them in envelopes and lifecycle
+  events instead.
 - Prefer an independent room for validation; for light or standard work only,
   clear and recycle the completed worker as a fresh-context fallback when two
   rooms are all that exist.
 - Allow one bounded repair and one revalidation, then stop rather than loop.
 - Persist durable, evidenced lessons through Basic Memory.
+- Require actual Basic Memory search/read evidence for standard and critical
+  work, with explicit `searched`, status, references, and unavailable reasons.
 - Preserve lifecycle events and an append-only housekeeping handover for
   reliable future-agent resume.
 - Audit code read-only through two blind vendor-distinct passes, synthesize

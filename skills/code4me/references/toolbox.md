@@ -16,16 +16,22 @@ Vendor-local memories are not the Code4Me source of truth.
 
 ## Memory contract
 
-For every non-trivial task:
+For every `standard` or `critical` task, and any `light` task that depends on
+project history or conventions:
 
 1. Search Basic Memory before planning, starting with `code4me memory map`, then
    task-specific decisions, preferences, conventions, lessons, and bug patterns.
 2. Read relevant results and carry their `memory://` references in the task
    envelope. Use `empty` when the search finds nothing relevant and
-   `unavailable` when the MCP or project is unavailable.
-3. A worker reads supplied references before planning and may search further.
-4. A worker returns only durable candidates with evidence. The producer checks
-   the evidence, searches for duplicates, and updates or writes Basic Memory.
+   `unavailable` when the MCP or project is unavailable. Set `searched: true`
+   for `used` or `empty`; use `searched: false` with `unavailable` and a reason
+   only when memory cannot be reached.
+3. A worker opens every supplied reference before planning, searches relevant
+   gaps when memory is available, and reports truthful `Basic Memory` tool
+   evidence or an unavailable reason.
+4. A worker always returns `memory_candidates`, using `[]` when there is no
+   durable lesson. The producer checks the evidence, searches for duplicates,
+   and updates or writes Basic Memory.
 
 On first use in an empty Basic Memory project, create one `code4me memory map`
 note. Do not create bucket notes. Durable notes are atomic and carry `code4me`
