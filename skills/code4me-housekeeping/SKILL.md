@@ -1,18 +1,19 @@
 ---
 name: code4me-housekeeping
-description: Audit Code4Me lifecycle and worktree integrity, then preserve a compact resumable handover in the append-only event log without changing product files. Use when the user asks for Code4Me housekeeping, a handover, bookkeeping health, checkpoint readiness, commit readiness, a pre-commit audit, or confirmation that a coding session is safe to leave.
+description: Audit Code4Me lifecycle, event-log, memory, and worktree integrity, then preserve a compact resumable handover without changing product files. Use when the user asks for Code4Me housekeeping, a handover, bookkeeping or memory health, checkpoint readiness, commit readiness, a pre-commit audit, or confirmation that a coding session is safe to leave.
 ---
 
 # Code4Me Housekeeping
 
 Audit inline. Do not delegate, modify product files, delete, stage, commit, or
 push unless the same user request explicitly authorizes it. Housekeeping may
-append one handover checkpoint to `.code4me/events.jsonl` and write validated
-durable knowledge to Basic Memory; those are its only default writes.
+append one handover checkpoint to `.code4me/events.jsonl`, write validated
+durable knowledge to Basic Memory, and perform the safe log rotation below;
+those are its only default writes.
 
 Use audit-only mode, with no writes, when the user explicitly asks only for a
-pre-commit or readiness audit. Treat `housekeeping`, `handover`, `safe to leave`,
-or `finish this session` as a closeout request.
+pre-commit, readiness, or memory-health audit. Treat `housekeeping`, `handover`,
+`safe to leave`, or `finish this session` as a closeout request.
 
 ## Workflow
 
@@ -21,9 +22,9 @@ or `finish this session` as a closeout request.
    staged, and unstaged worktree changes with read-only version-control commands.
    Record physical absolute paths (`pwd -P` and the physical Git root) so a
    symlink such as `/tmp` versus `/private/tmp` does not create false drift.
-   Treat `.code4me/events.jsonl` as bookkeeping: list it under `excluded` and
-   exclude it from product-worktree drift comparisons so the checkpoint does not
-   make itself stale.
+   Treat `.code4me/events.jsonl` and `.code4me/archive/` as bookkeeping: list
+   them under `excluded` and exclude them from product-worktree drift comparisons
+   so the checkpoint does not make itself stale.
 2. If `.code4me/events.jsonl` exists, parse every non-empty line and verify:
    - each line is valid JSON;
    - each result has a preceding dispatch with matching stage ID, worker, and
@@ -68,13 +69,35 @@ or `finish this session` as a closeout request.
    record that fact without blocking the handover. Use `unavailable` only when
    the capability or project is absent or the call fails; use `empty` when it is
    accessible but there is no durable knowledge to reference.
-8. If every existing event is valid JSON, append exactly one compact checkpoint
+8. Run a read-only memory-health audit only when the user requests it, a release
+   is being prepared, log rotation is due, or memory search exposed duplicate,
+   conflicting, stale, or orphaned guidance. Inspect the project memory map and
+   relevant durable notes; use Basic Memory orphan detection when available.
+   Report `clean | review-recommended | unavailable` with evidence. Do not
+   rewrite memory during a health audit. During an explicit closeout or
+   consolidation request, update the best canonical note, preserve source
+   references, and mark superseded guidance with a link to its replacement;
+   never silently delete history.
+9. If every existing event is valid JSON, append exactly one compact checkpoint
    line. Create `.code4me/events.jsonl` only when closeout was requested and it
-   does not exist. Never rewrite earlier events. Use this shape:
+   does not exist. Never rewrite earlier events during ordinary operation. Use
+   this shape:
 
 ```json
-{"v":2,"type":"checkpoint","ts":"<ISO8601>","milestone_id":"<active id or null>","state":"handover","verdict":"READY|READY-WITH-NOTES|NOT-READY","repo":{"root":"<absolute repository root>","cwd":"<absolute working directory>","branch":"<branch or detached>","head":"<commit or unborn>","upstream":"<ref or null>","sync":"synced|ahead|behind|diverged|unavailable","ahead":0,"behind":0},"worktree":{"staged":[],"unstaged":[],"untracked":[],"excluded":[{"path":".code4me/events.jsonl","reason":"bookkeeping"}]},"completed":[],"active_tasks":[],"pending":[],"blockers":[],"checks":[],"release":{"version":"<version or null>","changelog":"consistent|not-applicable|conflict"},"memory":{"status":"used|empty|unavailable","refs":[]},"next":"<one exact next action>"}
+{"v":2,"type":"checkpoint","ts":"<ISO8601>","milestone_id":"<active id or null>","state":"handover","verdict":"READY|READY-WITH-NOTES|NOT-READY","repo":{"root":"<absolute repository root>","cwd":"<absolute working directory>","branch":"<branch or detached>","head":"<commit or unborn>","upstream":"<ref or null>","sync":"synced|ahead|behind|diverged|unavailable","ahead":0,"behind":0},"worktree":{"staged":[],"unstaged":[],"untracked":[],"excluded":[{"path":".code4me/events.jsonl","reason":"bookkeeping"},{"path":".code4me/archive/","reason":"bookkeeping"}]},"completed":[],"active_tasks":[],"pending":[],"blockers":[],"checks":[],"release":{"version":"<version or null>","changelog":"consistent|not-applicable|conflict"},"memory":{"status":"used|empty|unavailable","refs":[],"health":"clean|review-recommended|unavailable"},"archive":null,"next":"<one exact next action>"}
 ```
+
+10. After producing a `READY` closeout, rotate the active log only when it
+    exceeds 1 MiB or 1,000 non-empty events, every milestone in it is closed,
+    and no task, pending action, or blocker remains. Never rotate for calendar
+    age or readability alone. Copy the exact active bytes first to
+    `.code4me/archive/events-<filesystem-safe-UTC>-<sha256-prefix>.jsonl`, verify
+    its SHA-256 and event count, then atomically replace the active log with the
+    self-contained handover checkpoint. Replace its `archive: null` with an
+    object containing the relative path, full `sha256`, event count, first
+    timestamp, and last timestamp. If any copy, verification, or replacement
+    step fails, leave the original active log untouched. Archives are immutable;
+    never prune or rewrite them automatically.
 
 An honest `NOT-READY` handover is useful: preserve the blocker and exact next
 action instead of pretending the session is complete. Do not append when the
@@ -104,8 +127,9 @@ supersedes or closes them. Judge readiness against current scope.
 
 Return verdict and reason, milestone/task/team integrity, validation state,
 checkpoint freshness, repository identity and worktree scope, checks and release
-consistency, exact remaining actions, `commit-ready: yes | no`, and
-`handover checkpoint appended: yes | no`.
+consistency, memory health when audited, exact remaining actions, `commit-ready:
+yes | no`, `handover checkpoint appended: yes | no`, and `event log rotated:
+yes | no | not-due`.
 
-Do not write a handoff manifest. The append-only log and latest handover
-checkpoint are the resume surface.
+Do not write a handoff manifest. The active log and latest handover checkpoint
+are the resume surface; archives are evidence, not routine startup context.

@@ -59,8 +59,11 @@ processing.
 - Persist durable, evidenced lessons through Basic Memory.
 - Require actual Basic Memory search/read evidence for standard and critical
   work, with explicit `searched`, status, references, and unavailable reasons.
-- Preserve lifecycle events and an append-only housekeeping handover for
-  reliable future-agent resume.
+- Preserve active lifecycle events append-only; rotate only oversized, fully
+  closed history into verified immutable archives so routine resume stays
+  bounded.
+- Audit Basic Memory health at meaningful boundaries, consolidating only on
+  explicit closeout while preserving provenance and superseded guidance.
 - Audit code read-only through two blind vendor-distinct passes, synthesize
   agreement honestly, and never apply fixes automatically.
 - Report milestones, teams, model choices, validation, checkpoints, and event

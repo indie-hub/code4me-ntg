@@ -43,7 +43,7 @@ test("Housekeeping audits and writes one resumable handover checkpoint", () => {
     '"state":"handover"',
     '"root":"<absolute repository root>"',
     '"ahead":0,"behind":0',
-    '"excluded":[{"path":".code4me/events.jsonl","reason":"bookkeeping"}]',
+    '"excluded":[{"path":".code4me/events.jsonl","reason":"bookkeeping"},{"path":".code4me/archive/","reason":"bookkeeping"}]',
     "checkpoint does not make itself stale",
     "only validated, durable decisions",
     "Never store branch, worktree, pending task",
@@ -53,9 +53,29 @@ test("Housekeeping audits and writes one resumable handover checkpoint", () => {
     "does not close a milestone or supersede unresolved lifecycle events",
     "existing log contains malformed JSON",
     "handover checkpoint appended: yes | no",
+    "exceeds 1 MiB or 1,000 non-empty events",
+    "every milestone in it is closed",
+    "full `sha256`, event count, first timestamp, and last timestamp",
+    "leave the original active log untouched",
+    "Archives are immutable",
+    "memory-health audit only when",
+    "Do not rewrite memory during a health audit",
+    "mark superseded guidance with a link",
+    "event log rotated:",
     "Do not write a handoff manifest",
   ]) {
     assert.ok(housekeeping.includes(rule), `missing housekeeping rule: ${rule}`);
+  }
+});
+
+test("Status treats archives as verified cold history", () => {
+  for (const rule of [
+    "verify the referenced immutable file's SHA-256 and event count",
+    "Do not read archived events for normal status",
+    "historical or integrity detail",
+    "`.code4me/archive/`",
+  ]) {
+    assert.ok(status.includes(rule), `missing archive status rule: ${rule}`);
   }
 });
 

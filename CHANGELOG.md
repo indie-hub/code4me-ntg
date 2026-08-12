@@ -7,6 +7,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-08-12
+
+### Added
+
+- Let Housekeeping rotate oversized, fully closed event logs into hashed
+  immutable archives while leaving one self-contained active checkpoint.
+- Add evidence-backed Basic Memory health audits and explicit, provenance-safe
+  consolidation.
+
+### Changed
+
+- Keep normal Status and resume work on the bounded active log, consulting
+  archives only for requested history or integrity checks.
+- Let Codex discover `.codex-plugin/hooks.json` conventionally instead of using
+  the unsupported manifest `hooks` field.
+
 ## [0.14.0] - 2026-08-10
 
 ### Added

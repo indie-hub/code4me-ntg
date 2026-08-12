@@ -18,6 +18,10 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
    When its state is `handover`, treat its repository identity, worktree scope,
    completed and active tasks, blockers, memory references, and exact next action
    as the ready-to-resume brief.
+   If it contains `archive`, verify the referenced immutable file's SHA-256 and
+   event count before trusting the boundary. Do not read archived events for
+   normal status; inspect them only when the user requests historical or
+   integrity detail.
 4. Group v2 events by `milestone_id`, then logical task ID. Derive task state:
    - `classified`: classified but not assigned;
    - `assigned`: team assigned but work not started;
@@ -40,8 +44,8 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
 7. For a handover checkpoint, compare recorded HEAD, branch, upstream sync, and
    worktree paths with the current repository. Report `handover stale` when they
    differ; do not silently present recorded state as current state. Exclude the
-   bookkeeping path `.code4me/events.jsonl` from product-worktree drift because
-   appending the checkpoint necessarily changes it.
+   bookkeeping paths `.code4me/events.jsonl` and `.code4me/archive/` from
+   product-worktree drift because housekeeping changes them.
 
 ## Report
 

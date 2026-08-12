@@ -102,8 +102,9 @@ and Basic Memory.
 
 The producer is the sole event-log writer during a milestone. Housekeeping may
 append one closeout checkpoint after auditing the session. Create
-`.code4me/events.jsonl` on first use, append one compact JSON object per line,
-and never rewrite history.
+`.code4me/events.jsonl` on first use and append one compact JSON object per
+line. Never rewrite active history except Housekeeping's verified closed-
+milestone rotation; immutable archives preserve the exact prior bytes.
 The newest checkpoint is the canonical resume point; events after it take
 precedence. Basic Memory stores durable project knowledge, not transient task
 state or blank templates.
