@@ -18,6 +18,8 @@ test("Status derives milestone and task state from events", () => {
     "`validated`",
     "role-to-member team map",
     "model tier or exact model",
+    "quality-bar status, target, comparison method, and pass condition",
+    "Flag a work/verify bar mismatch",
     "later matching `task_controlled` events",
     "ready-to-resume brief",
     "`handover stale`",

@@ -43,6 +43,9 @@ processing.
   native read according to the shape of the question.
 - Send one work envelope and one mandatory validation envelope for every
   engineering change.
+- When comparison adds value, let the producer propose one inspectable quality
+  bar, expose it as provisional, and have the validator report the largest gap
+  against the actual artifact.
 - Mark every cross-room delivery as a mandatory Code4Me work order and reject a
   completed result that lacks truthful toolbox evidence.
 - Treat Doorbell delivery as asynchronous: checkpoint after dispatch and leave

@@ -108,7 +108,38 @@ test("Code4Me keeps project management out of source comments", () => {
   }
   assert.ok(validation.includes("project-management source comments"));
   assert.ok(validation.includes("`changes_requested` even when runtime behavior passes"));
-  assert.match(skill, /expected_return:\n  milestone_id:[\s\S]*\n  findings:[^\n]*\n  deferred_work:/);
+  assert.match(
+    skill,
+    /expected_return:\n  milestone_id:[\s\S]*\n  findings:[^\n]*\n  largest_gap:[^\n]*\n  deferred_work:/,
+  );
+});
+
+test("Code4Me proposes inspectable quality bars without open-ended loops", () => {
+  for (const rule of [
+    "quality_bar`: an initial inspectable comparison",
+    "proposes one recommended bar",
+    "A producer-proposed bar is `provisional`",
+    "Proceed without waiting",
+    "ask the user only when choosing the bar would introduce",
+    "stop an active validation round",
+    "set `quality_bar: null`",
+    "comparison method (`direct | blind_ab | metric | acceptance`)",
+    "Freeze the bar for each validation round",
+    "Never weaken or move the bar merely because",
+    "existing bounded limit of one repair and one revalidation still applies",
+    "largest_gap: <highest-leverage quality gap or null>",
+    "revision_reason: <why this changed between rounds, or null>",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing quality-bar rule: ${rule}`);
+  }
+  for (const rule of [
+    "never grade the implementer's summary",
+    "do not move or weaken the bar during the round",
+    "identify one `largest_gap`",
+    "must not hide blocking findings",
+  ]) {
+    assert.ok(validation.includes(rule), `missing quality validation rule: ${rule}`);
+  }
 });
 
 test("Code4Me makes Basic Memory use observable", () => {

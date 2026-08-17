@@ -12,6 +12,12 @@ Return evidence, not approval language.
   behavior only.
 - Run the smallest relevant documented checks and report exact results.
 - Check every acceptance criterion against source or runtime evidence.
+- When `quality_bar` is present, inspect its named artifact, runtime, source, or
+  measurement directly; never grade the implementer's summary. Compare by the
+  declared method and do not move or weaken the bar during the round.
+- On `changes_requested`, identify one `largest_gap` that gives the repair its
+  highest-leverage quality target. Still report every correctness, security, and
+  acceptance failure; `largest_gap` must not hide blocking findings.
 - Report findings with location, consequence, and required correction.
 - Return `pass` only when current code satisfies every required criterion.
 - Return `changes_requested` for fixable defects and `blocked` when evidence is

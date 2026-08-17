@@ -35,6 +35,9 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
 5. A result matches only when stage ID, worker, and vendor match its dispatch,
    including producer-inline `verify` stages. Derive applied control state from
    `task_assigned` plus later matching `task_controlled` events.
+   Derive the current quality bar from the latest applicable dispatch, falling
+   back to `task_classified`. Flag a work/verify bar mismatch unless the later
+   dispatch records a `revision_reason`.
    Flag malformed JSON, duplicate stage dispatches, unmatched results,
    `complete` v2 results without non-empty `tool_evidence`, validation predating
    the latest implementation result, tasks without classification or team
@@ -55,6 +58,8 @@ Return:
   completed and active tasks, blockers, memory references, and exact next action;
 - every active milestone with goal and acceptance summary;
 - each active task with kind, weight, state, and role-to-member team map;
+- each active task's quality-bar status, target, comparison method, and pass
+  condition when present;
 - each assigned member's mode, model tier or exact model, requested effort, and
   derived Crowded control state;
 - validation route and verdict, or why validation is missing;

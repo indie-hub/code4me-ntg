@@ -7,6 +7,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-08-17
+
+### Added
+
+- Let the producer propose an inspectable provisional quality bar when the user
+  has not supplied one, without making routine work wait for approval.
+- Compare the actual artifact by direct, blind A/B, metric, or acceptance
+  evidence and return one highest-leverage quality gap for bounded repair.
+
+### Changed
+
+- Freeze quality bars during validation and preserve the existing one-repair,
+  one-revalidation limit instead of introducing an open-ended refinement loop.
+
 ## [0.15.0] - 2026-08-12
 
 ### Added

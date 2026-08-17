@@ -33,7 +33,10 @@ and Basic Memory.
    - `kind`: `feature | bug | refactor | spike | incident | maintenance`;
    - `weight`: `light | standard | critical`;
    - `reason`: one sentence explaining the weight;
-   - task goal and acceptance criteria.
+   - task goal and acceptance criteria;
+   - `quality_bar`: an initial inspectable comparison using the policy below, or
+     `null` when acceptance criteria are sufficient. After the memory and project
+     guidance reads below, carry the final bar in every work or verify dispatch.
 4. Before planning every `standard` or `critical` task, and any `light` task
    that depends on project history or conventions, actually search shared
    **Basic Memory** for the project memory map, decisions, preferences,
@@ -89,6 +92,9 @@ and Basic Memory.
 10. Append the accepted work result, then run mandatory validation using
    [references/validation.md](references/validation.md). Record every validation
    attempt as a `verify` dispatch/result pair, including inline validation.
+   When a quality bar exists, require the validator to inspect its actual
+   evidence target, compare it by the declared method, and return one
+   `largest_gap` when requesting changes. The builder's summary is not evidence.
    Never emit `task_validated` or declare the task complete without verdict
    `pass` from a context that did not implement the current change.
 11. If validation returns `changes_requested`, keep the task open. Allow one
@@ -108,6 +114,35 @@ milestone rotation; immutable archives preserve the exact prior bytes.
 The newest checkpoint is the canonical resume point; events after it take
 precedence. Basic Memory stores durable project knowledge, not transient task
 state or blank templates.
+
+## Quality bars
+
+Use a quality bar only when it adds an inspectable comparison beyond ordinary
+acceptance criteria. If the user did not provide one, the producer proposes one
+recommended bar from project instructions, specifications, tests, existing
+behavior, relevant Basic Memory, or an inspectable comparable artifact. State it
+before dispatch and explain in one sentence what it optimizes. Do not offer a
+menu unless there is a material product trade-off.
+
+A producer-proposed bar is `provisional`. Proceed without waiting when it follows
+existing project evidence and does not change product direction; ask the user
+only when choosing the bar would introduce a subjective or irreversible
+trade-off. The user may revise it at any time; stop an active validation round
+and record the revised bar before restarting. If no credible bar exists, use the
+observable acceptance criteria and set `quality_bar: null`; create a spike only
+when discovering the bar is itself necessary to define the outcome.
+
+Every quality bar names its source, target, actual evidence to inspect,
+comparison method (`direct | blind_ab | metric | acceptance`), observable pass
+condition, and rationale. Prefer blind A/B only when the artifacts can be judged
+fairly without identity; never use it instead of correctness, security, or
+runtime evidence.
+
+Freeze the bar for each validation round. Only the producer may revise it between
+rounds because evidence showed it was misleading or uninspectable, and must
+record the reason in the next dispatch. Never weaken or move the bar merely
+because the current implementation missed it. The existing bounded limit of one
+repair and one revalidation still applies.
 
 ## Classification weights
 
@@ -320,6 +355,15 @@ delegation: forbidden
 goal: <concrete outcome>
 acceptance: [<observable criterion>]
 constraints: [<scope or safety constraint>]
+quality_bar:
+  status: confirmed | provisional
+  source: user | project | producer
+  target: <reference, specification, metric, or existing behavior>
+  evidence: [<actual artifact, runtime, source, or measurement to inspect>]
+  comparison: direct | blind_ab | metric | acceptance
+  pass_when: [<observable threshold>]
+  rationale: <one sentence describing what this optimizes>
+  revision_reason: <why this changed between rounds, or null>
 comment_policy: >
   Source comments explain code only. Never add task or milestone IDs, status,
   TODO/FIXME items, plans, progress, deferred work, or handover notes. Return
@@ -351,6 +395,7 @@ expected_return:
   blocker: <reason or null>
   verdict: pass | changes_requested | null
   findings: [<audit or validation finding>]
+  largest_gap: <highest-leverage quality gap or null>
   deferred_work: [<follow-up item or empty>]
   tool_evidence:
     - tool: Basic Memory
@@ -377,13 +422,13 @@ Status and Housekeeping readers without duplicating a tracker.
 
 ```json
 {"v":2,"type":"milestone_opened","ts":"<ISO8601>","milestone_id":"<id>","goal":"<outcome>","acceptance":[],"constraints":[]}
-{"v":2,"type":"task_classified","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","kind":"bug","weight":"standard","reason":"<one sentence>","goal":"<slice>","acceptance":[]}
+{"v":2,"type":"task_classified","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","kind":"bug","weight":"standard","reason":"<one sentence>","goal":"<slice>","acceptance":[],"quality_bar":null}
 {"v":2,"type":"task_assigned","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","team":{"producer":{"member":"room-1","vendor":"openai"},"implementer":{"member":"room-2","vendor":"anthropic","mode":"implement","model_tier":"balanced","model":"<exact-model>","effort":"medium","selection_reason":"<reason>","control_status":"pending"},"validator":{"member":"room-3","vendor":"deepseek","mode":"validate","model_tier":"balanced","model":"current","effort":"high","selection_reason":"<reason>","control_status":"not_required"},"specialists":[]}}
 {"v":2,"type":"task_controlled","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","member":"room-2","model":{"requested":"<exact|current>","applied":true},"effort":{"requested":"medium","applied":true}}
-{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","producer":"room-1","worker":"room-2","vendor":"anthropic","goal":"<slice>","acceptance":[],"constraints":[],"context_refs":[],"memory":{"status":"used","searched":true,"refs":[],"reason":null}}
+{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","producer":"room-1","worker":"room-2","vendor":"anthropic","goal":"<slice>","acceptance":[],"constraints":[],"quality_bar":null,"context_refs":[],"memory":{"status":"used","searched":true,"refs":[],"reason":null}}
 {"v":2,"type":"result","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","worker":"room-2","vendor":"anthropic","outcome":"complete","summary":"<result>","files_changed":[],"checks":[],"blocker":null,"verdict":null,"findings":[],"deferred_work":[],"tool_evidence":[{"tool":"Basic Memory","action":"read/search","result":"<references, empty search, or unavailable reason>"},{"tool":"CodeGraph","action":"inspect callers","result":"<evidence>"}],"memory_candidates":[],"memory_writes":[]}
-{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","producer":"room-1","worker":"room-3","vendor":"deepseek","goal":"validate accepted work","acceptance":[],"constraints":["read-only"],"context_refs":[],"memory":{"status":"empty","searched":true,"refs":[],"reason":"no relevant validation memory"}}
-{"v":2,"type":"result","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","worker":"room-3","vendor":"deepseek","outcome":"complete","summary":"<validation>","files_changed":[],"checks":[],"blocker":null,"verdict":"pass","findings":[],"deferred_work":[],"tool_evidence":[{"tool":"Basic Memory","action":"read/search","result":"<references, empty search, or unavailable reason>"},{"tool":"native","action":"run focused check","result":"<evidence>"}],"memory_candidates":[],"memory_writes":[]}
+{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","producer":"room-1","worker":"room-3","vendor":"deepseek","goal":"validate accepted work","acceptance":[],"constraints":["read-only"],"quality_bar":null,"context_refs":[],"memory":{"status":"empty","searched":true,"refs":[],"reason":"no relevant validation memory"}}
+{"v":2,"type":"result","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","worker":"room-3","vendor":"deepseek","outcome":"complete","summary":"<validation>","files_changed":[],"checks":[],"blocker":null,"verdict":"pass","findings":[],"largest_gap":null,"deferred_work":[],"tool_evidence":[{"tool":"Basic Memory","action":"read/search","result":"<references, empty search, or unavailable reason>"},{"tool":"native","action":"run focused check","result":"<evidence>"}],"memory_candidates":[],"memory_writes":[]}
 {"v":2,"type":"task_validated","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","validator":"room-3","vendor":"deepseek","verdict":"pass","checks":[],"findings":[]}
 {"v":2,"type":"checkpoint","ts":"<ISO8601>","milestone_id":"<id>","state":"active","active_tasks":[],"pending":[],"next":"<exact next action>","checks":[],"memory_refs":[]}
 {"v":2,"type":"checkpoint","ts":"<ISO8601>","milestone_id":"<active id or null>","state":"handover","verdict":"READY","repo":{"root":"<absolute repository root>","cwd":"<absolute working directory>","branch":"<branch or detached>","head":"<commit or unborn>","upstream":"<ref or null>","sync":"synced|ahead|behind|diverged|unavailable","ahead":0,"behind":0},"worktree":{"staged":[],"unstaged":[],"untracked":[],"excluded":[{"path":".code4me/events.jsonl","reason":"bookkeeping"}]},"completed":[],"active_tasks":[],"pending":[],"blockers":[],"checks":[],"release":{"version":"<version or null>","changelog":"consistent|not-applicable|conflict"},"memory":{"status":"used","refs":["memory://<note>"]},"next":"<exact next action>"}
