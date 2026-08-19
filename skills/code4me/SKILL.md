@@ -21,6 +21,9 @@ and Basic Memory.
    current repository and surface drift before acting. Read linked Basic Memory
    references. Resume its exact next action when it matches the user's request;
    otherwise use the handover as context, not authority.
+   When `.code4me/trello.json` exists and the Trello MCP is available, read the
+   sibling [Code4Me Trello skill](../code4me-trello/SKILL.md) and pull authorized
+   board changes before opening new work. Trello absence never blocks Code4Me.
 2. Define or reuse one `milestone_id` for the user-visible outcome. Record its
    goal, observable acceptance criteria, and constraints in a
    `milestone_opened` event. A small request may be one milestone with one task.
@@ -104,7 +107,8 @@ and Basic Memory.
 12. Append `task_validated` after a pass. Append a compact `checkpoint` whenever
     work pauses, blocks, or reaches a task boundary. Close the milestone only
     when every acceptance criterion is supported by validated task evidence;
-    then append `milestone_closed`.
+    then append `milestone_closed`. When Trello is configured, use the sibling
+    skill to push the derived lifecycle state after each accepted transition.
 
 The producer is the sole event-log writer during a milestone. Housekeeping may
 append one closeout checkpoint after auditing the session. Create
@@ -219,6 +223,15 @@ the validator, and is never permanently bound to a room, model, or vendor.
 
 Use the tool that matches the question. Memory never substitutes for current
 source, and optional tooling must degrade gracefully.
+
+## Optional Trello work board
+
+The [Code4Me Trello skill](../code4me-trello/SKILL.md) provides two-way intake
+and task-state projection when `.code4me/trello.json` and the Trello MCP are
+available. One card maps to one logical task. Board activity becomes correlated
+events before it can affect work, and a card moved to Done never bypasses
+independent validation. Do not load or invoke the skill when Trello is not
+configured.
 
 ## Communication
 
@@ -430,6 +443,8 @@ Status and Housekeeping readers without duplicating a tracker.
 {"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","producer":"room-1","worker":"room-3","vendor":"deepseek","goal":"validate accepted work","acceptance":[],"constraints":["read-only"],"quality_bar":null,"context_refs":[],"memory":{"status":"empty","searched":true,"refs":[],"reason":"no relevant validation memory"}}
 {"v":2,"type":"result","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","worker":"room-3","vendor":"deepseek","outcome":"complete","summary":"<validation>","files_changed":[],"checks":[],"blocker":null,"verdict":"pass","findings":[],"largest_gap":null,"deferred_work":[],"tool_evidence":[{"tool":"Basic Memory","action":"read/search","result":"<references, empty search, or unavailable reason>"},{"tool":"native","action":"run focused check","result":"<evidence>"}],"memory_candidates":[],"memory_writes":[]}
 {"v":2,"type":"task_validated","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","validator":"room-3","vendor":"deepseek","verdict":"pass","checks":[],"findings":[]}
+{"v":2,"type":"task_board_linked","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<id>","task_id":"<logical-task>","origin":"human|agent"}
+{"v":2,"type":"trello_synced","ts":"<ISO8601>","board_id":"<board>","cursor":"<action-id-or-ISO8601>","pulled":0,"pushed":0,"conflicts":[]}
 {"v":2,"type":"checkpoint","ts":"<ISO8601>","milestone_id":"<id>","state":"active","active_tasks":[],"pending":[],"next":"<exact next action>","checks":[],"memory_refs":[]}
 {"v":2,"type":"checkpoint","ts":"<ISO8601>","milestone_id":"<active id or null>","state":"handover","verdict":"READY","repo":{"root":"<absolute repository root>","cwd":"<absolute working directory>","branch":"<branch or detached>","head":"<commit or unborn>","upstream":"<ref or null>","sync":"synced|ahead|behind|diverged|unavailable","ahead":0,"behind":0},"worktree":{"staged":[],"unstaged":[],"untracked":[],"excluded":[{"path":".code4me/events.jsonl","reason":"bookkeeping"}]},"completed":[],"active_tasks":[],"pending":[],"blockers":[],"checks":[],"release":{"version":"<version or null>","changelog":"consistent|not-applicable|conflict"},"memory":{"status":"used","refs":["memory://<note>"]},"next":"<exact next action>"}
 {"v":2,"type":"milestone_closed","ts":"<ISO8601>","milestone_id":"<id>","summary":"<validated outcome>","validated_tasks":[]}

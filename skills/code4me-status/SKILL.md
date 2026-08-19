@@ -42,9 +42,13 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
    `complete` v2 results without non-empty `tool_evidence`, validation predating
    the latest implementation result, tasks without classification or team
    assignment, and closed milestones containing an unvalidated task.
-6. For v1-only history, retain the legacy view: awaiting dispatches and five
+6. Correlate `task_board_linked`, `task_change_requested`, and
+   `task_cancel_requested` by provider, board, card, milestone, and logical task.
+   Use the latest `trello_synced` event for cursor age, counts, and conflicts.
+   Status remains read-only: never call Trello or attempt synchronization.
+7. For v1-only history, retain the legacy view: awaiting dispatches and five
    most recent terminal results.
-7. For a handover checkpoint, compare recorded HEAD, branch, upstream sync, and
+8. For a handover checkpoint, compare recorded HEAD, branch, upstream sync, and
    worktree paths with the current repository. Report `handover stale` when they
    differ; do not silently present recorded state as current state. Exclude the
    bookkeeping paths `.code4me/events.jsonl` and `.code4me/archive/` from
@@ -63,6 +67,8 @@ Return:
 - each assigned member's mode, model tier or exact model, requested effort, and
   derived Crowded control state;
 - validation route and verdict, or why validation is missing;
+- linked Trello card IDs plus latest sync time and unresolved conflicts when
+  board events exist;
 - five most recent validated or terminal tasks unless another limit is asked;
 - event-log issues, or `none`.
 

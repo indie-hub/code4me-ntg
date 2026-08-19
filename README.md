@@ -6,11 +6,12 @@ temporary team, the smallest capable model and effort for each role, and
 mandatory independent validation. Audits deliberately use two blind
 model-vendor passes when available.
 
-The plugin contains four focused skills. The producer records classification,
+The plugin contains five focused skills. The producer records classification,
 team, dispatch, result, validation, and checkpoint events in the client
 project's local `.code4me/events.jsonl`. Housekeeping audits product state and
 appends one compact handover checkpoint; Status and the producer resume from it.
-There are no copied project templates or tracker forests.
+The optional Trello skill adds a two-way human work board without replacing
+that event history. There are no copied project templates or tracker forests.
 
 For non-trivial work, Code4Me searches the shared Basic Memory project before
 planning and carries relevant `memory://` references in the worker envelope.
@@ -73,6 +74,8 @@ processing.
   integrity.
 - Audit lifecycle closure, validation independence, checkpoint freshness,
   worktree scope, checks, and release consistency.
+- Synchronize one Trello card per logical task when configured, accepting human
+  work through Ready while preserving Code4Me validation as the completion gate.
 
 Two optional workflow checklists live under `skills/code4me/references/`: use
 the design brief only when a task truly needs design, and the validation
@@ -104,4 +107,33 @@ source = "https://github.com/indie-hub/code4me-ntg.git"
 adapters = true
 ```
 
-Run the checks with `node --test tests/*.test.mjs`.
+Run the checks with `node --test`.
+After installing the optional MCP recipe, run
+`node tests/trello-mcp-smoke.mjs` to verify its required tool surface. CI runs
+both checks on Linux, macOS, and Windows.
+
+## Optional Trello work board
+
+`code4me-trello` maps one Trello card to one logical Code4Me task and supports
+both human-created and agent-created work. It is optional: without
+`.code4me/trello.json` or the MCP, ordinary Code4Me behavior is unchanged.
+
+On macOS and Windows, let Crowded install the pinned package locally and launch
+its compiled Node entry point:
+
+```toml
+[[setup]]
+name = "trello-mcp-install"
+command = "npm"
+args = ["install", "--prefix", ".crowded/tools/trello", "@delorenj/mcp-server-trello@1.8.1"]
+
+[[mcp]]
+name = "trello"
+command = "node"
+args = [".crowded/tools/trello/node_modules/@delorenj/mcp-server-trello/build/index.js"]
+cwd = "."
+```
+
+Export `TRELLO_API_KEY` and `TRELLO_TOKEN` before launching Crowded; never put
+them in `crowded.toml`. Create `.code4me/trello.json` using the board contract
+documented in [`skills/code4me-trello/SKILL.md`](skills/code4me-trello/SKILL.md).

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code4Me Trello"
+  short_description: "Two-way Trello task synchronization"
+  default_prompt: "Use $code4me-trello to synchronize this project's Code4Me tasks with its Trello board."

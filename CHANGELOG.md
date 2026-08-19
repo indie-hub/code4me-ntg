@@ -7,6 +7,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-08-19
+
+### Added
+
+- Add optional two-way Trello synchronization with one card per logical task,
+  human Ready intake, agent-created proposals, correlated lifecycle events, and
+  read-only Status reporting.
+- Document a pinned Node-based Crowded MCP recipe that works without Bun or
+  platform-specific shell wrappers on macOS and Windows.
+- Add a required-tool MCP handshake and CI matrix for Linux, macOS, and Windows.
+
+### Changed
+
+- Keep Code4Me validation authoritative when board state is edited manually;
+  moving a card to Done cannot complete an unvalidated task.
+
 ## [0.16.0] - 2026-08-17
 
 ### Added

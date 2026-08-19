@@ -1,7 +1,7 @@
 {
   "name": "code4me-ntg",
-  "version": "0.16.0",
-  "description": "Lightweight milestone orchestration with enforced worker contracts, cross-vendor validation, and resumable handovers.",
+  "version": "0.17.0",
+  "description": "Lightweight milestone orchestration with cross-vendor validation, resumable handovers, and optional Trello task synchronization.",
   "author": {
     "name": "Bruno"
   },
@@ -16,7 +16,7 @@
   "interface": {
     "displayName": "Code4Me Next Gen",
     "shortDescription": "Lightweight teams with mandatory validation.",
-    "longDescription": "Code4Me coordinates lightweight milestones through task-scoped teams, chooses model tier and effort per role, carries project and task-matched guidance, enforces cross-room worker contracts and independent validation, preserves compact resumable handovers, shares durable Basic Memory context, and synthesizes blind cross-vendor code audits without applying fixes.",
+    "longDescription": "Code4Me coordinates lightweight milestones through task-scoped teams, chooses model tier and effort per role, carries project and task-matched guidance, enforces cross-room worker contracts and independent validation, preserves compact resumable handovers, shares durable Basic Memory context, synchronizes optional Trello task boards, and synthesizes blind cross-vendor code audits without applying fixes.",
     "developerName": "Bruno",
     "category": "Productivity",
     "capabilities": [
