@@ -19,10 +19,12 @@ importing, or reshaping cards.
 
 ## Configuration
 
-Require `TRELLO_API_KEY` and `TRELLO_TOKEN` in the agent process environment.
-Never write either value to the repository, card, event log, or result envelope.
-Use `TRELLO_ALLOWED_WORKSPACES` when the MCP should be restricted to an approved
-workspace.
+Credentials may come from `TRELLO_API_KEY` and `TRELLO_TOKEN` in the agent
+process environment or from the local configuration below. Environment values
+take precedence. Never write either value to a card, event log, result envelope,
+or tracked file. Use `TRELLO_ALLOWED_WORKSPACES` or
+`credentials.allowed_workspaces` when the MCP should be restricted to approved
+workspaces.
 
 Read the project-local board configuration:
 
@@ -30,6 +32,11 @@ Read the project-local board configuration:
 {
   "version": 1,
   "board_id": "<trello-board-id>",
+  "credentials": {
+    "api_key": "<trello-api-key>",
+    "token": "<trello-token>",
+    "allowed_workspaces": ["<workspace-id>"]
+  },
   "lists": {
     "inbox": "Inbox",
     "ready": "Ready",
@@ -41,8 +48,10 @@ Read the project-local board configuration:
 }
 ```
 
-The file contains identifiers, not credentials. Pass `board_id` explicitly to
-every MCP call; never depend on the MCP server's globally persisted active board.
+When `credentials` is present, keep `.code4me/trello.json` out of version
+control. The launcher also accepts a credentials-free file when both environment
+values are already present. Pass `board_id` explicitly to every MCP call; never
+depend on the MCP server's globally persisted active board.
 Resolve list names to IDs before syncing and stop on missing or duplicate managed
 lists. Create the board, lists, labels, or configuration only when the user
 explicitly authorizes initialization.
@@ -112,9 +121,9 @@ dispatch/result pairs, `task_validated`, checkpoints, or milestone closure.
 
 ## MCP installation for Crowded
 
-Use the pinned Node build on macOS and Windows. Add this optional recipe to the
-project's `crowded.toml`; forward slashes in the script path are accepted by
-Node on both platforms:
+Use the pinned Node build and Code4Me's credential launcher on macOS and Windows.
+Add this optional recipe to the project's `crowded.toml`; forward slashes in the
+script path are accepted by Node on both platforms:
 
 ```toml
 [[setup]]
@@ -125,10 +134,11 @@ args = ["install", "--prefix", ".crowded/tools/trello", "@delorenj/mcp-server-tr
 [[mcp]]
 name = "trello"
 command = "node"
-args = [".crowded/tools/trello/node_modules/@delorenj/mcp-server-trello/build/index.js"]
+args = [".crowded/plugins/code4me-ntg/scripts/trello-mcp-launch.mjs"]
 cwd = "."
 ```
 
 Do not use `@latest`, `bunx`, or platform-specific shell wrappers. Crowded
 resolves `npm` and `node` through PATH/PATHEXT and shares the MCP with configured
-Claude, Codex, and OpenCode rooms.
+Claude, Codex, and OpenCode rooms. Add `.code4me/trello.json` to `.gitignore`
+when it contains credentials.

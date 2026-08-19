@@ -7,6 +7,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-08-19
+
+### Added
+
+- Allow gitignored `.code4me/trello.json` files to carry Trello credentials,
+  with environment variables retaining precedence.
+- Add a cross-platform Node launcher that loads local credentials before
+  starting the pinned Trello MCP server.
+
+### Changed
+
+- Route the Crowded MCP recipe through the Code4Me launcher while preserving
+  the existing direct environment-variable setup.
+
 ## [0.17.0] - 2026-08-19
 
 ### Added

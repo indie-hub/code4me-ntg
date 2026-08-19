@@ -119,7 +119,7 @@ both human-created and agent-created work. It is optional: without
 `.code4me/trello.json` or the MCP, ordinary Code4Me behavior is unchanged.
 
 On macOS and Windows, let Crowded install the pinned package locally and launch
-its compiled Node entry point:
+Code4Me's cross-platform credential wrapper:
 
 ```toml
 [[setup]]
@@ -130,10 +130,12 @@ args = ["install", "--prefix", ".crowded/tools/trello", "@delorenj/mcp-server-tr
 [[mcp]]
 name = "trello"
 command = "node"
-args = [".crowded/tools/trello/node_modules/@delorenj/mcp-server-trello/build/index.js"]
+args = [".crowded/plugins/code4me-ntg/scripts/trello-mcp-launch.mjs"]
 cwd = "."
 ```
 
-Export `TRELLO_API_KEY` and `TRELLO_TOKEN` before launching Crowded; never put
-them in `crowded.toml`. Create `.code4me/trello.json` using the board contract
-documented in [`skills/code4me-trello/SKILL.md`](skills/code4me-trello/SKILL.md).
+Create `.code4me/trello.json` using the board and credential contract documented
+in [`skills/code4me-trello/SKILL.md`](skills/code4me-trello/SKILL.md), then add
+the file to `.gitignore` when it contains credentials. `TRELLO_API_KEY` and
+`TRELLO_TOKEN` environment variables remain supported and take precedence over
+the JSON values.

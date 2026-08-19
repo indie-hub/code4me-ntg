@@ -1,6 +1,6 @@
 {
   "name": "code4me-ntg",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Lightweight milestone orchestration with cross-vendor validation, resumable handovers, and optional Trello task synchronization.",
   "author": {
     "name": "Bruno"

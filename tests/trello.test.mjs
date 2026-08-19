@@ -10,6 +10,7 @@ const cardContract = read(
   "../skills/code4me-trello/references/card-contract.md",
 );
 const normalizedCardContract = cardContract.replace(/\s+/g, " ");
+const launcher = read("../scripts/trello-mcp-launch.mjs");
 const producer = read("../skills/code4me/SKILL.md");
 const status = read("../skills/code4me-status/SKILL.md");
 
@@ -49,7 +50,7 @@ test("Trello imports human work and proposes agent work without self-approval", 
   }
 });
 
-test("Trello config example is valid and contains no credentials", () => {
+test("Trello config example supports local credentials", () => {
   const match = trello.match(/```json\n([\s\S]*?)\n```/);
   assert.ok(match, "missing JSON configuration example");
 
@@ -57,8 +58,11 @@ test("Trello config example is valid and contains no credentials", () => {
   assert.equal(config.version, 1);
   assert.equal(config.lists.inbox, "Inbox");
   assert.equal(config.lists.done, "Done");
-  assert.equal("api_key" in config, false);
-  assert.equal("token" in config, false);
+  assert.equal(config.credentials.api_key, "<trello-api-key>");
+  assert.equal(config.credentials.token, "<trello-token>");
+  assert.deepEqual(config.credentials.allowed_workspaces, ["<workspace-id>"]);
+  assert.ok(normalizedTrello.includes("Environment values take precedence"));
+  assert.ok(normalizedTrello.includes("out of version control"));
 });
 
 test("Crowded recipe pins the Node package for macOS and Windows", () => {
@@ -66,7 +70,7 @@ test("Crowded recipe pins the Node package for macOS and Windows", () => {
     "@delorenj/mcp-server-trello@1.8.1",
     'command = "npm"',
     'command = "node"',
-    ".crowded/tools/trello/node_modules/@delorenj/mcp-server-trello/build/index.js",
+    ".crowded/plugins/code4me-ntg/scripts/trello-mcp-launch.mjs",
     "PATH/PATHEXT",
   ]) {
     assert.ok(trello.includes(rule), `missing portable setup rule: ${rule}`);
@@ -74,6 +78,11 @@ test("Crowded recipe pins the Node package for macOS and Windows", () => {
 
   assert.doesNotMatch(trello, /@delorenj\/mcp-server-trello@latest/);
   assert.match(trello, /Do not use `@latest`, `bunx`/);
+  assert.ok(
+    launcher.includes(
+      ".crowded/tools/trello/node_modules/@delorenj/mcp-server-trello/build/index.js",
+    ),
+  );
 });
 
 test("Producer and Status integrate Trello without making Status mutating", () => {
