@@ -7,6 +7,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-08-19
+
+### Changed
+
+- Make producers delegate implementation to an eligible Crowded room or native
+  subagent before self-implementing, with recorded reasons for fallback.
+- Prefer validator vendors distinct from the implementer and record degraded
+  coverage when standard work cannot use a cross-vendor route.
+
 ## [0.18.0] - 2026-08-19
 
 ### Added

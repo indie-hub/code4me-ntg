@@ -16,6 +16,10 @@ const toolbox = readFileSync(
   new URL("../skills/code4me/references/toolbox.md", import.meta.url),
   "utf8",
 ).replace(/\s+/g, " ");
+const openaiAgent = readFileSync(
+  new URL("../skills/code4me/agents/openai.yaml", import.meta.url),
+  "utf8",
+);
 
 test("Code4Me discovers real Crowded members without guessing", () => {
   for (const rule of [
@@ -76,7 +80,7 @@ test("Code4Me keeps lightweight milestones tasks and teams", () => {
     "`kind`: `feature | bug | refactor | spike | incident | maintenance`",
     "`weight`: `light | standard | critical`",
     "one producer, one implementer, one validator",
-    "producer may also implement or validate, but never both",
+    "producer coordinates engineering work by default",
     "Append `task_assigned` with controls marked `pending` or `not_required`",
     "newest checkpoint is the canonical resume point",
     "milestone_opened",
@@ -88,6 +92,23 @@ test("Code4Me keeps lightweight milestones tasks and teams", () => {
   ]) {
     assert.ok(normalizedSkill.includes(rule), `missing lifecycle rule: ${rule}`);
   }
+});
+
+test("Code4Me keeps the producer orchestration-first", () => {
+  for (const rule of [
+    "must not implement source changes while an eligible ready Crowded implementer",
+    "Choose the implementation route in this order",
+    "then the producer only as `producer_fallback`",
+    "`selection_reason` must start with `producer_fallback:`",
+    "Task smallness, speed, or convenience are not fallback reasons",
+    "Validator diversity is measured against the implementer, not the producer",
+    "Use a distinct, known vendor from the implementer whenever one is eligible",
+    "record a degraded-validation reason",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing producer routing rule: ${rule}`);
+  }
+  assert.match(openaiAgent, /delegate implementation whenever an eligible Crowded or native worker exists/);
+  assert.match(openaiAgent, /different vendor from the implementer/);
 });
 
 test("Code4Me keeps project management out of source comments", () => {

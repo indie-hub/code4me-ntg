@@ -63,20 +63,27 @@ and Basic Memory.
    [Windows](references/windows.md), and [Unix](references/unix.md).
 6. Discover the live roster and assign a task-scoped team: one producer, one
    implementer, one validator, and only the specialists this task needs. The
-   producer may also implement or validate, but never both for the same task.
-   The implementer and validator must not share the implementation context.
-   Select each member's mode, model tier, and effort using the policy below.
-   Append `task_assigned` with controls marked `pending` or `not_required`
-   before applying controls or starting work.
+   producer coordinates engineering work by default and must not implement
+   source changes while an eligible ready Crowded implementer or host-native
+   subagent is available. Choose the implementation route in this order: a
+   ready Crowded room, a host-native subagent, then the producer only as
+   `producer_fallback`. The producer may validate only when it did not
+   implement. The implementer and validator must not share the implementation
+   context. Select each member's mode, model tier, and effort using the policy
+   below. Append `task_assigned` with controls marked `pending` or
+   `not_required` before applying controls or starting work. For
+   `producer_fallback`, the implementer's `selection_reason` must start with
+   `producer_fallback:` and state why both delegated routes were unavailable.
 7. For a novel interface, new data flow, cross-cutting change, or critical task,
    read [references/design-brief.md](references/design-brief.md) and carry only
    the relevant answers in the task envelope or a user-requested artifact. Do
    not create a document merely to fill a checklist.
-8. Dispatch the `work` stage when another room or a host-native subagent is the
-   implementer; otherwise implement directly as the assigned
-   producer-implementer. Join native subagents and collect their result before
-   continuing. Every engineering change still requires validation by the
-   assigned independent context.
+8. Dispatch the `work` stage for a Crowded or host-native implementer. Implement
+   directly only after recording a valid `producer_fallback` assignment. Task
+   smallness, speed, or convenience are not fallback reasons. The producer may
+   perform event-log and coordination bookkeeping inline. Join native subagents
+   and collect their result before continuing. Every engineering change still
+   requires validation by the assigned independent context.
 9. Accept only a result whose stage ID, worker, and dispatched vendor match and
    whose outcome is `complete`, `blocked`, or `failed`. A `complete` result must
    contain non-empty, truthful `tool_evidence` showing the Code4Me toolbox route;
@@ -151,9 +158,11 @@ repair and one revalidation still applies.
 ## Classification weights
 
 - `light`: local, reversible, low-risk work. Validation needs a fresh context;
+  prefer a distinct known vendor from the implementer when one is eligible, but
   the same vendor is acceptable.
 - `standard`: behavior change, meaningful multi-file work, or a new dependency.
-  Use an independent room when possible and prefer cross-vendor validation.
+  Use a distinct, known vendor from the implementer whenever one is eligible;
+  otherwise record a degraded-validation reason in `task_assigned`.
 - `critical`: authentication, authorization, money, privacy, data loss,
   migration, or public-contract risk. Require a validator with a distinct,
   known vendor from the implementer.
@@ -189,6 +198,7 @@ model, effort, selection reason, and initial control status in `task_assigned`.
 ## Team rules
 
 - Roles belong to the task, not permanently to a room or vendor.
+- Validator diversity is measured against the implementer, not the producer.
 - A two-agent team is valid when the producer holds exactly one of implementer
   or validator and the peer holds the other.
 - Specialists such as architect, researcher, security reviewer, or QA advise
@@ -256,8 +266,9 @@ Use only numeric rooms present in the response with `transport: raw` and
 `state: ready`. Never guess room numbers. Represent a member as `room-N`; use
 the roster's normalized `vendor` for diversity. A missing vendor or `unknown`
 is no diversity evidence. Do not infer provider from room name, guest, or model.
-If no suitable room exists for implementation, use a host-native implementer;
-if none exists, the producer may implement and must assign another context to
+If no suitable ready room exists for implementation, use a host-native
+implementer. If neither route exists, record `producer_fallback:` and the reason
+before the producer edits implementation files, then assign another context to
 validate.
 
 Send a delegated stage with:

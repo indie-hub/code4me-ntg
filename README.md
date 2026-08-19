@@ -40,6 +40,9 @@ processing.
   apply an exact vendor model only when a reviewed mapping exists.
 - Discover Crowded's live roster, including normalized model-vendor identity,
   without fixed room-number assumptions; retain native workers as fallbacks.
+- Keep the producer orchestration-first: delegate implementation to a ready
+  Crowded room, then a native subagent, and self-implement only as a recorded
+  fallback when neither route exists.
 - Route questions to Basic Memory, CodeGraph, CCC, Context Mode, or a narrow
   native read according to the shape of the question.
 - Send one work envelope and one mandatory validation envelope for every
@@ -56,8 +59,9 @@ processing.
 - Keep tasks, milestones, status, plans, TODO/FIXME items, deferred work, and
   handovers out of source comments; carry them in envelopes and lifecycle
   events instead.
-- Prefer an independent room for validation; for light or standard work only,
-  clear and recycle the completed worker as a fresh-context fallback when two
+- Prefer a validator whose known vendor differs from the implementer; for light
+  or standard work only, record degraded coverage when no such route exists.
+  Clear and recycle the completed worker as a fresh-context fallback when two
   rooms are all that exist.
 - Allow one bounded repair and one revalidation, then stop rather than loop.
 - Persist durable, evidenced lessons through Basic Memory.

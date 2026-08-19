@@ -1,4 +1,4 @@
 interface:
   display_name: "Code4Me Next Gen"
   short_description: "Coordinate teams with mandatory validation"
-  default_prompt: "Use $code4me to coordinate this milestone through a task-scoped team and independent validation."
+  default_prompt: "Use $code4me to coordinate this milestone: delegate implementation whenever an eligible Crowded or native worker exists, then prefer validation by a different vendor from the implementer."
