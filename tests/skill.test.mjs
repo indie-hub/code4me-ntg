@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-const skill = readFileSync(new URL("../skills/code4me/SKILL.md", import.meta.url), "utf8");
+const skill = readFileSync(
+  new URL("../skills/code4me/SKILL.md", import.meta.url),
+  "utf8",
+).replace(/\r\n/g, "\n");
 const normalizedSkill = skill.replace(/\s+/g, " ");
 const contextSelection = readFileSync(
   new URL("../skills/code4me/references/context-selection.md", import.meta.url),

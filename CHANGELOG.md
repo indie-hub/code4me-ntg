@@ -7,6 +7,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.20.1] - 2026-08-20
+
+### Fixed
+
+- Normalize Markdown fixture line endings in tests so CRLF Windows checkouts
+  exercise the same contracts as Linux and macOS.
+
 ## [0.20.0] - 2026-08-20
 
 ### Added
