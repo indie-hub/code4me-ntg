@@ -20,6 +20,11 @@ deduplicates, and writes them back. Basic Memory is durable project knowledge,
 the event log is task correlation, and Context Mode is working-context
 processing.
 
+Prefix a direct request with `crowd:` (or explicitly ask for Crowd Mode) to let
+the producer assemble bounded cross-vendor waves from the live Crowded roster.
+The one-shot mode reuses ordinary Code4Me tasks, envelopes, checkpoints, and
+validation; it does not add a workflow engine or persist to later requests.
+
 ## Current scope
 
 - Open one lightweight milestone and split only where work can be validated
@@ -43,6 +48,9 @@ processing.
 - Keep the producer orchestration-first: delegate implementation to a ready
   Crowded room, then a native subagent, and self-implement only as a recorded
   fallback when neither route exists.
+- In explicit Crowd Mode, reserve validation capacity, fan out only independent
+  read-only evidence or isolated writable tasks, dispatch one complete wave,
+  then checkpoint and yield without active waiting.
 - Route questions to Basic Memory, CodeGraph, CCC, Context Mode, or a narrow
   native read according to the shape of the question.
 - Send one work envelope and one mandatory validation envelope for every
@@ -81,11 +89,12 @@ processing.
 - Synchronize one Trello card per logical task when configured, accepting human
   work through Ready while preserving Code4Me validation as the completion gate.
 
-Two optional workflow checklists live under `skills/code4me/references/`: use
-the design brief only when a task truly needs design, and the validation
-checklist for the independent review. Compact language and platform baselines
-are selected conditionally and project instructions always override them. None
-of these references are files to copy into every project.
+Conditional workflow references live under `skills/code4me/references/`: use
+the design brief only when a task truly needs design, Crowd Mode only on an
+explicit one-shot request, and the validation checklist for independent review.
+Compact language and platform baselines are selected conditionally and project
+instructions always override them. None of these references are files to copy
+into every project.
 
 ## Worker-contract hooks
 

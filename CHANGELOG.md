@@ -7,6 +7,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-08-20
+
+### Added
+
+- Add one-shot Crowd Mode for adaptive cross-vendor waves over the live
+  Crowded roster while reusing existing tasks, envelopes, and checkpoints.
+
+### Changed
+
+- Allow an explicit Crowd Mode producer to dispatch a complete planned wave
+  before checkpointing and yielding, without permitting active waiting.
+
 ## [0.19.0] - 2026-08-19
 
 ### Changed

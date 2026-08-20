@@ -1,6 +1,6 @@
 ---
 name: code4me
-description: 'Coordinate engineering milestones and tasks through a task-scoped producer, implementer, validator, optional specialists, mandatory independent validation, shared Basic Memory, and lightweight append-only bookkeeping. Use when the user asks Code4Me to build, fix, refactor, delegate, coordinate, validate, resume, or hand engineering work to available agents, or when an agent receives a Code4Me envelope containing `delegation: forbidden`.'
+description: 'Coordinate engineering milestones and tasks through a task-scoped producer, implementer, validator, optional specialists, mandatory independent validation, shared Basic Memory, and lightweight append-only bookkeeping. Use when the user asks Code4Me to build, fix, refactor, delegate, coordinate, validate, resume, or hand engineering work to available agents; explicitly requests Crowd Mode with `crowd:`, `crowd this`, or `use the whole room`; or when an agent receives a Code4Me envelope containing `delegation: forbidden`.'
 ---
 
 # Code4Me
@@ -12,6 +12,13 @@ non-obvious behavior. Never put task or milestone IDs, status, TODO/FIXME
 items, plans, progress, deferred work, or handover notes in source comments.
 Keep project management in envelopes, `.code4me/events.jsonl`, checkpoints,
 and Basic Memory.
+
+## Crowd Mode
+
+When the user explicitly requests one-shot `crowd:` or Crowd Mode orchestration,
+read and follow [references/crowd-mode.md](references/crowd-mode.md). The mode
+applies only to that direct request. Never infer it from task size or activate it
+inside a worker envelope.
 
 ## Workflow
 
@@ -287,15 +294,17 @@ reply_to:
   command: '"$CROWDED_BIN" send PRODUCER_ROOM_NUMBER --task STAGE_ID --role result -- RESULT_ENVELOPE'
 ```
 
-Crowded delivery is asynchronous. After `send` returns an accepted `injected`
-or `queued` status, append a checkpoint with state `awaiting_result` and end the
-current turn so the producer room becomes idle. Only for an accepted
-`$CROWDED_BIN send`, do not start a background waiter, call a wait tool, poll the
-roster or terminal, sleep, or keep sampling; those actions keep the PTY busy and
-delay result delivery. This prohibition does not apply to host-native subagent
-wait or join tools. Resume only when the Doorbell result is injected. After a
-worker sends its Crowded result, it likewise ends its turn without waiting for
-acknowledgement.
+Crowded delivery is asynchronous. After an ordinary `send` returns an accepted
+`injected` or `queued` status, append a checkpoint with state `awaiting_result`
+and end the current turn so the producer room becomes idle. In explicit Crowd
+Mode, send every already-planned stage in the current wave without waiting
+between sends, then append one `awaiting_result` checkpoint and end the turn.
+Only for an accepted `$CROWDED_BIN send`, do not start a background waiter, call
+a wait tool, poll the roster or terminal, sleep, or keep sampling; those actions
+keep the PTY busy and delay result delivery. This prohibition does not apply to
+host-native subagent wait or join tools. Resume only when the Doorbell result is
+injected. After a worker sends its Crowded result, it likewise ends its turn
+without waiting for acknowledgement.
 
 ### Incoming worker contract
 

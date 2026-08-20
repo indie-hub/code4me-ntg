@@ -8,6 +8,10 @@ const contextSelection = readFileSync(
   new URL("../skills/code4me/references/context-selection.md", import.meta.url),
   "utf8",
 );
+const crowdMode = readFileSync(
+  new URL("../skills/code4me/references/crowd-mode.md", import.meta.url),
+  "utf8",
+).replace(/\s+/g, " ");
 const validation = readFileSync(
   new URL("../skills/code4me/references/validation.md", import.meta.url),
   "utf8",
@@ -109,6 +113,33 @@ test("Code4Me keeps the producer orchestration-first", () => {
   }
   assert.match(openaiAgent, /delegate implementation whenever an eligible Crowded or native worker exists/);
   assert.match(openaiAgent, /different vendor from the implementer/);
+});
+
+test("Code4Me Crowd Mode uses bounded cross-vendor waves", () => {
+  for (const rule of [
+    "[references/crowd-mode.md](references/crowd-mode.md)",
+    "applies only to that direct request",
+    "Never infer it from task size",
+    "send every already-planned stage in the current wave without waiting between sends",
+    "append one `awaiting_result` checkpoint",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing Crowd Mode routing rule: ${rule}`);
+  }
+  for (const rule of [
+    "does not persist to later requests",
+    "`delegation: forbidden` always wins for workers",
+    "do not add a workflow language, wave event, tracker, daemon, or scheduler",
+    "without manufacturing work for idle rooms",
+    "Reserve an independent validator before assigning the rest of the live roster",
+    "Keep one active writer per checkout",
+    "verified isolated worktree",
+    "Do not mix a Doorbell wave with host-native joins",
+    "If required wave results are still outstanding",
+    "do not decide by model vote",
+    "never to stages or waves",
+  ]) {
+    assert.ok(crowdMode.includes(rule), `missing Crowd Mode contract: ${rule}`);
+  }
 });
 
 test("Code4Me keeps project management out of source comments", () => {
