@@ -58,6 +58,25 @@ test("Code4Me enforces its worker contract across rooms", () => {
   }
 });
 
+test("Code4Me uses Technical English without rewriting technical literals", () => {
+  for (const rule of [
+    "Code4Me Technical English profile",
+    "all technical and operational communication with the user and between agents",
+    "does not claim formal compliance",
+    "Use short sentences and active voice",
+    "one action or idea in each sentence",
+    "one consistent term for each concept",
+    "actor, action, artifact, and expected result",
+    "Avoid idioms, vague pronouns, and ambiguous references",
+    "Define each abbreviation on first use",
+    "Preserve code, commands, paths, logs, error messages, and quotations exactly",
+    "Do not require the user to write in this profile",
+    "Casual greetings can remain natural",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing Technical English rule: ${rule}`);
+  }
+});
+
 test("Code4Me distinguishes Crowded yielding from native joins", () => {
   for (const rule of [
     "delivery: asynchronous | native_managed",
@@ -87,7 +106,7 @@ test("Code4Me keeps lightweight milestones tasks and teams", () => {
     "`kind`: `feature | bug | refactor | spike | incident | maintenance`",
     "`weight`: `light | standard | critical`",
     "one producer, one implementer, one validator",
-    "producer coordinates engineering work by default",
+    "producer keeps its main context orchestration-only",
     "Append `task_assigned` with controls marked `pending` or `not_required`",
     "newest checkpoint is the canonical resume point",
     "milestone_opened",
@@ -103,9 +122,15 @@ test("Code4Me keeps lightweight milestones tasks and teams", () => {
 
 test("Code4Me keeps the producer orchestration-first", () => {
   for (const rule of [
+    "keeps its main context orchestration-only",
+    "engineering artifact work and independent judgment",
+    "implementation, repair, research, design, audit, QA, and validation",
+    "targeted reads needed to route work",
+    "do not justify a subagent",
     "must not implement source changes while an eligible ready Crowded implementer",
     "Choose the implementation route in this order",
     "then the producer only as `producer_fallback`",
+    "must never validate work it implemented",
     "`selection_reason` must start with `producer_fallback:`",
     "Task smallness, speed, or convenience are not fallback reasons",
     "Validator diversity is measured against the implementer, not the producer",
@@ -239,9 +264,16 @@ test("Code4Me recycles only as a fresh-context validation fallback", () => {
     "query roster again",
     "A cleared room is fresh context, not a new vendor",
     "Never use it to satisfy `critical` cross-vendor validation",
+    "Only after all eligible fresh-context routes are unavailable",
+    "producer that did not implement validate inline",
+    "`producer_validation_fallback:`",
   ]) {
     assert.ok(normalizedSkill.includes(rule), `missing recycle rule: ${rule}`);
   }
+  const native = normalizedSkill.indexOf("use a host-native validator");
+  const recycled = normalizedSkill.indexOf("last delegated fresh-context fallback");
+  const inline = normalizedSkill.indexOf("producer that did not implement validate inline");
+  assert.ok(native < recycled && recycled < inline, "validation fallback order is incorrect");
 });
 
 test("Code4Me selects task-scoped model and effort", () => {

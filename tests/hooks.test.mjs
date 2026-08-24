@@ -56,6 +56,8 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /search Basic Memory for relevant gaps/);
   assert.match(hookOutput.additionalContext, /memory\.searched true/);
   assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
+  assert.match(hookOutput.additionalContext, /Code4Me Technical English profile/);
+  assert.match(hookOutput.additionalContext, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
   assert.equal("permissionDecision" in hookOutput, false);
   assert.equal(
     run("envelope", {
@@ -91,6 +93,8 @@ test("OpenCode appends guidance only to incoming envelopes", async () => {
   assert.match(message.parts[0].text, /deferred_work in the result envelope/);
   assert.match(message.parts[0].text, /Actually open every supplied memory:\/\/ reference/);
   assert.match(message.parts[0].text, /Always return memory_candidates/);
+  assert.match(message.parts[0].text, /Code4Me Technical English profile/);
+  assert.match(message.parts[0].text, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
 
   const ordinary = { parts: [{ type: "text", text: "fix the parser" }] };
   await plugin["chat.message"]({}, ordinary);

@@ -70,17 +70,23 @@ inside a worker envelope.
    [Windows](references/windows.md), and [Unix](references/unix.md).
 6. Discover the live roster and assign a task-scoped team: one producer, one
    implementer, one validator, and only the specialists this task needs. The
-   producer coordinates engineering work by default and must not implement
+   producer keeps its main context orchestration-only by default. Delegate
+   engineering artifact work and independent judgment, including implementation,
+   repair, research, design, audit, QA, and validation, to a ready Crowded room
+   or host-native subagent whenever either route is available. Routine
+   classification, roster and checkpoint inspection, targeted reads needed to
+   route work, event-log bookkeeping, and result synthesis stay with the
+   producer and do not justify a subagent. The producer must not implement
    source changes while an eligible ready Crowded implementer or host-native
    subagent is available. Choose the implementation route in this order: a
    ready Crowded room, a host-native subagent, then the producer only as
-   `producer_fallback`. The producer may validate only when it did not
-   implement. The implementer and validator must not share the implementation
-   context. Select each member's mode, model tier, and effort using the policy
-   below. Append `task_assigned` with controls marked `pending` or
-   `not_required` before applying controls or starting work. For
-   `producer_fallback`, the implementer's `selection_reason` must start with
-   `producer_fallback:` and state why both delegated routes were unavailable.
+   `producer_fallback`. The producer must never validate work it implemented.
+   The implementer and validator must not share the implementation context.
+   Select each member's mode, model tier, and effort using the policy below.
+   Append `task_assigned` with controls marked `pending` or `not_required`
+   before applying controls or starting work. For `producer_fallback`, the
+   implementer's `selection_reason` must start with `producer_fallback:` and
+   state why both delegated routes were unavailable.
 7. For a novel interface, new data flow, cross-cutting change, or critical task,
    read [references/design-brief.md](references/design-brief.md) and carry only
    the relevant answers in the task envelope or a user-requested artifact. Do
@@ -252,6 +258,26 @@ configured.
 
 ## Communication
 
+### Code4Me Technical English profile
+
+Use this profile for all technical and operational communication with the user
+and between agents, including task envelopes, results, validation reports,
+checkpoints, Basic Memory entries, and Trello cards. The profile is based on
+ASD-STE100 Simplified Technical English, but Code4Me does not claim formal
+compliance.
+
+- Use short sentences and active voice.
+- Put one action or idea in each sentence.
+- Use one consistent term for each concept.
+- State the actor, action, artifact, and expected result when they matter.
+- Avoid idioms, vague pronouns, and ambiguous references.
+- Define each abbreviation on first use.
+- Preserve code, commands, paths, logs, error messages, and quotations exactly.
+- Do not require the user to write in this profile. Interpret natural-language
+  requests and answer their technical content with the profile.
+
+Casual greetings can remain natural.
+
 ### Native subagents
 
 For a host-native subagent, use the platform's normal dispatch and wait or join
@@ -344,10 +370,10 @@ is recorded there as failed; it does not authorize guessing another model.
 
 ### Validation routing
 
-Prefer a ready room that did not implement the task. A producer that did not
-implement may validate inline. If no independent room exists, use a host-native
-validator. For `light` or `standard` only, the completed implementer may be
-recycled as a last fresh-context fallback when roster says `allow_control: true`:
+Prefer a ready room that did not implement the task. If no independent room
+exists, use a host-native validator. For `light` or `standard` only, the
+completed implementer may be recycled as a last delegated fresh-context
+fallback when roster says `allow_control: true`:
 
 ```sh
 "$CROWDED_BIN" control IMPLEMENTER_ROOM_NUMBER clear
@@ -357,8 +383,13 @@ Clear only after the work result is accepted and logged. Require valid JSON with
 `ok: true` and `status: "applied"`, then query roster again and wait for that
 room to become `ready` before dispatching validation. A cleared room is fresh
 context, not a new vendor. Never use it to satisfy `critical` cross-vendor
-validation. If no eligible validation route exists, append a checkpoint with
-state `unvalidated`; do not self-approve or declare completion.
+validation. Only after all eligible fresh-context routes are unavailable may a
+producer that did not implement validate inline, and only when it still
+satisfies the task's vendor rule. Record `producer_validation_fallback:` and why
+the Crowded, native, and recycled routes were unavailable in the verify
+dispatch. If the producer implemented, or no eligible validation route exists,
+append a checkpoint with state `unvalidated`; do not self-approve or declare
+completion.
 
 ## Task envelope
 

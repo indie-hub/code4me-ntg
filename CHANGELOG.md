@@ -7,6 +7,23 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.21.1] - 2026-08-24
+
+### Changed
+
+- Keep the producer's main context orchestration-only when a Crowded room or
+  native subagent can perform engineering work or independent validation.
+- Make inline producer validation the final eligible fallback after fresh
+  Crowded, native, and recycled contexts are unavailable.
+
+## [0.21.0] - 2026-08-24
+
+### Added
+
+- Add the Code4Me Technical English profile, based on ASD-STE100, for technical
+  and operational communication across users and agents while preserving exact
+  technical literals.
+
 ## [0.20.1] - 2026-08-20
 
 ### Fixed
