@@ -208,9 +208,18 @@ role using this policy. Never invent an exact model name. If no mapping exists,
 keep the room's current model and record it as `current`. Record tier, requested
 model, effort, selection reason, and initial control status in `task_assigned`.
 
+When the Crowded roster supplies scheduling metadata, treat `model_tier` as the
+room's user-configured capacity and `cost_tier` as its relative cost. Filter by
+the required capability and minimum model tier. Preserve required vendor
+diversity before cost optimization. Among otherwise eligible rooms, choose the
+smallest adequate `model_tier`, then the lowest `cost_tier`. These fields are
+user judgments. Do not benchmark, infer, or overwrite them.
+
 ## Team rules
 
 - Roles belong to the task, not permanently to a room or vendor.
+- Roster `capabilities` describe role eligibility; `assigned_role` describes the
+  current task assignment.
 - Validator diversity is measured against the implementer, not the producer.
 - A two-agent team is valid when the producer holds exactly one of implementer
   or validator and the peer holds the other.
@@ -304,6 +313,16 @@ implementer. If neither route exists, record `producer_fallback:` and the reason
 before the producer edits implementation files, then assign another context to
 validate.
 
+Use roster `capabilities` values `produce`, `implement`, `validate`, `qa`,
+`audit`, `design`, `research`, and `security-review` as eligibility filters when
+present. A room without `capabilities` is a backward-compatible generalist. Use
+`model_tier: fast | balanced | deep` and `cost_tier: low | medium | high` when
+present. If `model_tier` is absent, use the existing exact-model mapping; if no
+mapping exists, prefer a classified eligible room and use the unknown-capacity
+room only when no classified room is eligible. A missing `cost_tier` supplies
+no cost tie-breaker. Record the roster metadata used in the assignment's
+`selection_reason`.
+
 Send a delegated stage with:
 
 ```sh
@@ -350,6 +369,12 @@ Return non-empty `tool_evidence` naming each selected tool, action, and concise
 result or unavailable reason. Never claim a tool call that did not occur. The
 worker must return `memory_candidates`, using `[]` when no durable lesson was
 found, but must never write the producer's log.
+
+Treat `assigned_role`, `goal`, `acceptance`, `constraints`, and `quality_bar` as
+the producer's stage contract. Do not change them silently. If the contract is
+unsafe, inconsistent, or impossible, return `blocked` or `changes_requested`
+with evidence. A validator decides its verdict independently; the producer
+cannot require a pass.
 
 Source comments must explain code only. Never put task or milestone IDs,
 status, TODO/FIXME items, plans, progress, deferred work, or handover notes in
@@ -405,6 +430,7 @@ milestone_id: <stable milestone id>
 task_id: <logical task id>
 stage_id: <unique dispatch stage id>
 stage: work | repair | audit | verify
+assigned_role: implementer | validator | architect | researcher | security-reviewer | qa | auditor
 kind: feature | bug | refactor | spike | incident | maintenance
 weight: light | standard | critical
 producer: <room or agent>
@@ -489,9 +515,9 @@ Status and Housekeeping readers without duplicating a tracker.
 {"v":2,"type":"task_classified","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","kind":"bug","weight":"standard","reason":"<one sentence>","goal":"<slice>","acceptance":[],"quality_bar":null}
 {"v":2,"type":"task_assigned","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","team":{"producer":{"member":"room-1","vendor":"openai"},"implementer":{"member":"room-2","vendor":"anthropic","mode":"implement","model_tier":"balanced","model":"<exact-model>","effort":"medium","selection_reason":"<reason>","control_status":"pending"},"validator":{"member":"room-3","vendor":"deepseek","mode":"validate","model_tier":"balanced","model":"current","effort":"high","selection_reason":"<reason>","control_status":"not_required"},"specialists":[]}}
 {"v":2,"type":"task_controlled","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","member":"room-2","model":{"requested":"<exact|current>","applied":true},"effort":{"requested":"medium","applied":true}}
-{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","producer":"room-1","worker":"room-2","vendor":"anthropic","goal":"<slice>","acceptance":[],"constraints":[],"quality_bar":null,"context_refs":[],"memory":{"status":"used","searched":true,"refs":[],"reason":null}}
+{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","assigned_role":"implementer","producer":"room-1","worker":"room-2","vendor":"anthropic","goal":"<slice>","acceptance":[],"constraints":[],"quality_bar":null,"context_refs":[],"memory":{"status":"used","searched":true,"refs":[],"reason":null}}
 {"v":2,"type":"result","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","worker":"room-2","vendor":"anthropic","outcome":"complete","summary":"<result>","files_changed":[],"checks":[],"blocker":null,"verdict":null,"findings":[],"deferred_work":[],"tool_evidence":[{"tool":"Basic Memory","action":"read/search","result":"<references, empty search, or unavailable reason>"},{"tool":"CodeGraph","action":"inspect callers","result":"<evidence>"}],"memory_candidates":[],"memory_writes":[]}
-{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","producer":"room-1","worker":"room-3","vendor":"deepseek","goal":"validate accepted work","acceptance":[],"constraints":["read-only"],"quality_bar":null,"context_refs":[],"memory":{"status":"empty","searched":true,"refs":[],"reason":"no relevant validation memory"}}
+{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","assigned_role":"validator","producer":"room-1","worker":"room-3","vendor":"deepseek","goal":"validate accepted work","acceptance":[],"constraints":["read-only"],"quality_bar":null,"context_refs":[],"memory":{"status":"empty","searched":true,"refs":[],"reason":"no relevant validation memory"}}
 {"v":2,"type":"result","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","worker":"room-3","vendor":"deepseek","outcome":"complete","summary":"<validation>","files_changed":[],"checks":[],"blocker":null,"verdict":"pass","findings":[],"largest_gap":null,"deferred_work":[],"tool_evidence":[{"tool":"Basic Memory","action":"read/search","result":"<references, empty search, or unavailable reason>"},{"tool":"native","action":"run focused check","result":"<evidence>"}],"memory_candidates":[],"memory_writes":[]}
 {"v":2,"type":"task_validated","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","validator":"room-3","vendor":"deepseek","verdict":"pass","checks":[],"findings":[]}
 {"v":2,"type":"task_board_linked","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<id>","task_id":"<logical-task>","origin":"human|agent"}

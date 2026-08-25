@@ -23,6 +23,7 @@ wait_policy: passive
 milestone_id: M1
 task_id: M1-T1
 stage_id: M1-T1-work-1
+assigned_role: implementer
 producer: room-1
 worker: room-2
 delegation: forbidden
@@ -56,6 +57,8 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /search Basic Memory for relevant gaps/);
   assert.match(hookOutput.additionalContext, /memory\.searched true/);
   assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
+  assert.match(hookOutput.additionalContext, /assigned_role, goal, acceptance, constraints, and quality_bar/);
+  assert.match(hookOutput.additionalContext, /validator decides the verdict independently/i);
   assert.match(hookOutput.additionalContext, /Code4Me Technical English profile/);
   assert.match(hookOutput.additionalContext, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
   assert.equal("permissionDecision" in hookOutput, false);
@@ -68,7 +71,11 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
     }).hookSpecificOutput.hookEventName,
     "UserPromptSubmit",
   );
-  assert.deepEqual(run("envelope", { prompt: "fix the parser" }), {});
+  const producer = run("envelope", { prompt: "fix the parser" });
+  assert.match(producer.hookSpecificOutput.additionalContext, /Code4Me producer check/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /Crowded roster and native subagent availability/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /must not validate/);
+  assert.deepEqual(run("envelope", { prompt: "hello" }), {});
 });
 
 test("only broad source fallbacks receive advisory guidance", () => {
@@ -84,7 +91,7 @@ test("only broad source fallbacks receive advisory guidance", () => {
   }), {});
 });
 
-test("OpenCode appends guidance only to incoming envelopes", async () => {
+test("OpenCode appends worker or producer guidance when applicable", async () => {
   const plugin = await Code4Me();
   const message = { parts: [{ type: "text", text: envelope }] };
   await plugin["chat.message"]({}, message);
@@ -93,10 +100,17 @@ test("OpenCode appends guidance only to incoming envelopes", async () => {
   assert.match(message.parts[0].text, /deferred_work in the result envelope/);
   assert.match(message.parts[0].text, /Actually open every supplied memory:\/\/ reference/);
   assert.match(message.parts[0].text, /Always return memory_candidates/);
+  assert.match(message.parts[0].text, /assigned_role, goal, acceptance, constraints, and quality_bar/);
+  assert.match(message.parts[0].text, /validator decides the verdict independently/i);
   assert.match(message.parts[0].text, /Code4Me Technical English profile/);
   assert.match(message.parts[0].text, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
 
   const ordinary = { parts: [{ type: "text", text: "fix the parser" }] };
   await plugin["chat.message"]({}, ordinary);
-  assert.equal(ordinary.parts[0].text, "fix the parser");
+  assert.match(ordinary.parts[0].text, /Code4Me producer check/);
+  assert.match(ordinary.parts[0].text, /must not validate/);
+
+  const casual = { parts: [{ type: "text", text: "hello" }] };
+  await plugin["chat.message"]({}, casual);
+  assert.equal(casual.parts[0].text, "hello");
 });

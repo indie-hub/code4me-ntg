@@ -7,6 +7,17 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-08-25
+
+### Added
+
+- Select Crowded rooms from user-configured capabilities, model capacity, and
+  relative cost while preserving cross-vendor validation and compatibility with
+  older rosters.
+- Add `assigned_role` to task envelopes and dispatch events.
+- Add role-aware worker contract reinforcement and producer self-check nudges to
+  the existing Claude, Codex, and OpenCode adapters.
+
 ## [0.21.1] - 2026-08-24
 
 ### Changed

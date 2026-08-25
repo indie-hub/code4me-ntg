@@ -44,6 +44,24 @@ test("Code4Me discovers real Crowded members without guessing", () => {
   }
 });
 
+test("Code4Me schedules the smallest capable room at the lowest relative cost", () => {
+  for (const rule of [
+    "Roster `capabilities` describe role eligibility",
+    "`assigned_role` describes the current task assignment",
+    "`capabilities` values `produce`, `implement`, `validate`, `qa`",
+    "without `capabilities` is a backward-compatible generalist",
+    "`model_tier: fast | balanced | deep`",
+    "`cost_tier: low | medium | high`",
+    "Preserve required vendor diversity before cost optimization",
+    "smallest adequate `model_tier`, then the lowest `cost_tier`",
+    "Do not benchmark, infer, or overwrite them",
+    "missing `cost_tier` supplies no cost tie-breaker",
+    "roster metadata used in the assignment's `selection_reason`",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing scheduling rule: ${rule}`);
+  }
+});
+
 test("Code4Me enforces its worker contract across rooms", () => {
   for (const rule of [
     "protocol: code4me-ntg/v3",
@@ -53,6 +71,10 @@ test("Code4Me enforces its worker contract across rooms", () => {
     "non-empty `tool_evidence`",
     "Never claim a tool call that did not occur",
     "reject it as malformed otherwise",
+    "assigned_role: implementer | validator",
+    "producer's stage contract",
+    "Do not change them silently",
+    "producer cannot require a pass",
   ]) {
     assert.ok(normalizedSkill.includes(rule), `missing worker contract: ${rule}`);
   }
