@@ -1,6 +1,6 @@
 ---
 name: code4me-status
-description: Read and summarize lightweight Code4Me milestones, tasks, teams, validation state, checkpoints, resumable handovers, and legacy delegated-task events without changing the project. Use when the user asks for Code4Me status, active milestones, task progress, team assignments, blockers, validation, resume context, or event-log problems.
+description: Read and summarize lightweight Code4Me milestones, tasks, teams, validation state, workflow health, checkpoints, resumable handovers, and legacy delegated-task events without changing the project. Use when the user asks for Code4Me status, active milestones, task progress, team assignments, blockers, validation, workflow metrics, resume context, or event-log problems.
 ---
 
 # Code4Me Status
@@ -54,6 +54,36 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
    bookkeeping paths `.code4me/events.jsonl` and `.code4me/archive/` from
    product-worktree drift because housekeeping changes them.
 
+## Workflow health
+
+When the user asks for workflow health, metrics, effectiveness, or a detailed
+status, derive one compact section from existing events. Do not write counters,
+summaries, telemetry, or new events. Default to the active milestone. If no
+milestone is active, use terminal logical tasks in the active log. Read verified
+archives only when the user requests historical scope.
+
+Count each logical task once. Use these definitions:
+
+- `first-pass validation`: the first matching `verify` result after initial
+  work has verdict `pass`; divide by tasks that have a matching verify result.
+- `repair rate`: the task has at least one `repair` dispatch; divide by terminal
+  tasks in scope.
+- `cross-vendor validation`: the validated task's known validator vendor differs
+  from its known implementer vendor; divide by validated tasks where both
+  vendors are known. Report excluded unknown-vendor tasks.
+- `producer fallback`: the assigned implementer's `selection_reason` starts
+  with `producer_fallback:`; divide by assigned tasks in scope.
+- `blocked rate`: the logical task's terminal state is `blocked` or `failed`;
+  divide by terminal tasks in scope.
+- `elapsed cycle`: duration from `task_classified` timestamp to `task_validated`
+  timestamp, or to the latest matching terminal `blocked` or `failed` result.
+  Report the median duration and sample size. This duration includes queue and
+  human wait time; do not label it agent work time.
+
+Show the numerator, denominator, and percentage for every rate. Report `n/a`
+when a denominator is zero or required data is absent. List malformed or
+missing data as event-log issues. Do not rank agents, rooms, vendors, or models.
+
 ## Report
 
 Return:
@@ -70,6 +100,8 @@ Return:
 - linked Trello card IDs plus latest sync time and unresolved conflicts when
   board events exist;
 - five most recent validated or terminal tasks unless another limit is asked;
+- workflow-health scope, sample sizes, rates, and median elapsed cycle only when
+  requested;
 - event-log issues, or `none`.
 
 Never call a task complete merely because implementation returned `complete`.

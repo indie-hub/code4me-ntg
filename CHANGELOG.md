@@ -7,6 +7,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-08-28
+
+### Added
+
+- Derive optional workflow-health rates and median elapsed cycle time in
+  Code4Me Status from existing lifecycle events without new telemetry, storage,
+  or model rankings.
+
 ## [0.23.0] - 2026-08-28
 
 ### Added

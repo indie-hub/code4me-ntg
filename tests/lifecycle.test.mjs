@@ -30,6 +30,30 @@ test("Status derives milestone and task state from events", () => {
   }
 });
 
+test("Status derives workflow health without new telemetry", () => {
+  for (const rule of [
+    "## Workflow health",
+    "derive one compact section from existing events",
+    "Do not write counters, summaries, telemetry, or new events",
+    "Default to the active milestone",
+    "Count each logical task once",
+    "`first-pass validation`",
+    "`repair rate`",
+    "`cross-vendor validation`",
+    "Report excluded unknown-vendor tasks",
+    "`producer fallback`",
+    "`blocked rate`",
+    "`elapsed cycle`",
+    "median duration and sample size",
+    "includes queue and human wait time",
+    "numerator, denominator, and percentage",
+    "Report `n/a`",
+    "Do not rank agents, rooms, vendors, or models",
+  ]) {
+    assert.ok(status.includes(rule), `missing workflow-health rule: ${rule}`);
+  }
+});
+
 test("Housekeeping audits and writes one resumable handover checkpoint", () => {
   for (const rule of [
     "classified before team assignment",

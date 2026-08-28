@@ -10,6 +10,8 @@ The plugin contains five focused skills. The producer records classification,
 team, dispatch, result, validation, and checkpoint events in the client
 project's local `.code4me/events.jsonl`. Housekeeping audits product state and
 appends one compact handover checkpoint; Status and the producer resume from it.
+On request, Status derives workflow-health rates and elapsed cycle time from the
+same events without adding telemetry or persistent summaries.
 The optional Trello skill adds a two-way human work board without replacing
 that event history. There are no copied project templates or tracker forests.
 
