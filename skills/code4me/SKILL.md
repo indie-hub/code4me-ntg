@@ -44,9 +44,12 @@ inside a worker envelope.
    - `weight`: `light | standard | critical`;
    - `reason`: one sentence explaining the weight;
    - task goal and acceptance criteria;
+   - `verification`: exact project checks and observable evidence using the
+     policy below, or `null` when no credible reproducible check exists;
    - `quality_bar`: an initial inspectable comparison using the policy below, or
      `null` when acceptance criteria are sufficient. After the memory and project
-     guidance reads below, carry the final bar in every work or verify dispatch.
+   guidance reads below, carry the final verification contract and quality bar
+   in every work or verify dispatch.
 4. Before planning every `standard` or `critical` task, and any `light` task
    that depends on project history or conventions, actually search shared
    **Basic Memory** for the project memory map, decisions, preferences,
@@ -112,9 +115,14 @@ inside a worker envelope.
    durable memory. Reject completed work that introduced task, milestone,
    status, TODO/FIXME, planning, progress, deferred-work, or handover comments
    in source files; send it through the bounded repair path.
+   For a non-null verification contract, require `checks` to name every command
+   and evidence target with its exact result. Reject `outcome: complete` when a
+   required command failed, was unavailable, or was omitted.
 10. Append the accepted work result, then run mandatory validation using
    [references/validation.md](references/validation.md). Record every validation
    attempt as a `verify` dispatch/result pair, including inline validation.
+   Require the validator to rerun the verification commands when possible and
+   inspect every evidence target directly.
    When a quality bar exists, require the validator to inspect its actual
    evidence target, compare it by the declared method, and return one
    `largest_gap` when requesting changes. The builder's summary is not evidence.
@@ -138,6 +146,33 @@ milestone rotation; immutable archives preserve the exact prior bytes.
 The newest checkpoint is the canonical resume point; events after it take
 precedence. Basic Memory stores durable project knowledge, not transient task
 state or blank templates.
+
+## Verification contracts
+
+Acceptance states what must be true. Verification states how the agents prove
+it. Use a verification contract when the repository provides a relevant command
+or observable artifact before work starts:
+
+```yaml
+verification:
+  commands: [<exact project command>]
+  evidence: [<observable output or artifact>]
+```
+
+Derive commands from project instructions, existing scripts, manifests, CI
+configuration, tests, or the user's request. Never invent a command. At least
+one of `commands` or `evidence` must be non-empty. Set `verification: null` when
+no credible reproducible check exists; do not create a test or artifact only to
+populate this field.
+
+The implementer runs every applicable command and reports its exact result in
+`checks`. A required command failure prevents `outcome: complete`. If a command
+cannot run in the assigned environment, return `blocked` with the reason. The
+validator independently reruns the commands when possible and directly inspects
+every listed evidence target. If independent execution is impossible, report
+the limitation and use other direct evidence; never pass from the implementer's
+summary alone. Verification commands do not expand the task's authority or
+permit unsafe external effects.
 
 ## Quality bars
 
@@ -445,6 +480,9 @@ delegation: forbidden
 goal: <concrete outcome>
 acceptance: [<observable criterion>]
 constraints: [<scope or safety constraint>]
+verification:
+  commands: [<exact project command>]
+  evidence: [<observable output or artifact>]
 quality_bar:
   status: confirmed | provisional
   source: user | project | producer
@@ -512,12 +550,12 @@ Status and Housekeeping readers without duplicating a tracker.
 
 ```json
 {"v":2,"type":"milestone_opened","ts":"<ISO8601>","milestone_id":"<id>","goal":"<outcome>","acceptance":[],"constraints":[]}
-{"v":2,"type":"task_classified","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","kind":"bug","weight":"standard","reason":"<one sentence>","goal":"<slice>","acceptance":[],"quality_bar":null}
+{"v":2,"type":"task_classified","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","kind":"bug","weight":"standard","reason":"<one sentence>","goal":"<slice>","acceptance":[],"verification":{"commands":["<exact project command>"],"evidence":["<observable output or artifact>"]},"quality_bar":null}
 {"v":2,"type":"task_assigned","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","team":{"producer":{"member":"room-1","vendor":"openai"},"implementer":{"member":"room-2","vendor":"anthropic","mode":"implement","model_tier":"balanced","model":"<exact-model>","effort":"medium","selection_reason":"<reason>","control_status":"pending"},"validator":{"member":"room-3","vendor":"deepseek","mode":"validate","model_tier":"balanced","model":"current","effort":"high","selection_reason":"<reason>","control_status":"not_required"},"specialists":[]}}
 {"v":2,"type":"task_controlled","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","member":"room-2","model":{"requested":"<exact|current>","applied":true},"effort":{"requested":"medium","applied":true}}
-{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","assigned_role":"implementer","producer":"room-1","worker":"room-2","vendor":"anthropic","goal":"<slice>","acceptance":[],"constraints":[],"quality_bar":null,"context_refs":[],"memory":{"status":"used","searched":true,"refs":[],"reason":null}}
+{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","assigned_role":"implementer","producer":"room-1","worker":"room-2","vendor":"anthropic","goal":"<slice>","acceptance":[],"constraints":[],"verification":{"commands":["<exact project command>"],"evidence":["<observable output or artifact>"]},"quality_bar":null,"context_refs":[],"memory":{"status":"used","searched":true,"refs":[],"reason":null}}
 {"v":2,"type":"result","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<stage-id>","parent_task_id":"<logical-task>","stage":"work","worker":"room-2","vendor":"anthropic","outcome":"complete","summary":"<result>","files_changed":[],"checks":[],"blocker":null,"verdict":null,"findings":[],"deferred_work":[],"tool_evidence":[{"tool":"Basic Memory","action":"read/search","result":"<references, empty search, or unavailable reason>"},{"tool":"CodeGraph","action":"inspect callers","result":"<evidence>"}],"memory_candidates":[],"memory_writes":[]}
-{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","assigned_role":"validator","producer":"room-1","worker":"room-3","vendor":"deepseek","goal":"validate accepted work","acceptance":[],"constraints":["read-only"],"quality_bar":null,"context_refs":[],"memory":{"status":"empty","searched":true,"refs":[],"reason":"no relevant validation memory"}}
+{"v":2,"type":"dispatch","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","assigned_role":"validator","producer":"room-1","worker":"room-3","vendor":"deepseek","goal":"validate accepted work","acceptance":[],"constraints":["read-only"],"verification":{"commands":["<exact project command>"],"evidence":["<observable output or artifact>"]},"quality_bar":null,"context_refs":[],"memory":{"status":"empty","searched":true,"refs":[],"reason":"no relevant validation memory"}}
 {"v":2,"type":"result","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<verify-stage-id>","parent_task_id":"<logical-task>","stage":"verify","worker":"room-3","vendor":"deepseek","outcome":"complete","summary":"<validation>","files_changed":[],"checks":[],"blocker":null,"verdict":"pass","findings":[],"largest_gap":null,"deferred_work":[],"tool_evidence":[{"tool":"Basic Memory","action":"read/search","result":"<references, empty search, or unavailable reason>"},{"tool":"native","action":"run focused check","result":"<evidence>"}],"memory_candidates":[],"memory_writes":[]}
 {"v":2,"type":"task_validated","ts":"<ISO8601>","milestone_id":"<id>","task_id":"<logical-task>","validator":"room-3","vendor":"deepseek","verdict":"pass","checks":[],"findings":[]}
 {"v":2,"type":"task_board_linked","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<id>","task_id":"<logical-task>","origin":"human|agent"}

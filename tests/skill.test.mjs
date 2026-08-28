@@ -216,6 +216,34 @@ test("Code4Me keeps project management out of source comments", () => {
   );
 });
 
+test("Code4Me carries a lightweight verification contract", () => {
+  for (const rule of [
+    "## Verification contracts",
+    "Acceptance states what must be true",
+    "Verification states how the agents prove it",
+    "commands: [<exact project command>]",
+    "evidence: [<observable output or artifact>]",
+    "Never invent a command",
+    "At least one of `commands` or `evidence` must be non-empty",
+    "Set `verification: null`",
+    "required command failure prevents `outcome: complete`",
+    "return `blocked` with the reason",
+    "validator independently reruns the commands",
+    "do not expand the task's authority",
+    '"verification":{"commands"',
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing verification rule: ${rule}`);
+  }
+  for (const rule of [
+    "Read the verification contract",
+    "Independently rerun every listed command",
+    "inspect every evidence target directly",
+    "never accept the implementer's summary as verification",
+  ]) {
+    assert.ok(validation.includes(rule), `missing verification validation rule: ${rule}`);
+  }
+});
+
 test("Code4Me proposes inspectable quality bars without open-ended loops", () => {
   for (const rule of [
     "quality_bar`: an initial inspectable comparison",

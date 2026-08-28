@@ -28,6 +28,9 @@ producer: room-1
 worker: room-2
 delegation: forbidden
 goal: fix the parser
+verification:
+  commands: [node --test]
+  evidence: [test output]
 reply_to:
   transport: crowded
 memory:
@@ -57,7 +60,9 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /search Basic Memory for relevant gaps/);
   assert.match(hookOutput.additionalContext, /memory\.searched true/);
   assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
-  assert.match(hookOutput.additionalContext, /assigned_role, goal, acceptance, constraints, and quality_bar/);
+  assert.match(hookOutput.additionalContext, /assigned_role, goal, acceptance, constraints, verification, and quality_bar/);
+  assert.match(hookOutput.additionalContext, /Run every applicable verification command/);
+  assert.match(hookOutput.additionalContext, /required failure prevents outcome complete/);
   assert.match(hookOutput.additionalContext, /validator decides the verdict independently/i);
   assert.match(hookOutput.additionalContext, /Code4Me Technical English profile/);
   assert.match(hookOutput.additionalContext, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
@@ -100,7 +105,8 @@ test("OpenCode appends worker or producer guidance when applicable", async () =>
   assert.match(message.parts[0].text, /deferred_work in the result envelope/);
   assert.match(message.parts[0].text, /Actually open every supplied memory:\/\/ reference/);
   assert.match(message.parts[0].text, /Always return memory_candidates/);
-  assert.match(message.parts[0].text, /assigned_role, goal, acceptance, constraints, and quality_bar/);
+  assert.match(message.parts[0].text, /assigned_role, goal, acceptance, constraints, verification, and quality_bar/);
+  assert.match(message.parts[0].text, /Run every applicable verification command/);
   assert.match(message.parts[0].text, /validator decides the verdict independently/i);
   assert.match(message.parts[0].text, /Code4Me Technical English profile/);
   assert.match(message.parts[0].text, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);

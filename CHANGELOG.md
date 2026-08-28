@@ -7,6 +7,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-08-28
+
+### Added
+
+- Add an optional verification contract that carries exact project commands and
+  observable evidence through implementation and independent validation without
+  creating new project artifacts.
+
 ## [0.22.0] - 2026-08-25
 
 ### Added
