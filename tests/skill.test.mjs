@@ -274,7 +274,9 @@ test("Code4Me proposes inspectable quality bars without open-ended loops", () =>
 
 test("Code4Me makes Basic Memory use observable", () => {
   for (const rule of [
-    "actually search shared **Basic Memory**",
+    "Before planning any task, consult shared **Basic Memory**",
+    "make at least one targeted search",
+    "Do not classify, assign, or dispatch",
     "Do not merely mention memory or rely on recollection",
     "`used` and `empty` require a completed search",
     "searched: true | false",
@@ -286,8 +288,25 @@ test("Code4Me makes Basic Memory use observable", () => {
   ]) {
     assert.ok(normalizedSkill.includes(rule), `missing memory rule: ${rule}`);
   }
-  assert.ok(toolbox.includes("searches relevant gaps when memory is available"));
+  assert.ok(toolbox.includes("makes one targeted gap search when memory is available"));
   assert.ok(toolbox.includes("reports truthful `Basic Memory` tool evidence"));
+  assert.ok(toolbox.includes("does not begin task work until"));
+});
+
+test("Code4Me protects evidence-backed invariants", () => {
+  for (const rule of [
+    "invariants:",
+    "id: <stable invariant id>",
+    "change_policy: fixed | explicit_approval",
+    "task-specific outcome belongs in `acceptance`",
+    "new product rule requires explicit user confirmation",
+    "reports each invariant ID",
+    "confirms that its source was not weakened",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing invariant rule: ${rule}`);
+  }
+  assert.ok(validation.includes("For each invariant, name its ID"));
+  assert.ok(validation.includes("Missing invariant evidence prevents a pass"));
 });
 
 test("Code4Me requires bounded independent validation", () => {

@@ -7,6 +7,17 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-09-18
+
+### Added
+
+- Add optional evidence-backed invariants to task verification contracts.
+
+### Changed
+
+- Require a Basic Memory availability check and targeted search before every
+  task is classified, assigned, dispatched, or started.
+
 ## [0.24.0] - 2026-08-28
 
 ### Added

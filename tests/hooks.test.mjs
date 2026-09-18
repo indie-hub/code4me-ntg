@@ -57,10 +57,11 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /deferred_work in the result envelope/);
   assert.match(hookOutput.additionalContext, /same milestone, task, and stage IDs/);
   assert.match(hookOutput.additionalContext, /Actually open every supplied memory:\/\/ reference/);
-  assert.match(hookOutput.additionalContext, /search Basic Memory for relevant gaps/);
+  assert.match(hookOutput.additionalContext, /For every task, make one targeted Basic Memory search/);
   assert.match(hookOutput.additionalContext, /memory\.searched true/);
   assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
-  assert.match(hookOutput.additionalContext, /assigned_role, goal, acceptance, constraints, verification, and quality_bar/);
+  assert.match(hookOutput.additionalContext, /verification, including each invariant, and quality_bar/);
+  assert.match(hookOutput.additionalContext, /Run every applicable verification command and invariant check/);
   assert.match(hookOutput.additionalContext, /Run every applicable verification command/);
   assert.match(hookOutput.additionalContext, /required failure prevents outcome complete/);
   assert.match(hookOutput.additionalContext, /validator decides the verdict independently/i);
@@ -80,6 +81,7 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(producer.hookSpecificOutput.additionalContext, /Code4Me producer check/);
   assert.match(producer.hookSpecificOutput.additionalContext, /Crowded roster and native subagent availability/);
   assert.match(producer.hookSpecificOutput.additionalContext, /must not validate/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /consult Basic Memory, make one targeted search/);
   assert.deepEqual(run("envelope", { prompt: "hello" }), {});
 });
 
@@ -105,7 +107,8 @@ test("OpenCode appends worker or producer guidance when applicable", async () =>
   assert.match(message.parts[0].text, /deferred_work in the result envelope/);
   assert.match(message.parts[0].text, /Actually open every supplied memory:\/\/ reference/);
   assert.match(message.parts[0].text, /Always return memory_candidates/);
-  assert.match(message.parts[0].text, /assigned_role, goal, acceptance, constraints, verification, and quality_bar/);
+  assert.match(message.parts[0].text, /verification, including each invariant, and quality_bar/);
+  assert.match(message.parts[0].text, /Run every applicable verification command and invariant check/);
   assert.match(message.parts[0].text, /Run every applicable verification command/);
   assert.match(message.parts[0].text, /validator decides the verdict independently/i);
   assert.match(message.parts[0].text, /Code4Me Technical English profile/);
@@ -115,6 +118,7 @@ test("OpenCode appends worker or producer guidance when applicable", async () =>
   await plugin["chat.message"]({}, ordinary);
   assert.match(ordinary.parts[0].text, /Code4Me producer check/);
   assert.match(ordinary.parts[0].text, /must not validate/);
+  assert.match(ordinary.parts[0].text, /consult Basic Memory, make one targeted search/);
 
   const casual = { parts: [{ type: "text", text: "hello" }] };
   await plugin["chat.message"]({}, casual);

@@ -8,6 +8,9 @@ Return evidence, not approval language.
   possible and inspect every evidence target directly. Report exact results.
   If independent execution is impossible, state why and use other direct
   evidence; never accept the implementer's summary as verification.
+- For each invariant, name its ID, rerun its check, confirm its pass condition,
+  and confirm that its source and check were not weakened. Missing invariant
+  evidence prevents a pass.
 - Inspect the current diff and relevant callers or boundaries.
 - Confirm the changes stay within scope and do not weaken or delete tests silently.
 - Reject task or milestone IDs, status, TODO/FIXME items, plans, progress,

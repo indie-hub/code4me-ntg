@@ -15,7 +15,7 @@ same events without adding telemetry or persistent summaries.
 The optional Trello skill adds a two-way human work board without replacing
 that event history. There are no copied project templates or tracker forests.
 
-For non-trivial work, Code4Me searches the shared Basic Memory project before
+For every task, Code4Me searches the shared Basic Memory project before
 planning and carries relevant `memory://` references in the worker envelope.
 Workers may return durable memory candidates; the producer validates,
 deduplicates, and writes them back. Basic Memory is durable project knowledge,
@@ -60,6 +60,8 @@ validation; it does not add a workflow engine or persist to later requests.
 - Carry exact project verification commands and observable evidence in both
   envelopes when credible checks exist; do not create artifacts to fill the
   contract.
+- Carry only relevant, evidence-backed durable invariants. The implementer must
+  not weaken them, and the validator must rerun their checks.
 - When comparison adds value, let the producer propose one inspectable quality
   bar, expose it as provisional, and have the validator report the largest gap
   against the actual artifact.
@@ -78,8 +80,8 @@ validation; it does not add a workflow engine or persist to later requests.
   rooms are all that exist.
 - Allow one bounded repair and one revalidation, then stop rather than loop.
 - Persist durable, evidenced lessons through Basic Memory.
-- Require actual Basic Memory search/read evidence for standard and critical
-  work, with explicit `searched`, status, references, and unavailable reasons.
+- Require actual Basic Memory search/read evidence for every task, with explicit
+  `searched`, status, references, and unavailable reasons.
 - Preserve active lifecycle events append-only; rotate only oversized, fully
   closed history into verified immutable archives so routine resume stays
   bounded.
