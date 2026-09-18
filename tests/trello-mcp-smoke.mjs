@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { once } from "node:events";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -90,6 +91,9 @@ try {
   });
 } finally {
   child.kill();
+  if (child.exitCode === null && child.signalCode === null) {
+    await once(child, "exit");
+  }
   await rm(root, { recursive: true, force: true });
 }
 
