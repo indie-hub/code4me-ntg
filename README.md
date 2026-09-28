@@ -50,6 +50,9 @@ validation; it does not add a workflow engine or persist to later requests.
 - Keep the producer orchestration-first: delegate implementation to a ready
   Crowded room, then a native subagent, and self-implement only as a recorded
   fallback when neither route exists.
+- Use System 1 as a fast advisory layer: the producer recommends routing and
+  workers choose the cheapest reversible next action. Use System 2 for
+  consequential, uncertain, irreversible, or contract-changing decisions.
 - In explicit Crowd Mode, reserve validation capacity, fan out only independent
   read-only evidence or isolated writable tasks, dispatch one complete wave,
   then checkpoint and yield without active waiting.

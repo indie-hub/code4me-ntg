@@ -73,7 +73,9 @@ inside a worker envelope.
    [Python](references/python.md), [Swift](references/swift.md),
    [C#](references/csharp.md), [C/C++](references/cpp.md),
    [Windows](references/windows.md), and [Unix](references/unix.md).
-6. Discover the live roster and assign a task-scoped team: one producer, one
+6. Apply the producer System 1 contract below after memory and project guidance.
+   Confirm or revise its recommendation with deliberate System 2 reasoning.
+   Then discover the live roster and assign a task-scoped team: one producer, one
    implementer, one validator, and only the specialists this task needs. The
    producer keeps its main context orchestration-only by default. Delegate
    engineering artifact work and independent judgment, including implementation,
@@ -225,6 +227,40 @@ rounds because evidence showed it was misleading or uninspectable, and must
 record the reason in the next dispatch. Never weaken or move the bar merely
 because the current implementation missed it. The existing bounded limit of one
 repair and one revalidation still applies.
+
+## System 1 decision layer
+
+System 1 is a fast recommendation layer, not a separate agent, model, service,
+or authority. It proposes the next decision from current evidence.
+System 2 deliberately confirms consequential decisions. Neither layer may
+override user authority, task envelope, constraints, acceptance criteria,
+verification, quality bar, or invariants.
+
+If the model or runtime cannot perform a distinct System 1 pass, use System 2
+directly. Do not block the task or weaken any contract.
+
+Use System 1 directly only when the recommendation is inside current authority,
+low-risk, reversible, and supported by available evidence. Switch to System 2
+when confidence is low, evidence conflicts, action is irreversible, risk becomes
+critical, scope would expand, contract would change, or same approach repeatedly
+fails. Record only consequential selection, deviation, or escalation; never log
+private reasoning or every micro-decision.
+
+**Producer contract:** after required memory and project guidance, rapidly
+recommend task shape, weight, worker role, cheapest capable eligible worker,
+model tier, effort, validation route, and relevant evidence-backed invariants.
+Eliminate candidates that fail hard capability, isolation, independence, or
+cross-vendor requirements before comparing cost. The producer confirms or
+revises recommendation before assignment and records only final decision plus
+short evidence-based reason.
+
+**Worker contract:** at each meaningful decision point, rapidly choose the cheapest
+reversible next action that advances acceptance. Use current source/runtime
+evidence, supplied Basic Memory, constraints, verification, quality bar, and
+invariants. Act directly when shared rule above permits it. Otherwise use System
+2; return `blocked` or `changes_requested` when the decision needs new authority
+or a contract change. Report consequential deviations and escalations in result
+evidence, not source comments.
 
 ## Classification weights
 
@@ -428,6 +464,10 @@ Return non-empty `tool_evidence` naming each selected tool, action, and concise
 result or unavailable reason. Never claim a tool call that did not occur. The
 worker must return `memory_candidates`, using `[]` when no durable lesson was
 found, but must never write the producer's log.
+
+During task, apply worker System 1 contract for fast local decisions and switch
+to System 2 at listed escalation triggers. This does not permit redispatch,
+scope expansion, contract changes, or weaker evidence.
 
 Treat `assigned_role`, `goal`, `acceptance`, `constraints`, `verification`,
 including each invariant, and `quality_bar` as

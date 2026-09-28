@@ -60,6 +60,8 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /For every task, make one targeted Basic Memory search/);
   assert.match(hookOutput.additionalContext, /memory\.searched true/);
   assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
+  assert.match(hookOutput.additionalContext, /Use worker System 1 for the cheapest reversible next action/);
+  assert.match(hookOutput.additionalContext, /Use System 2 when risk, uncertainty, irreversibility, scope, or the contract changes/);
   assert.match(hookOutput.additionalContext, /verification, including each invariant, and quality_bar/);
   assert.match(hookOutput.additionalContext, /Run every applicable verification command and invariant check/);
   assert.match(hookOutput.additionalContext, /Run every applicable verification command/);
@@ -82,6 +84,8 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(producer.hookSpecificOutput.additionalContext, /Crowded roster and native subagent availability/);
   assert.match(producer.hookSpecificOutput.additionalContext, /must not validate/);
   assert.match(producer.hookSpecificOutput.additionalContext, /consult Basic Memory, make one targeted search/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /Use System 1 to recommend task shape/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /Use System 2 before consequential or uncertain decisions/);
   assert.deepEqual(run("envelope", { prompt: "hello" }), {});
 });
 
@@ -107,6 +111,7 @@ test("OpenCode appends worker or producer guidance when applicable", async () =>
   assert.match(message.parts[0].text, /deferred_work in the result envelope/);
   assert.match(message.parts[0].text, /Actually open every supplied memory:\/\/ reference/);
   assert.match(message.parts[0].text, /Always return memory_candidates/);
+  assert.match(message.parts[0].text, /Use worker System 1 for the cheapest reversible next action/);
   assert.match(message.parts[0].text, /verification, including each invariant, and quality_bar/);
   assert.match(message.parts[0].text, /Run every applicable verification command and invariant check/);
   assert.match(message.parts[0].text, /Run every applicable verification command/);
@@ -119,6 +124,7 @@ test("OpenCode appends worker or producer guidance when applicable", async () =>
   assert.match(ordinary.parts[0].text, /Code4Me producer check/);
   assert.match(ordinary.parts[0].text, /must not validate/);
   assert.match(ordinary.parts[0].text, /consult Basic Memory, make one targeted search/);
+  assert.match(ordinary.parts[0].text, /Use System 1 to recommend task shape/);
 
   const casual = { parts: [{ type: "text", text: "hello" }] };
   await plugin["chat.message"]({}, casual);

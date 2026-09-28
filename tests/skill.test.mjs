@@ -272,6 +272,23 @@ test("Code4Me proposes inspectable quality bars without open-ended loops", () =>
   }
 });
 
+test("Code4Me separates fast producer and worker decisions from System 2", () => {
+  for (const rule of [
+    "## System 1 decision layer",
+    "agent, model, service, or authority",
+    "cannot perform a distinct System 1 pass",
+    "Do not block the task or weaken any contract",
+    "**Producer contract:**",
+    "cheapest capable eligible worker",
+    "**Worker contract:**",
+    "cheapest reversible next action",
+    "return `blocked` or `changes_requested`",
+    "never log private reasoning",
+  ]) {
+    assert.ok(normalizedSkill.includes(rule), `missing decision-layer rule: ${rule}`);
+  }
+});
+
 test("Code4Me makes Basic Memory use observable", () => {
   for (const rule of [
     "Before planning any task, consult shared **Basic Memory**",

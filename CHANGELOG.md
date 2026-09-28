@@ -7,6 +7,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-09-28
+
+### Added
+
+- Add role-specific System 1 decision contracts for producer routing and worker
+  execution, with explicit System 2 escalation triggers.
+
 ## [0.25.0] - 2026-09-18
 
 ### Added
