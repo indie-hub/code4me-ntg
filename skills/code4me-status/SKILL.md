@@ -45,6 +45,11 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
    `complete` v2 results without non-empty `tool_evidence`, validation predating
    the latest implementation result, tasks without classification or team
    assignment, and closed milestones containing an unvalidated task.
+   Validate each `decision_receipts` entry against its stage's `system_one`
+   descriptor. Flag claimed use without a receipt, provider or model mismatch,
+   negative latency, shadow advice treated as operative, and `verified`
+   evidence with a null request ID or `recorded_by: agent`. Keep `reported` and
+   independently `verified` receipts separate.
 6. Correlate `task_board_linked`, `task_change_requested`, and
    `task_cancel_requested` by provider, board, card, milestone, and logical task.
    Use the latest `trello_synced` event for cursor age, counts, and conflicts.
@@ -87,6 +92,25 @@ Show the numerator, denominator, and percentage for every rate. Report `n/a`
 when a denominator is zero or required data is absent. List malformed or
 missing data as event-log issues. Do not rank agents, rooms, vendors, or models.
 
+### System One effectiveness
+
+When receipts exist or the user asks about System One, read
+[the provider contract](../code4me/references/system-one.md) and derive:
+
+- verified-receipt stage rate: stages with at least one verified receipt divided
+  by stages that declared `system_one.status: ready`;
+- shadow match, shadow override, escalation, and error rates from receipt
+  dispositions;
+- median and p95 latency from non-negative verified latency values, with sample
+  size;
+- first-pass validation and repair rates split by presence of a verified receipt.
+
+Report verified and reported receipts separately. Report `n/a` when the sample
+is insufficient. These comparisons are observational, not causal. Do not infer
+time, token, cost, or quality savings. Label provider-reported cost as provider
+data, not as a project measurement. A causal claim requires a representative
+randomized or alternating A/B comparison with the same acceptance contract.
+
 ## Report
 
 Return:
@@ -100,12 +124,15 @@ Return:
 - each active task's invariant IDs and latest check status when present;
 - each assigned member's mode, model tier or exact model, requested effort, and
   derived Crowded control state;
+- active System One provider, model, interface, status, mode, and verified versus
+  reported receipt counts when declared;
 - validation route and verdict, or why validation is missing;
 - linked Trello card IDs plus latest sync time and unresolved conflicts when
   board events exist;
 - five most recent validated or terminal tasks unless another limit is asked;
 - workflow-health scope, sample sizes, rates, and median elapsed cycle only when
   requested;
+- System One effectiveness metrics only when receipts exist or the user asks;
 - event-log issues, or `none`.
 
 Never call a task complete merely because implementation returned `complete`.

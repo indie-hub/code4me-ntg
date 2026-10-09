@@ -7,6 +7,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-10-09
+
+### Added
+
+- Add optional System One provider discovery, shadow-mode decision receipts,
+  and derived effectiveness metrics without a runtime dependency.
+
 ## [0.26.0] - 2026-09-28
 
 ### Added

@@ -25,8 +25,28 @@ test("Status derives milestone and task state from events", () => {
     "`handover stale`",
     "Never call a task complete merely because implementation returned `complete`",
     "`complete` v2 results without non-empty `tool_evidence`",
+    "Validate each `decision_receipts` entry",
+    "claimed use without a receipt",
+    "shadow advice treated as operative",
+    "`recorded_by: agent`",
+    "Keep `reported` and independently `verified` receipts separate",
   ]) {
     assert.ok(status.includes(rule), `missing status rule: ${rule}`);
+  }
+});
+
+test("Status derives System One effectiveness without causal claims", () => {
+  for (const rule of [
+    "### System One effectiveness",
+    "verified-receipt stage rate",
+    "shadow match, shadow override, escalation, and error rates",
+    "median and p95 latency",
+    "first-pass validation and repair rates split",
+    "observational, not causal",
+    "Do not infer time, token, cost, or quality savings",
+    "randomized or alternating A/B comparison",
+  ]) {
+    assert.ok(status.includes(rule), `missing System One metric: ${rule}`);
   }
 });
 

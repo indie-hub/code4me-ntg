@@ -23,6 +23,10 @@ const toolbox = readFileSync(
   new URL("../skills/code4me/references/toolbox.md", import.meta.url),
   "utf8",
 ).replace(/\s+/g, " ");
+const systemOne = readFileSync(
+  new URL("../skills/code4me/references/system-one.md", import.meta.url),
+  "utf8",
+).replace(/\s+/g, " ");
 const openaiAgent = readFileSync(
   new URL("../skills/code4me/agents/openai.yaml", import.meta.url),
   "utf8",
@@ -284,8 +288,30 @@ test("Code4Me separates fast producer and worker decisions from System 2", () =>
     "cheapest reversible next action",
     "return `blocked` or `changes_requested`",
     "never log private reasoning",
+    "references/system-one.md",
+    "system_one:",
+    "decision_receipts:",
+    "provider declaration does not prove use",
   ]) {
     assert.ok(normalizedSkill.includes(rule), `missing decision-layer rule: ${rule}`);
+  }
+  for (const rule of [
+    "A skill or documentation package alone is not a runtime",
+    "read-only live probe",
+    "Default to `shadow`",
+    "No receipt means no claimed use",
+    "evidence_status: verified | reported",
+    "recorded_by: provider | adapter | hook | observer | agent",
+    "Only a provider, adapter, hook, or observer independent of the agent",
+    "verified receipt requires a non-null `request_id`",
+    "observational, not causal",
+    "never invent token or cost savings",
+    "TypeSafe",
+    "Choice",
+    "Score",
+    "Noul",
+  ]) {
+    assert.ok(systemOne.includes(rule), `missing provider rule: ${rule}`);
   }
 });
 

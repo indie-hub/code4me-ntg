@@ -62,6 +62,10 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
   assert.match(hookOutput.additionalContext, /Use worker System 1 for the cheapest reversible next action/);
   assert.match(hookOutput.additionalContext, /Use System 2 when risk, uncertainty, irreversibility, scope, or the contract changes/);
+  assert.match(hookOutput.additionalContext, /Read the system_one descriptor/);
+  assert.match(hookOutput.additionalContext, /Shadow advice never controls the action/);
+  assert.match(hookOutput.additionalContext, /Return decision_receipts for claimed calls/);
+  assert.match(hookOutput.additionalContext, /Agent-supplied evidence cannot be verified/);
   assert.match(hookOutput.additionalContext, /verification, including each invariant, and quality_bar/);
   assert.match(hookOutput.additionalContext, /Run every applicable verification command and invariant check/);
   assert.match(hookOutput.additionalContext, /Run every applicable verification command/);
@@ -85,6 +89,9 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(producer.hookSpecificOutput.additionalContext, /must not validate/);
   assert.match(producer.hookSpecificOutput.additionalContext, /consult Basic Memory, make one targeted search/);
   assert.match(producer.hookSpecificOutput.additionalContext, /Use System 1 to recommend task shape/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /Discover any callable System One provider/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /default it to shadow mode/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /declaration alone does not prove use/i);
   assert.match(producer.hookSpecificOutput.additionalContext, /Use System 2 before consequential or uncertain decisions/);
   assert.deepEqual(run("envelope", { prompt: "hello" }), {});
 });
@@ -112,6 +119,8 @@ test("OpenCode appends worker or producer guidance when applicable", async () =>
   assert.match(message.parts[0].text, /Actually open every supplied memory:\/\/ reference/);
   assert.match(message.parts[0].text, /Always return memory_candidates/);
   assert.match(message.parts[0].text, /Use worker System 1 for the cheapest reversible next action/);
+  assert.match(message.parts[0].text, /Read the system_one descriptor/);
+  assert.match(message.parts[0].text, /Return decision_receipts for claimed calls/);
   assert.match(message.parts[0].text, /verification, including each invariant, and quality_bar/);
   assert.match(message.parts[0].text, /Run every applicable verification command and invariant check/);
   assert.match(message.parts[0].text, /Run every applicable verification command/);
@@ -125,6 +134,8 @@ test("OpenCode appends worker or producer guidance when applicable", async () =>
   assert.match(ordinary.parts[0].text, /must not validate/);
   assert.match(ordinary.parts[0].text, /consult Basic Memory, make one targeted search/);
   assert.match(ordinary.parts[0].text, /Use System 1 to recommend task shape/);
+  assert.match(ordinary.parts[0].text, /Discover any callable System One provider/);
+  assert.match(ordinary.parts[0].text, /default it to shadow mode/);
 
   const casual = { parts: [{ type: "text", text: "hello" }] };
   await plugin["chat.message"]({}, casual);

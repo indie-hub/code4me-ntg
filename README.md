@@ -53,6 +53,12 @@ validation; it does not add a workflow engine or persist to later requests.
 - Use System 1 as a fast advisory layer: the producer recommends routing and
   workers choose the cheapest reversible next action. Use System 2 for
   consequential, uncertain, irreversible, or contract-changing decisions.
+- Discover an optional callable System One provider, declare its exact
+  capability, and default it to shadow mode. TypeSafe is one example, not a
+  dependency.
+- Require compact receipts for claimed provider calls. Status derives verified
+  use, disposition, latency, and outcome splits from existing events without a
+  second telemetry store or unsupported causal claims.
 - In explicit Crowd Mode, reserve validation capacity, fan out only independent
   read-only evidence or isolated writable tasks, dispatch one complete wave,
   then checkpoint and yield without active waiting.
