@@ -59,6 +59,8 @@ validation; it does not add a workflow engine or persist to later requests.
 - Require compact receipts for claimed provider calls. Status derives verified
   use, disposition, latency, and outcome splits from existing events without a
   second telemetry store or unsupported causal claims.
+- Call System One only when it can eliminate a named expensive action, then
+  record whether that action was actually avoided.
 - In explicit Crowd Mode, reserve validation capacity, fan out only independent
   read-only evidence or isolated writable tasks, dispatch one complete wave,
   then checkpoint and yield without active waiting.
@@ -123,9 +125,9 @@ memory, block a call, or grant permission. There is deliberately no SessionStart
 hook.
 
 OpenCode receives the incoming-envelope nudge through
-`.opencode/plugins/code4me.mjs`. Its current pre-tool hook exposes mutable tool
-arguments but no safe advisory-context channel, so the broad-source nudge is not
-installed there.
+`.opencode/plugins/code4me.js`. Its OpenCode 2 prompt hook adds the worker or
+producer guidance before prompt admission. The adapter does not intercept tool
+calls.
 
 With Crowded, enable these adapters in the project recipe:
 

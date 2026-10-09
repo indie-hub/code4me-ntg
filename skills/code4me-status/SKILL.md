@@ -47,7 +47,8 @@ Report the smallest accurate view of `.code4me/events.jsonl` without changing it
    assignment, and closed milestones containing an unvalidated task.
    Validate each `decision_receipts` entry against its stage's `system_one`
    descriptor. Flag claimed use without a receipt, provider or model mismatch,
-   negative latency, shadow advice treated as operative, and `verified`
+   negative latency, a missing `avoids` or boolean `avoided`, shadow advice
+   treated as operative, and `verified`
    evidence with a null request ID or `recorded_by: agent`. Keep `reported` and
    independently `verified` receipts separate.
 6. Correlate `task_board_linked`, `task_change_requested`, and
@@ -101,6 +102,8 @@ When receipts exist or the user asks about System One, read
   by stages that declared `system_one.status: ready`;
 - shadow match, shadow override, escalation, and error rates from receipt
   dispositions;
+- avoided-work rate: verified receipts with `avoided: true` divided by verified
+  receipts with a boolean `avoided` value;
 - median and p95 latency from non-negative verified latency values, with sample
   size;
 - first-pass validation and repair rates split by presence of a verified receipt.

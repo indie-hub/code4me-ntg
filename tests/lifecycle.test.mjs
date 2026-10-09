@@ -28,6 +28,7 @@ test("Status derives milestone and task state from events", () => {
     "Validate each `decision_receipts` entry",
     "claimed use without a receipt",
     "shadow advice treated as operative",
+    "a missing `avoids` or boolean `avoided`",
     "`recorded_by: agent`",
     "Keep `reported` and independently `verified` receipts separate",
   ]) {
@@ -40,6 +41,7 @@ test("Status derives System One effectiveness without causal claims", () => {
     "### System One effectiveness",
     "verified-receipt stage rate",
     "shadow match, shadow override, escalation, and error rates",
+    "avoided-work rate",
     "median and p95 latency",
     "first-pass validation and repair rates split",
     "observational, not causal",

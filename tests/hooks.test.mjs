@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { Code4Me } from "../.opencode/plugins/code4me.mjs";
+import Code4Me from "../.opencode/plugins/code4me.js";
 
 const hook = fileURLToPath(new URL("../hooks/nudge.mjs", import.meta.url));
 
@@ -60,7 +60,9 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(hookOutput.additionalContext, /For every task, make one targeted Basic Memory search/);
   assert.match(hookOutput.additionalContext, /memory\.searched true/);
   assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
-  assert.match(hookOutput.additionalContext, /Use worker System 1 for the cheapest reversible next action/);
+  assert.match(hookOutput.additionalContext, /Use worker System 1 only when it can eliminate a named expensive action/);
+  assert.match(hookOutput.additionalContext, /Record avoids and whether it was actually avoided/);
+  assert.match(hookOutput.additionalContext, /if no expensive action can be named, do not call it/i);
   assert.match(hookOutput.additionalContext, /Use System 2 when risk, uncertainty, irreversibility, scope, or the contract changes/);
   assert.match(hookOutput.additionalContext, /Read the system_one descriptor/);
   assert.match(hookOutput.additionalContext, /Shadow advice never controls the action/);
@@ -91,6 +93,8 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.match(producer.hookSpecificOutput.additionalContext, /Use System 1 to recommend task shape/);
   assert.match(producer.hookSpecificOutput.additionalContext, /Discover any callable System One provider/);
   assert.match(producer.hookSpecificOutput.additionalContext, /default it to shadow mode/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /A System One call should eliminate expensive work/);
+  assert.match(producer.hookSpecificOutput.additionalContext, /record avoids plus avoided/);
   assert.match(producer.hookSpecificOutput.additionalContext, /declaration alone does not prove use/i);
   assert.match(producer.hookSpecificOutput.additionalContext, /Use System 2 before consequential or uncertain decisions/);
   assert.deepEqual(run("envelope", { prompt: "hello" }), {});
@@ -110,34 +114,49 @@ test("only broad source fallbacks receive advisory guidance", () => {
 });
 
 test("OpenCode appends worker or producer guidance when applicable", async () => {
-  const plugin = await Code4Me();
-  const message = { parts: [{ type: "text", text: envelope }] };
-  await plugin["chat.message"]({}, message);
-  assert.match(message.parts[0].text, /Code4Me task envelope detected/);
-  assert.match(message.parts[0].text, /Source comments explain code only/);
-  assert.match(message.parts[0].text, /deferred_work in the result envelope/);
-  assert.match(message.parts[0].text, /Actually open every supplied memory:\/\/ reference/);
-  assert.match(message.parts[0].text, /Always return memory_candidates/);
-  assert.match(message.parts[0].text, /Use worker System 1 for the cheapest reversible next action/);
-  assert.match(message.parts[0].text, /Read the system_one descriptor/);
-  assert.match(message.parts[0].text, /Return decision_receipts for claimed calls/);
-  assert.match(message.parts[0].text, /verification, including each invariant, and quality_bar/);
-  assert.match(message.parts[0].text, /Run every applicable verification command and invariant check/);
-  assert.match(message.parts[0].text, /Run every applicable verification command/);
-  assert.match(message.parts[0].text, /validator decides the verdict independently/i);
-  assert.match(message.parts[0].text, /Code4Me Technical English profile/);
-  assert.match(message.parts[0].text, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
+  let promptHook;
+  await Code4Me.setup({
+    session: {
+      async hook(name, callback) {
+        assert.equal(name, "prompt");
+        promptHook = callback;
+      },
+    },
+  });
+  assert.equal(Code4Me.id, "code4me.ntg");
 
-  const ordinary = { parts: [{ type: "text", text: "fix the parser" }] };
-  await plugin["chat.message"]({}, ordinary);
-  assert.match(ordinary.parts[0].text, /Code4Me producer check/);
-  assert.match(ordinary.parts[0].text, /must not validate/);
-  assert.match(ordinary.parts[0].text, /consult Basic Memory, make one targeted search/);
-  assert.match(ordinary.parts[0].text, /Use System 1 to recommend task shape/);
-  assert.match(ordinary.parts[0].text, /Discover any callable System One provider/);
-  assert.match(ordinary.parts[0].text, /default it to shadow mode/);
+  const runPrompt = async (text) => {
+    const event = { prompt: { text } };
+    await promptHook(event);
+    return event.prompt.text;
+  };
 
-  const casual = { parts: [{ type: "text", text: "hello" }] };
-  await plugin["chat.message"]({}, casual);
-  assert.equal(casual.parts[0].text, "hello");
+  const message = await runPrompt(envelope);
+  assert.match(message, /Code4Me task envelope detected/);
+  assert.match(message, /Source comments explain code only/);
+  assert.match(message, /deferred_work in the result envelope/);
+  assert.match(message, /Actually open every supplied memory:\/\/ reference/);
+  assert.match(message, /Always return memory_candidates/);
+  assert.match(message, /Use worker System 1 only when it can eliminate a named expensive action/);
+  assert.match(message, /Record avoids and whether it was actually avoided/);
+  assert.match(message, /Read the system_one descriptor/);
+  assert.match(message, /Return decision_receipts for claimed calls/);
+  assert.match(message, /verification, including each invariant, and quality_bar/);
+  assert.match(message, /Run every applicable verification command and invariant check/);
+  assert.match(message, /Run every applicable verification command/);
+  assert.match(message, /validator decides the verdict independently/i);
+  assert.match(message, /Code4Me Technical English profile/);
+  assert.match(message, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
+  assert.equal(await runPrompt(message), message);
+
+  const ordinary = await runPrompt("fix the parser");
+  assert.match(ordinary, /Code4Me producer check/);
+  assert.match(ordinary, /must not validate/);
+  assert.match(ordinary, /consult Basic Memory, make one targeted search/);
+  assert.match(ordinary, /Use System 1 to recommend task shape/);
+  assert.match(ordinary, /Discover any callable System One provider/);
+  assert.match(ordinary, /default it to shadow mode/);
+  assert.match(ordinary, /A System One call should eliminate expensive work/);
+
+  assert.equal(await runPrompt("hello"), "hello");
 });

@@ -7,6 +7,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.28.0] - 2026-10-09
+
+### Changed
+
+- Require every System One call to name expensive work it can eliminate and to
+  report whether that work was actually avoided.
+- Port the OpenCode adapter to the OpenCode 2 plugin definition and prompt hook.
+
 ## [0.27.0] - 2026-10-09
 
 ### Added

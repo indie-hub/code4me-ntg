@@ -117,7 +117,8 @@ inside a worker envelope.
    cannot expand scope or relabel its vendor, or claim tool use it did not perform.
    A capability declaration does not prove System One use. When a result claims
    a provider call, require a matching `decision_receipts` entry; reject the
-   claim as malformed when the receipt is absent. Accept `verified` only with a
+   claim as malformed when the receipt is absent or does not name the expensive
+   action and whether it was actually avoided. Accept `verified` only with a
    non-null request ID and `recorded_by` set to an independent provider,
    adapter, hook, or observer. Treat agent-supplied receipts as `reported`. In
    shadow mode, never treat the provider recommendation as the operative
@@ -258,8 +259,11 @@ Use System 1 directly only when the recommendation is inside current authority,
 low-risk, reversible, and supported by available evidence. Switch to System 2
 when confidence is low, evidence conflicts, action is irreversible, risk becomes
 critical, scope would expand, contract would change, or same approach repeatedly
-fails. Record only consequential selection, deviation, or escalation; never log
-private reasoning or every micro-decision.
+fails. A System One call should eliminate expensive work. Before calling it,
+name the specific context load, System 2 reasoning, larger-model use,
+delegation, probe, or branch exploration it can avoid. If none can be named,
+do not call it. Record only consequential selection, deviation, or escalation;
+never log private reasoning or every micro-decision.
 
 **Producer contract:** after required memory and project guidance, rapidly
 recommend task shape, weight, worker role, cheapest capable eligible worker,
@@ -267,7 +271,9 @@ model tier, effort, validation route, and relevant evidence-backed invariants.
 Eliminate candidates that fail hard capability, isolation, independence, or
 cross-vendor requirements before comparing cost. The producer confirms or
 revises recommendation before assignment and records only final decision plus
-short evidence-based reason. Attach any provider receipt to `task_assigned`.
+short evidence-based reason. Use System One only when a genuine semantic choice
+remains after deterministic filtering. Attach any provider receipt to
+`task_assigned`.
 
 **Worker contract:** at each meaningful decision point, rapidly choose the cheapest
 reversible next action that advances acceptance. Use current source/runtime
@@ -276,7 +282,8 @@ invariants. Act directly when shared rule above permits it. Otherwise use System
 2; return `blocked` or `changes_requested` when the decision needs new authority
 or a contract change. Report consequential deviations and escalations in result
 evidence, not source comments. Return a receipt for every claimed consequential
-provider call and `decision_receipts: []` when none occurred.
+provider call. Each receipt names the expensive action it could avoid and
+whether it actually did. Return `decision_receipts: []` when none occurred.
 
 ## Classification weights
 
@@ -645,6 +652,8 @@ expected_return:
       model: <provider-reported model>
       interface: mcp | http | sdk
       purpose: <worker_route | effort | next_action | evidence_check | other>
+      avoids: <specific expensive action>
+      avoided: true | false
       primitive: <provider primitive>
       latency_ms: <non-negative integer or null>
       answer: <compact typed answer>

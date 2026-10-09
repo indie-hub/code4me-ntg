@@ -42,6 +42,12 @@ Code4Me dependency. Current primary references:
 
 ## Decision receipts
 
+**A System One call should eliminate expensive work.** Before the call, name
+the specific context load, System 2 reasoning, larger-model use, delegation,
+probe, or branch exploration that the answer can avoid. If no expensive action
+can be named, do not call System One. Use deterministic source, rules, and tests
+directly when they already decide the question.
+
 Capability declaration does not prove use. Every claimed consequential System
 One call needs one compact receipt:
 
@@ -54,6 +60,8 @@ One call needs one compact receipt:
   model: <provider-reported model>
   interface: mcp | http | sdk
   purpose: <worker_route | effort | next_action | evidence_check | other>
+  avoids: <specific expensive action>
+  avoided: true | false
   primitive: <provider primitive>
   latency_ms: <non-negative integer or null>
   answer: <compact typed answer>
@@ -68,6 +76,10 @@ Only a provider, adapter, hook, or observer independent of the agent may set
 `reported`. No receipt means no claimed use. Store no raw state, prompt,
 credentials, private reasoning, or secret in a receipt.
 
+Set `avoided: true` only when the named action was actually skipped. A false
+value is honest evidence that the call did not save work, not a reason to hide
+the receipt.
+
 Attach producer receipts to `task_assigned`. Return worker and validator receipts
 in the matching result. Use `decision_receipts: []` when no consequential System
 One call occurred.
@@ -79,6 +91,7 @@ Report verified and reported receipts separately:
 
 - stages with a verified receipt divided by stages that declared `status: ready`;
 - shadow agreement, override, escalation, and error rates;
+- receipts that actually avoided their named expensive action;
 - median and p95 verified latency with sample size;
 - first-pass validation and repair rates split by verified-receipt presence;
 - provider-reported cost only when present; never invent token or cost savings.
