@@ -133,6 +133,10 @@ inside a worker envelope.
    evidence target, and invariant ID with its exact result. Reject
    `outcome: complete` when a required command or invariant failed, was
    unavailable, or was omitted.
+   Before reusing the worker, preserve the accepted result at a unique task-and-
+   stage path or in the next envelope. Give validation that exact result and
+   the target commit plus working-tree fingerprint; never reuse a mutable
+   shared result path. Later relevant edits require validation of the new target.
 10. Append the accepted work result, then run mandatory validation using
    [references/validation.md](references/validation.md). Record every validation
    attempt as a `verify` dispatch/result pair, including inline validation.
@@ -147,8 +151,11 @@ inside a worker envelope.
    bounded repair by the implementer followed by one revalidation. If the
    second validation does not pass, checkpoint the task as blocked instead of
    looping.
-12. Append `task_validated` after a pass. Append a compact `checkpoint` whenever
-    work pauses, blocks, or reaches a task boundary. Close the milestone only
+12. Append `task_validated` after a pass. Append a compact `checkpoint` when
+    accepted work, ownership, blockers, decisions, or the next action changes.
+    Combine changes from one turn into one checkpoint; do not repeat an
+    unchanged status. Keep the awaiting-result checkpoint before yielding.
+    Close the milestone only
     when every acceptance criterion is supported by validated task evidence;
     then append `milestone_closed`. When Trello is configured, use the sibling
     skill to push the derived lifecycle state after each accepted transition.
@@ -278,7 +285,10 @@ remains after deterministic filtering. Attach any provider receipt to
 **Worker contract:** at each meaningful decision point, rapidly choose the cheapest
 reversible next action that advances acceptance. Use current source/runtime
 evidence, supplied Basic Memory, constraints, verification, quality bar, and
-invariants. Act directly when shared rule above permits it. Otherwise use System
+invariants. Before a large context load or exploring several branches, consider
+one bounded provider judgment to shortlist relevant evidence or select the next
+discriminating probe. Use the examples in the provider reference; no call is
+needed when existing rules already decide. Act directly when shared rule above permits it. Otherwise use System
 2; return `blocked` or `changes_requested` when the decision needs new authority
 or a contract change. Report consequential deviations and escalations in result
 evidence, not source comments. Return a receipt for every claimed consequential
@@ -483,6 +493,10 @@ not begin work until this consultation is complete.
 Use the toolbox according to the task,
 not mechanically: CodeGraph for exact structure, CCC for semantic discovery,
 Context Mode for large derived context, or narrow native reads when cheaper.
+For required Headroom-compressed evidence, retrieve `/v1/retrieve/<hash>` from
+the configured Headroom base URL and read `original_content`. A compression
+marker does not count as reading the evidence. See the toolbox reference for
+retrieval failures.
 Return non-empty `tool_evidence` naming each selected tool, action, and concise
 result or unavailable reason. Never claim a tool call that did not occur. The
 worker must return `memory_candidates`, using `[]` when no durable lesson was
@@ -520,6 +534,13 @@ Require each response to report `ok: true` and `status: "applied"`, then wait
 for the room to return `ready`. Append `task_controlled` with the requested
 model and effort plus each applied result. Unsupported or unavailable control
 is recorded there as failed; it does not authorize guessing another model.
+After a clear, restart, or model/effort change, check the effective model and
+effort using runtime observations when available. A successful control response
+or `ready` state alone does not prove the effective configuration. Clear may
+restore defaults: reapply the intended settings before dispatch. Record unknown
+or unsupported values honestly in the existing control evidence; do not claim a
+model tier from an unverified setting. Select a confirmed eligible alternative
+or report the capability gap when the task requires that setting.
 
 ### Validation routing
 

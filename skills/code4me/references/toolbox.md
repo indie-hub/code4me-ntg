@@ -57,3 +57,15 @@ credentials, tokens, or private user data.
 When a preferred tool is missing or stale, use the next suitable route and say
 what degraded. Memory records prior knowledge; live source evidence wins when
 they disagree.
+
+## Headroom retrieval
+
+When required evidence or instructions contain a Headroom compression marker,
+extract its hash and request `/v1/retrieve/<hash>` from the configured Headroom
+base URL. Read the response's `original_content` before relying on it or claiming
+the source was read. Retrieve only content needed for the current decision.
+
+If retrieval fails, expires, or returns another marker instead of original
+content, try a narrow direct read of the source when available. Do not loop on
+the same marker or reconstruct missing content from a summary. Report unresolved
+evidence as unavailable; required evidence must be recovered before a pass.

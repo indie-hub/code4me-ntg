@@ -79,7 +79,13 @@ pre-commit, readiness, or memory-health audit. Treat `housekeeping`, `handover`,
    references, and mark superseded guidance with a link to its replacement;
    never silently delete history.
 9. If every existing event is valid JSON, append exactly one compact checkpoint
-   line. Create `.code4me/events.jsonl` only when closeout was requested and it
+   line. Summarize the current state rather than repeating the event history.
+   Preserve stage-specific result paths and revision references for active or
+   accepted work, unresolved decisions, and explicit user waivers. Keep
+   implementation complete, independently validated, and accepted with waiver
+   distinct; a waiver is not a validation pass. Include the exact next action
+   and relevant durable Basic Memory references so a fresh agent can resume.
+   Create `.code4me/events.jsonl` only when closeout was requested and it
    does not exist. Never rewrite earlier events during ordinary operation. Use
    this shape:
 

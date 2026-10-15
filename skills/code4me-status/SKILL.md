@@ -104,12 +104,16 @@ When receipts exist or the user asks about System One, read
   dispositions;
 - avoided-work rate: verified receipts with `avoided: true` divided by verified
   receipts with a boolean `avoided` value;
+- split skipped-work counts by disposition: advice followed (`shadow_match`
+  or `active_accept`), overridden (`shadow_override`), escalated, or failed.
+  An override with `avoided: true` is skipped work, not advice-followed savings;
 - median and p95 latency from non-negative verified latency values, with sample
   size;
 - first-pass validation and repair rates split by presence of a verified receipt.
 
 Report verified and reported receipts separately. Report `n/a` when the sample
-is insufficient. These comparisons are observational, not causal. Do not infer
+is insufficient. Deduplicate receipts by stage and `decision_id` so a checkpoint
+copy does not count as another call. These comparisons are observational, not causal. Do not infer
 time, token, cost, or quality savings. Label provider-reported cost as provider
 data, not as a project measurement. A causal claim requires a representative
 randomized or alternating A/B comparison with the same acceptance contract.

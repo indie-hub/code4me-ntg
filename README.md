@@ -60,7 +60,14 @@ validation; it does not add a workflow engine or persist to later requests.
   use, disposition, latency, and outcome splits from existing events without a
   second telemetry store or unsupported causal claims.
 - Call System One only when it can eliminate a named expensive action, then
-  record whether that action was actually avoided.
+  record whether that action was actually avoided. Workers can shortlist context
+  or choose an investigative probe; Status separates skipped work by disposition
+  without treating it as measured savings.
+- Recheck effective room settings after controls, preserve stage-specific result
+  artifacts for validation, and recover required Headroom evidence through
+  `/v1/retrieve/<hash>` before claiming it was read.
+- Write checkpoints on meaningful state changes and preserve a compact handover
+  with evidence references and the exact next action.
 - In explicit Crowd Mode, reserve validation capacity, fan out only independent
   read-only evidence or isolated writable tasks, dispatch one complete wave,
   then checkpoint and yield without active waiting.

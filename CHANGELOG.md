@@ -7,6 +7,17 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.29.0] - 2026-10-15
+
+### Changed
+
+- Check effective room settings after controls and preserve validation results
+  by stage and code revision.
+- Recover required Headroom-compressed evidence through its retrieval endpoint.
+- Focus worker System One calls on context selection and investigation, and
+  distinguish skipped work from advice-followed savings.
+- Keep checkpoints focused on meaningful state changes and actionable handovers.
+
 ## [0.28.0] - 2026-10-09
 
 ### Changed

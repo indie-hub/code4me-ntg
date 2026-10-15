@@ -3,6 +3,13 @@
 Validate the current implementation from a context that did not implement it.
 Return evidence, not approval language.
 
+- Preserve the accepted result at a unique task-and-stage path before reusing
+  its worker. Never give a validator a mutable shared `result.yaml`; use the
+  stage-specific artifact or embed the accepted result in the envelope.
+- Bind the validation to that result and the exact commit plus working-tree
+  fingerprint when there are uncommitted changes. Check the target before and
+  after validation. Later relevant edits require validation of the changed
+  target; a pass for an earlier revision does not cover them.
 - Re-read the task goal, acceptance criteria, constraints, and changed files.
 - Read the verification contract. Independently rerun every listed command when
   possible and inspect every evidence target directly. Report exact results.

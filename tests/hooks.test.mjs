@@ -100,6 +100,29 @@ test("incoming envelopes enforce the Code4Me worker contract", () => {
   assert.deepEqual(run("envelope", { prompt: "hello" }), {});
 });
 
+test("vendor prompt hooks carry recovery and handoff guidance once", async () => {
+  let promptHook;
+  await Code4Me.setup({ session: { async hook(_name, callback) { promptHook = callback; } } });
+  for (const prompt of [envelope, "fix the parser"]) {
+    const event = { prompt: { text: prompt } };
+    await promptHook(event);
+    const first = event.prompt.text;
+    await promptHook(event);
+    assert.equal(event.prompt.text, first);
+    const native = run("envelope", { prompt }).hookSpecificOutput.additionalContext;
+    for (const guidance of [native, first]) {
+      assert.ok(guidance.includes("/v1/retrieve/<hash>"));
+      assert.ok(guidance.includes("original_content"));
+      if (prompt === envelope) {
+        assert.ok(guidance.includes("shortlist evidence or choose a discriminating probe"));
+      } else {
+        assert.ok(guidance.includes("confirm effective model and effort"));
+        assert.ok(guidance.includes("Preserve accepted results by task and stage"));
+      }
+    }
+  }
+});
+
 test("only broad source fallbacks receive advisory guidance", () => {
   const broad = run("source", {
     tool_name: "Read",
