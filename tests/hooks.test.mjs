@@ -7,7 +7,7 @@ import Code4Me from "../.opencode/plugins/code4me.js";
 import { isCode4MeEnvelope, ENVELOPE_GUIDANCE, PRODUCER_GUIDANCE, INVALID_GUIDANCE } from "../hooks/nudge.mjs";
 
 const hook = fileURLToPath(new URL("../hooks/nudge.mjs", import.meta.url));
-const contract = readFileSync(new URL("../skills/code4me/references/task-contract.md", import.meta.url), "utf8");
+const contract = readFileSync(new URL("../skills/code4me/references/task-contract.md", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 const [task, result] = [...contract.matchAll(/```json\n([\s\S]*?)\n```/g)].map((m) => JSON.parse(m[1]));
 function run(mode, payload) {
   const response = spawnSync(process.execPath, [hook, mode], { input: JSON.stringify(payload), encoding: "utf8" });
@@ -24,7 +24,7 @@ async function openCodePrompt() {
 test("current JSON and YAML tasks reach the worker without altering the task", async () => {
   const apply = await openCodePrompt();
   const yaml = "protocol: code4me-ntg/v4\ntype: task\nrequired_skill: code4me\ntask_id: T1\nstage_id: T1-implement-1\ndelegation: forbidden\ngoal: fix the parser";
-  for (const prompt of [JSON.stringify(task), yaml]) {
+  for (const prompt of [JSON.stringify(task), yaml, yaml.replaceAll("\n", "\r\n")]) {
     assert.equal(isCode4MeEnvelope(prompt), true);
     assert.equal(guidance(prompt), ENVELOPE_GUIDANCE);
     const enriched = await apply(prompt);

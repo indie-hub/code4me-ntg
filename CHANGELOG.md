@@ -7,6 +7,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-29
+
+### Fixed
+
+- Normalize CRLF Markdown reads in contract tests so Windows checkouts extract
+  code examples and frontmatter correctly; cover CRLF worker prompts explicitly.
+
 ## [1.0.0] - 2026-10-29
 
 ### Breaking

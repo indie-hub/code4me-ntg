@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-const audit = readFileSync(new URL("../skills/code4me-audit/SKILL.md", import.meta.url), "utf8");
+const audit = readFileSync(new URL("../skills/code4me-audit/SKILL.md", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 test("audit finding template carries actionable evidence and persistent resolution state", () => {
   const template = audit.match(/```yaml\n([\s\S]*?)\n```/)[1];
   const keys = [...template.matchAll(/^(\w+):/gm)].map((m) => m[1]);

@@ -11,7 +11,7 @@ const docs = walk(resolve(root, "skills")).filter((path) => path.endsWith(".md")
 
 test("skill references resolve inside the bundle", () => {
   for (const path of docs) {
-    const text = readFileSync(path, "utf8");
+    const text = readFileSync(path, "utf8").replace(/\r\n/g, "\n");
     for (const [, target] of text.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
       if (/^(https?:|memory:|#)/.test(target)) continue;
       assert.ok(existsSync(resolve(dirname(path), target.split("#")[0])), `${path}: missing ${target}`);
@@ -26,7 +26,7 @@ test("one current contract replaces the retired design and legacy envelopes", ()
   assert.ok(existsSync(resolve(root, "skills/code4me/references/task-contract.md")));
   assert.equal(existsSync(resolve(root, "skills/code4me/references/design-brief.md")), false);
   for (const path of docs) {
-    const text = readFileSync(path, "utf8");
+    const text = readFileSync(path, "utf8").replace(/\r\n/g, "\n");
     assert.doesNotMatch(text, /code4me-ntg\/v[123]\b|"v":\s*[12]\b|parent_task_id|task_classified|task_assigned|design-brief\.md/, path);
   }
 });
@@ -35,7 +35,7 @@ test("all five skills have discoverable descriptions and no unfinished scaffold"
   const skills = readdirSync(resolve(root, "skills"));
   assert.equal(skills.length, 5);
   for (const folder of skills) {
-    const text = readFileSync(resolve(root, "skills", folder, "SKILL.md"), "utf8");
+    const text = readFileSync(resolve(root, "skills", folder, "SKILL.md"), "utf8").replace(/\r\n/g, "\n");
     assert.match(text, /^---\nname: [a-z0-9-]+\ndescription: .+\n---/);
     assert.doesNotMatch(text, /\[TODO\]|TODO: fill|IMPLEMENT ME/);
   }
