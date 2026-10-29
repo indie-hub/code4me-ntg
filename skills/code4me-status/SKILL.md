@@ -1,146 +1,101 @@
 ---
 name: code4me-status
-description: Read and summarize lightweight Code4Me milestones, tasks, teams, validation state, workflow health, checkpoints, resumable handovers, and legacy delegated-task events without changing the project. Use when the user asks for Code4Me status, active milestones, task progress, team assignments, blockers, validation, workflow metrics, resume context, or event-log problems.
+description: Read Code4Me intent, direct/draft progress, findings, validation, handovers, and optional workflow metrics without changing the project. Use for Code4Me status, resume context, blockers, or effectiveness questions.
 ---
 
 # Code4Me Status
 
-Report the smallest accurate view of `.code4me/events.jsonl` without changing it.
+Read `.code4me/events.jsonl`; do not create or modify it. If absent, report no
+local Code4Me history. Use [the v4 contract](../code4me/references/task-contract.md).
+Unsupported versions require an explicit carryover; report the boundary rather
+than guessing ID mappings or counting old events as current work.
 
-## Workflow
+## Derive the current state
 
-1. If `.code4me/events.jsonl` does not exist, report `no local Code4Me history`
-   and stop. Do not create it.
-2. Read each non-empty line as one JSON event in file order. Support v2 lifecycle
-   events and legacy v1 dispatch/result pairs.
-3. Use the newest valid `checkpoint` as the canonical resume summary, then apply
-   every later event. Never let a checkpoint hide subsequent work.
-   When its state is `handover`, treat its repository identity, worktree scope,
-   completed and active tasks, blockers, memory references, and exact next action
-   as the ready-to-resume brief.
-   If it contains `archive`, verify the referenced immutable file's SHA-256 and
-   event count before trusting the boundary. Do not read archived events for
-   normal status; inspect them only when the user requests historical or
-   integrity detail.
-4. Group v2 events by `milestone_id`, then logical task ID. Derive task state:
-   - `classified`: classified but not assigned;
-   - `assigned`: team assigned but work not started;
-   - `awaiting_result`: dispatch lacks a matching result;
-   - `awaiting_validation`: work completed but no passing `task_validated`;
-   - `needs_changes`: the latest matching `verify` result returned
-     `changes_requested` after the latest work or repair;
-   - `blocked` or `failed`: latest terminal stage outcome;
-   - `validated`: a matching `task_validated` has verdict `pass` after the
-     latest work or repair result.
-5. A result matches only when stage ID, worker, and vendor match its dispatch,
-   including producer-inline `verify` stages. Derive applied control state from
-   `task_assigned` plus later matching `task_controlled` events.
-   Derive the current quality bar from the latest applicable dispatch, falling
-   back to `task_classified`. Flag a work/verify bar mismatch unless the later
-   dispatch records a `revision_reason`.
-   Derive current invariants from the latest applicable dispatch, falling back
-   to `task_classified`. Flag a complete or validated task when `checks` omit an
-   invariant ID or its pass condition.
-   Flag malformed JSON, duplicate stage dispatches, unmatched results,
-   `complete` v2 results without non-empty `tool_evidence`, validation predating
-   the latest implementation result, tasks without classification or team
-   assignment, and closed milestones containing an unvalidated task.
-   Validate each `decision_receipts` entry against its stage's `system_one`
-   descriptor. Flag claimed use without a receipt, provider or model mismatch,
-   negative latency, a missing `avoids` or boolean `avoided`, shadow advice
-   treated as operative, and `verified`
-   evidence with a null request ID or `recorded_by: agent`. Keep `reported` and
-   independently `verified` receipts separate.
-6. Correlate `task_board_linked`, `task_change_requested`, and
-   `task_cancel_requested` by provider, board, card, milestone, and logical task.
-   Use the latest `trello_synced` event for cursor age, counts, and conflicts.
-   Status remains read-only: never call Trello or attempt synchronization.
-7. For v1-only history, retain the legacy view: awaiting dispatches and five
-   most recent terminal results.
-8. For a handover checkpoint, compare recorded HEAD, branch, upstream sync, and
-   worktree paths with the current repository. Report `handover stale` when they
-   differ; do not silently present recorded state as current state. Exclude the
-   bookkeeping paths `.code4me/events.jsonl` and `.code4me/archive/` from
-   product-worktree drift because housekeeping changes them.
+Parse every non-empty line in file order. Read the newest valid checkpoint and
+apply later events; a checkpoint cannot hide subsequent work. Compare a handover's
+repository, branch, HEAD, sync, and product-worktree scope with current state.
+Report drift. Exclude bookkeeping paths from their own freshness comparison.
+Verify an archive boundary's SHA-256 and event count before trusting it; archives
+are cold history, read only for requested historical or integrity scope.
 
-## Workflow health
+Group by milestone and logical task_id, and match dispatch/results by stage_id,
+stage, worker, and vendor. Count each task once. Derive phase from accepted
+dispatch/results under its route:
 
-When the user asks for workflow health, metrics, effectiveness, or a detailed
-status, derive one compact section from existing events. Do not write counters,
-summaries, telemetry, or new events. Default to the active milestone. If no
-milestone is active, use terminal logical tasks in the active log. Read verified
-archives only when the user requests historical scope.
+- opened: task_opened exists, no dispatch yet;
+- awaiting_result: dispatched stage has no accepted result;
+- awaiting_challenge: draft complete, no proceeding independent challenge;
+- rethinking: challenge returned rethink within its remaining budget;
+- awaiting_finish: challenge proceeded, finish not complete;
+- awaiting_validation: implement/finish/repair complete, no current passing verify;
+- needs_changes: verify requested changes, no accepted repair yet;
+- blocked/failed: required stage cannot continue or its budget is exhausted;
+- validated: matching task_validated cites an independent passing verify on the
+  exact current target and aligned intent;
+- accepted_with_waiver: user accepted explicit limits; not validated.
+- completed_read_only: an audit/research-only task has supported accepted results;
+  this is not a product-validation verdict.
 
-Count each logical task once. Use these definitions:
+A complete draft, a proceeding challenge, and a user waiver never mean validated.
+Show technical verdict and intent_alignment separately. Never infer a room is
+currently busy just because its result has not arrived.
 
-- `first-pass validation`: the first matching `verify` result after initial
-  work has verdict `pass`; divide by tasks that have a matching verify result.
-- `repair rate`: the task has at least one `repair` dispatch; divide by terminal
-  tasks in scope.
-- `cross-vendor validation`: the validated task's known validator vendor differs
-  from its known implementer vendor; divide by validated tasks where both
-  vendors are known. Report excluded unknown-vendor tasks.
-- `producer fallback`: the assigned implementer's `selection_reason` starts
-  with `producer_fallback:`; divide by assigned tasks in scope.
-- `blocked rate`: the logical task's terminal state is `blocked` or `failed`;
-  divide by terminal tasks in scope.
-- `elapsed cycle`: duration from `task_classified` timestamp to `task_validated`
-  timestamp, or to the latest matching terminal `blocked` or `failed` result.
-  Report the median duration and sample size. This duration includes queue and
-  human wait time; do not label it agent work time.
+## Integrity
 
-Show the numerator, denominator, and percentage for every rate. Report `n/a`
-when a denominator is zero or required data is absent. List malformed or
-missing data as event-log issues. Do not rank agents, rooms, vendors, or models.
+Flag malformed JSON, unsupported versions, reused stage IDs, unmatched or duplicate
+terminal results, missing task_opened, absent complete-result tool evidence,
+current passes on stale targets, missing required checks/invariants, exceeded
+rethink/repair budgets, and closed milestones without validated acceptance.
+Check team independence and critical known cross-vendor/deep/high-effort evidence.
+A pending control needs matching task_controlled; report observed versus requested
+or unknown settings. A ready room or applied control is not configuration proof.
 
-### System One effectiveness
+Track finding IDs and responses in results. Author claims do not resolve findings;
+use the independent reviewer's supported status. Do not repeat resolved issues
+without changed evidence. Flag open required findings at a claimed pass, unexplained
+intent/contract changes, and waivers presented as passes. Missing evidence is not
+an opportunity to invent a verdict or user preference.
 
-When receipts exist or the user asks about System One, read
-[the provider contract](../code4me/references/system-one.md) and derive:
+Validate claimed System One receipts against their stage descriptor: matching
+provider/model, non-negative latency, named avoids and boolean avoided, and the
+permitted mode. Verified requires an independent recorder and request ID; agent
+claims stay reported. Consult [the provider rules](../code4me/references/system-one.md)
+when receipts exist or effectiveness is requested.
 
-- verified-receipt stage rate: stages with at least one verified receipt divided
-  by stages that declared `system_one.status: ready`;
-- shadow match, shadow override, escalation, and error rates from receipt
-  dispositions;
-- avoided-work rate: verified receipts with `avoided: true` divided by verified
-  receipts with a boolean `avoided` value;
-- split skipped-work counts by disposition: advice followed (`shadow_match`
-  or `active_accept`), overridden (`shadow_override`), escalated, or failed.
-  An override with `avoided: true` is skipped work, not advice-followed savings;
-- median and p95 latency from non-negative verified latency values, with sample
-  size;
-- first-pass validation and repair rates split by presence of a verified receipt.
+Read task_board_linked, task_change_requested, task_cancel_requested and the
+latest trello_synced event when present. Never call Trello or attempt synchronization.
 
-Report verified and reported receipts separately. Report `n/a` when the sample
-is insufficient. Deduplicate receipts by stage and `decision_id` so a checkpoint
-copy does not count as another call. These comparisons are observational, not causal. Do not infer
-time, token, cost, or quality savings. Label provider-reported cost as provider
-data, not as a project measurement. A causal claim requires a representative
-randomized or alternating A/B comparison with the same acceptance contract.
+## Optional metrics
+
+Derive from existing events only when requested. No new telemetry store or
+summary events. Use the active milestone or explicitly requested scope, with
+sample sizes, exclusions, and n/a for missing data. Do not rank agents/vendors.
+
+- Delivery duration: task_opened to current task_validated, median and sample
+  size. This includes queue and human wait time, not just agent work.
+- Late intent rework: tasks first found misaligned or partly aligned at final
+  verify, divided by tasks with a final intent judgment. Report unclear separately.
+- Draft usefulness: proceeding, rethink, and blocked challenge counts, plus the
+  observed work avoided when evidenced; more drafts is not inherently better.
+- First-pass validation, repair rate, blocked rate, and cross-vendor coverage:
+  count logical tasks once and show numerator, denominator, and unknown exclusions.
+- Actual total model/provider usage or cost only when recorded, including System
+  One overhead. Escaped defects require later attributable defect evidence and
+  an observation window; absence of such records is unknown, not zero defects.
+
+For System One deduplicate by stage and decision_id. Separate reported from
+verified use, followed advice from overrides/escalations/errors, skipped work,
+latency, and downstream outcomes. An override with avoided true is not savings
+from following advice. Comparisons are observational, not causal; measured
+savings require comparable tasks, the same acceptance contract, and total usage.
+No call quota or invented token estimate.
 
 ## Report
 
-Return:
-
-- latest checkpoint state, repository identity, worktree scope and exclusions,
-  completed and active tasks, blockers, memory references, and exact next action;
-- every active milestone with goal and acceptance summary;
-- each active task with kind, weight, state, and role-to-member team map;
-- each active task's quality-bar status, target, comparison method, and pass
-  condition when present;
-- each active task's invariant IDs and latest check status when present;
-- each assigned member's mode, model tier or exact model, requested effort, and
-  derived Crowded control state;
-- active System One provider, model, interface, status, mode, and verified versus
-  reported receipt counts when declared;
-- validation route and verdict, or why validation is missing;
-- linked Trello card IDs plus latest sync time and unresolved conflicts when
-  board events exist;
-- five most recent validated or terminal tasks unless another limit is asked;
-- workflow-health scope, sample sizes, rates, and median elapsed cycle only when
-  requested;
-- System One effectiveness metrics only when receipts exist or the user asks;
-- event-log issues, or `none`.
-
-Never call a task complete merely because implementation returned `complete`.
-Never call a room currently working merely because its result is absent.
+Give the smallest accurate resume view: outcome and route, current phase,
+remaining uncertainty, task-scoped team and observed controls, target/result
+references, open required findings and responses, validation and intent verdicts,
+blockers/waivers, relevant memory, and exact next action. Include board correlation
+and metrics only when applicable. Report integrity issues explicitly. Implementation
+complete never substitutes for independently validated delivery.

@@ -1,43 +1,70 @@
-# Validation checklist
+# Challenge and final validation
 
-Validate the current implementation from a context that did not implement it.
-Return evidence, not approval language.
+Use an independent context and the exact target. Reviewers do not modify product
+files. Reusing an independent challenger as final validator is valid; using the
+builder's own context is not. Honor critical cross-vendor requirements.
 
-- Preserve the accepted result at a unique task-and-stage path before reusing
-  its worker. Never give a validator a mutable shared `result.yaml`; use the
-  stage-specific artifact or embed the accepted result in the envelope.
-- Bind the validation to that result and the exact commit plus working-tree
-  fingerprint when there are uncommitted changes. Check the target before and
-  after validation. Later relevant edits require validation of the changed
-  target; a pass for an earlier revision does not cover them.
-- Re-read the task goal, acceptance criteria, constraints, and changed files.
-- Read the verification contract. Independently rerun every listed command when
-  possible and inspect every evidence target directly. Report exact results.
-  If independent execution is impossible, state why and use other direct
-  evidence; never accept the implementer's summary as verification.
-- For each invariant, name its ID, rerun its check, confirm its pass condition,
-  and confirm that its source and check were not weakened. Missing invariant
-  evidence prevents a pass.
-- Inspect the current diff and relevant callers or boundaries.
-- Confirm the changes stay within scope and do not weaken or delete tests silently.
-- Reject task or milestone IDs, status, TODO/FIXME items, plans, progress,
-  deferred work, and handover notes introduced in source comments. Source
-  comments may explain code rationale, invariants, constraints, and non-obvious
-  behavior only.
-- Run the smallest relevant documented checks not already covered by the
-  verification contract and report exact results.
-- Check every acceptance criterion against source or runtime evidence.
-- When `quality_bar` is present, inspect its named artifact, runtime, source, or
-  measurement directly; never grade the implementer's summary. Compare by the
-  declared method and do not move or weaken the bar during the round.
-- On `changes_requested`, identify one `largest_gap` that gives the repair its
-  highest-leverage quality target. Still report every correctness, security, and
-  acceptance failure; `largest_gap` must not hide blocking findings.
-- Report findings with location, consequence, and required correction.
-- Return `pass` only when current code satisfies every required criterion.
-- Return `changes_requested` for fixable defects and `blocked` when evidence is
-  unavailable or the validation route is not independent enough for the weight.
-- Treat project-management source comments as `changes_requested` even when
-  runtime behavior passes.
+## Evidence first
 
-Do not modify project files while acting as validator.
+Read the original request, relevant decisions, intent, scope, and applicable
+project standards. Preserve the prior result at a stage-specific path or embed
+it before reusing its worker. Bind review to the commit and any worktree
+fingerprint; compare before and after. Never judge a mutable shared result.yaml
+or let an old pass cover later relevant edits.
+
+Recover required Headroom originals using the toolbox rule. Source summaries,
+matching replay baselines, green tests, and another agent's approval do not by
+themselves prove the intended behavior. Independently inspect the actual artifact
+and run the demonstration or relevant verification commands when possible. If
+required evidence cannot be obtained, return blocked with the exact gap.
+
+## Challenge: should this be finished?
+
+Read [intent-and-draft.md](intent-and-draft.md). Inspect the smallest runnable
+slice against the user outcome and example. Test the important assumption.
+Return proceed, rethink, or blocked and intent_alignment with evidence. Required
+findings explain a direction problem or missing proof; finish-only holes are
+not automatically draft failures. Proceed is not a production correctness pass.
+
+## Verify: is this ready?
+
+- Independently check every final acceptance criterion, exact command, artifact,
+  and sourced invariant; report results and any execution limitation truthfully.
+- Check intent separately from mechanics. All-green technical checks with the
+  wrong user outcome require changes_requested. Unresolved material ambiguity
+  requires blocked, not an invented preference or numeric intent score.
+- Inspect changed code and connected boundaries. Use only perspectives the change
+  warrants: correctness/data integrity, security/privacy, resilience/performance,
+  maintainability, interaction/QA. Specialists are bounded help, not required seats.
+- Apply existing executable checks to what they can reliably decide. Evaluate
+  semantic questions from evidence; never treat an LLM judgment as a deterministic
+  gate. Check that tests/baselines were not weakened to fit the implementation.
+- Inspect the actual quality-bar target when present. Do not move the bar to excuse
+  a miss. Source comments explain code, never task IDs, status, plans, TODO/FIXME,
+  deferred work, or handovers; report introduced violations as required findings.
+- Return pass only with aligned intent, every required criterion supported, and
+  no open required finding. Otherwise return changes_requested or blocked.
+
+## Finding lifecycle
+
+Use stable IDs within the logical task. State perspective, required/advisory,
+location, consequence, evidence, and status. Include the highest-leverage gap
+without hiding other required findings. Preferences alone do not block delivery.
+
+The author responds to each finding: fixed, refuted with evidence, or deferred
+with appropriate authority and a follow-up. A required acceptance failure stays
+open unless evidence refutes it or the user explicitly changes the contract.
+Check resolutions independently. Do not repeat resolved comments without new
+evidence; reopen regressions with the same ID. Revalidate changed evidence and
+its affected boundaries, not every unrelated investigation from scratch.
+
+One bounded repair and one revalidation are allowed before blocking. Draft
+rethinks have their own one-attempt budget. A user-authorized exception is a
+recorded decision, not permission for an endless loop.
+
+## Learn from the review
+
+A supported finding may become a scoped Basic Memory observation or decision.
+Repeated failures should lead to better context, a capability, or a shared
+executable check, with the incident and evidence linked. Propose policy changes
+for review rather than turning every reviewer preference into a global rule.

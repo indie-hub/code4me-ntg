@@ -10,10 +10,13 @@ checklist named `Acceptance criteria`.
 | --- | --- |
 | `Inbox` | Idea, proposed work, or incomplete request; not authorized |
 | `Ready` | Human-authorized and ready for Code4Me intake |
-| `In Progress` | Claimed or dispatched implementation |
-| `Validation` | Implementation returned; independent validation is pending |
+| `In Progress` | Implementation, draft, challenge, or finish in progress |
+| `Validation` | Final implementation returned; independent verification pending |
 | `Blocked` | Cannot proceed; use the `needs-human` label when appropriate |
 | `Done` | Passing Code4Me validation exists after the latest implementation |
+
+A draft or proceeding challenge never qualifies as Done. One card spans the
+whole logical task; do not create cards for draft/challenge/finish stages.
 
 The list is current state, not history. Code4Me events and card comments preserve
 the history.
@@ -45,7 +48,7 @@ for domain or attention such as `needs-human`; do not duplicate list state in
 labels.
 
 When the board already provides them, use optional custom fields `Task ID`,
-`Milestone`, `Weight`, `Requested executor`, and `Provenance` for a Jira-like
+`Milestone`, `Risk`, `Requested executor`, and `Provenance` for a Jira-like
 scan view. Custom fields require a paid Trello plan in the selected MCP, so
 never require them for correctness; `task_board_linked` events remain the
 mapping authority.

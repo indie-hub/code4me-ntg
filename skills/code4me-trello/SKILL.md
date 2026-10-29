@@ -70,9 +70,10 @@ perform external writes.
    for either side of an existing mapping.
 3. Import an unlinked card only after it reaches `Ready`. Create or reuse the
    smallest milestone, assign a stable logical task ID, append ordinary
-   `milestone_opened` and `task_classified` events as needed, then append
+   `milestone_opened` and `task_opened` events as needed, then append
    `task_board_linked` with `origin: human`. A title-only card is valid input:
-   the producer proposes observable acceptance criteria and a provisional
+   the producer captures the original request, outcome, success example, boundaries,
+   and assumptions, then proposes observable acceptance criteria and a provisional
    quality bar under the normal Code4Me rules rather than inventing hidden
    requirements.
 4. For an agent-created task, create its card once and append
@@ -105,18 +106,24 @@ The producer remains the sole event-log writer during a milestone. When this
 skill is invoked by that producer, it writes through the producer inline; a
 worker or validator returns proposed board changes instead of writing the log.
 
+Draft and finish stages remain `In Progress`; a challenge is not final
+validation. Move to `Validation` only when the final implement/finish/repair
+result is ready for verify. Preserve finding IDs and resolutions in linked
+evidence; never treat a draft or user waiver as Done. Route and risk can be
+shown in existing optional custom fields; do not require new lists or fields.
+
 ## Events
 
-Append compact v2 events using the existing milestone and logical-task IDs:
+Append compact v4 events using the existing milestone and logical-task IDs:
 
 ```json
-{"v":2,"type":"task_board_linked","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<milestone>","task_id":"<logical-task>","origin":"human|agent"}
-{"v":2,"type":"task_change_requested","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<milestone>","task_id":"<logical-task>","changes":["<changed intent field>"]}
-{"v":2,"type":"task_cancel_requested","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<milestone>","task_id":"<logical-task>"}
-{"v":2,"type":"trello_synced","ts":"<ISO8601>","board_id":"<board>","cursor":"<action-id-or-ISO8601>","pulled":0,"pushed":0,"conflicts":[]}
+{"v":4,"type":"task_board_linked","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<milestone>","task_id":"<logical-task>","origin":"human|agent"}
+{"v":4,"type":"task_change_requested","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<milestone>","task_id":"<logical-task>","changes":["<changed intent field>"]}
+{"v":4,"type":"task_cancel_requested","ts":"<ISO8601>","provider":"trello","board_id":"<board>","card_id":"<card>","milestone_id":"<milestone>","task_id":"<logical-task>"}
+{"v":4,"type":"trello_synced","ts":"<ISO8601>","board_id":"<board>","cursor":"<action-id-or-ISO8601>","pulled":0,"pushed":0,"conflicts":[]}
 ```
 
-These events correlate external intent; they do not replace `task_assigned`,
+These events correlate external intent; they do not replace `task_opened`,
 dispatch/result pairs, `task_validated`, checkpoints, or milestone closure.
 
 ## MCP installation for Crowded

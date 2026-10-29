@@ -1,71 +1,75 @@
-# Toolbox and Basic Memory
+# Toolbox and shared memory
 
-Route by question shape:
+Route the question to the smallest useful source:
 
 | Question | First choice |
-|---|---|
-| What did we decide or learn before? | Basic Memory |
-| Where is this exact symbol used? | CodeGraph |
-| Where is behavior like this implemented? | CCC (CocoIndex Code) |
-| What does this large log/report/output show? | Context Mode |
-| What exact text is in this small file or config? | Narrow native read/search |
+| --- | --- |
+| What did we decide or learn? | Basic Memory |
+| Where is this symbol used? | CodeGraph, when the repository is indexed |
+| Where is similar behavior implemented? | CCC (CocoIndex Code) |
+| What does this large output show? | Context Mode |
+| What exact text is in this known file? | Narrow native read/search |
 
-Basic Memory is the shared, durable project memory. `.code4me/events.jsonl` is
-only an append-only task ledger. Context Mode manages large working context.
-Vendor-local memories are not the Code4Me source of truth.
+Use CodeGraph first for code navigation when `.codegraph/` exists at the repo
+root. Otherwise skip it; indexing is the user's decision. Optional tools may
+be absent or stale. Use another suitable route and report the limitation.
+Live source wins over stale memory; memory supplies decisions code cannot explain.
 
-## Memory contract
+## Basic Memory consultation
 
-For every task:
+Before planning, check project availability, search its memory map and relevant
+decisions/lessons, and read useful results. Carry the smallest relevant set of
+`memory://` references. Workers read supplied refs, then search for specific gaps
+when needed; do not repeat identical searches as a ritual. Return evidence of
+what was searched/read, reused, contradicted, or unavailable.
 
-1. Check that Basic Memory and its project are available. Search before
-   planning, starting with `code4me memory map`, then make at least one targeted
-   search for task-specific decisions, preferences, conventions, lessons, and
-   bug patterns.
-2. Read relevant results and carry their `memory://` references in the task
-   envelope. Use `empty` when the search finds nothing relevant and
-   `unavailable` when the MCP or project is unavailable. Set `searched: true`
-   for `used` or `empty`; use `searched: false` with `unavailable` and a reason
-   only when memory cannot be reached.
-3. A worker opens every supplied reference before planning, makes one targeted
-   gap search when memory is available, and reports truthful `Basic Memory` tool
-   evidence or an unavailable reason. The worker does not begin task work until
-   this consultation is complete.
-4. A worker always returns `memory_candidates`, using `[]` when there is no
-   durable lesson. The producer checks the evidence, searches for duplicates,
-   and updates or writes Basic Memory.
+Use `used` with read references, `empty` after a completed search with no relevant
+result, and `unavailable` only after the capability/project cannot be reached.
+Used/empty set `searched: true`; unavailable sets false and a reason. Missing
+knowledge is not permission to invent it. Distinguish no relevant result from
+an unanswered material question; investigate the latter or state an assumption.
+Memory absence alone does not block otherwise supported work.
 
-On first use in an empty Basic Memory project, create one `code4me memory map`
-note. Do not create bucket notes. Durable notes are atomic and carry `code4me`
-plus one primary kind: `decision`, `preference`, `lesson`, `bug-pattern`, or
-`convention`. `integration` and `security` may be extra tags.
+## Evidence-backed knowledge
 
-If the project already has memory, follow its structure. Never mass-retag,
-rename, or move existing notes. Do not store task progress, raw logs, secrets,
-credentials, tokens, or private user data.
+Basic Memory is the shared durable store. The event log owns task progress;
+Context Mode owns working-context processing. Vendor-local notes are not the
+project's authoritative shared record. Follow an existing project structure;
+for an empty project create one `code4me memory map`, not a tree of blank buckets.
 
-## Source and output routing
+Workers return `memory_candidates` (or []). Producers deduplicate and promote
+supported claims, not transcripts. A useful atomic note records:
 
-- Use CodeGraph for exact definitions, callers, callees, neighbors, and impact.
-- Use CCC for semantic or fuzzy source discovery when the symbol name is
-  unknown.
-- Use Context Mode for derived analysis over large logs, reports, generated
-  output, documentation, or already-narrowed source.
-- Use narrow native reads/searches for exact text, small files, configs, or
-  source ranges already identified by an index.
+- claim and kind: observed behavior, decision, preference, lesson, or bug pattern;
+- scope and conditions under which it holds;
+- source artifact/span or exact evidence reference and observation/decision date;
+- rationale, including why an attractive alternative was rejected when relevant;
+- current, disputed, or superseded status, with a replacement link when applicable.
 
-When a preferred tool is missing or stale, use the next suitable route and say
-what degraded. Memory records prior knowledge; live source evidence wins when
-they disagree.
+A draft may establish a scoped observation; it cannot establish project policy
+without the appropriate decision. A reviewer preference is not a universal rule.
+When knowledge changes, preserve provenance and link superseded guidance rather
+than silently overwriting the meaning. Conflicts require source inspection;
+newer text alone does not defeat better evidence. Read back writes and record
+returned references. Never store secrets, raw logs, private reasoning, transient
+branch/worktree/task state, or unvalidated hypotheses as established facts.
+
+## Learn into the workflow
+
+Repeated supported findings should change the next task: improve its context,
+point to a reusable capability, or add an executable check where reliable.
+Record the incident, consequence, and evidence behind a proposed rule. Run the
+same predicate locally and in CI when practical. A check that relies on model
+judgment is advisory evidence, not a deterministic guarantee. Authorization and
+privacy boundaries must be enforced before exposing data; prompt instructions
+alone do not enforce access control. Do not build a new memory engine for this.
 
 ## Headroom retrieval
 
-When required evidence or instructions contain a Headroom compression marker,
-extract its hash and request `/v1/retrieve/<hash>` from the configured Headroom
-base URL. Read the response's `original_content` before relying on it or claiming
-the source was read. Retrieve only content needed for the current decision.
-
-If retrieval fails, expires, or returns another marker instead of original
-content, try a narrow direct read of the source when available. Do not loop on
-the same marker or reconstruct missing content from a summary. Report unresolved
+When required evidence or instructions contain a compression marker, extract its
+hash and request `/v1/retrieve/<hash>` from the configured Headroom base URL.
+Read `original_content` before relying on it or claiming the source was read.
+Retrieve only what the current decision needs. If retrieval expires, fails, or
+returns another marker, try a narrow direct source read. Do not loop on the
+same marker or reconstruct missing content from a summary. Report unresolved
 evidence as unavailable; required evidence must be recovered before a pass.

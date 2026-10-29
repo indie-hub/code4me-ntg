@@ -5,30 +5,40 @@ import { pathToFileURL } from "node:url";
 export const ENVELOPE_MARKER = "Code4Me task envelope detected.";
 export const PRODUCER_MARKER = "Code4Me producer check.";
 
-export const PRODUCER_GUIDANCE = `${PRODUCER_MARKER}
-After room controls, confirm effective model and effort; clear may restore defaults. Preserve accepted results by task and stage before reusing a worker. Retrieve required Headroom evidence at the configured base URL's /v1/retrieve/<hash> and read original_content; a marker is not a source read.
-Keep the main context orchestration-only. Before you classify, assign, or dispatch any task, consult Basic Memory, make one targeted search, and record used, empty, or unavailable with truthful evidence. Use System 1 to recommend task shape, the cheapest capable eligible worker, model tier, effort, validation route, and relevant invariants. Discover any callable System One provider, declare its exact capability, default it to shadow mode, and attach a receipt for each claimed call. A System One call should eliminate expensive work: name the action it can avoid before calling, and record avoids plus avoided. If no expensive action can be named, do not call it. A declaration alone does not prove use. Use System 2 before consequential or uncertain decisions. Before you implement, repair, investigate, or validate, check the Crowded roster and native subagent availability. Delegate to the smallest capable eligible fresh context. If you implemented the change, you must not validate it. Reserve an independent validator before implementation. Do producer work inline only after you record the applicable fallback.`;
-
-export const ENVELOPE_GUIDANCE = `${ENVELOPE_MARKER}
-Retrieve required Headroom evidence at the configured base URL's /v1/retrieve/<hash> and read original_content. If recovery fails, report unavailable evidence rather than infer its contents. Before a large context load or branch exploration, consider one System One judgment to shortlist evidence or choose a discriminating probe; follow the provider reference. No call is needed when existing rules decide.
-Mandatory worker contract: load and follow the installed code4me skill's Incoming worker contract before acting. If that skill is unavailable, return blocked instead of silently bypassing it. Execute this task here; delegation is forbidden. Before planning, read every supplied context_refs entry, including project instructions and conditional language or platform guidance, plus every supplied Basic Memory memory:// reference. If memory.status is empty or unavailable, continue and preserve that status. Basic Memory is durable prior knowledge; .code4me/events.jsonl is task correlation; Context Mode is working-context processing. Return the same milestone, task, and stage IDs, non-empty truthful tool_evidence, and any durable evidenced memory_candidates. If reply_to.transport is crowded, end the turn after the accepted result send and do not launch a background waiter or poll for acknowledgement. If reply_to.transport is native, return the result normally; the producer must join the native subagent.
-Actually open every supplied memory:// reference before planning. For every task, make one targeted Basic Memory search for relevant gaps when available; report truthful Basic Memory tool evidence or an unavailable reason. memory.status used or empty requires memory.searched true; unavailable requires false and a reason. Do not begin work until this consultation is complete. Always return memory_candidates, using [] when no durable lesson was found.
-Use worker System 1 only when it can eliminate a named expensive action. Record avoids and whether it was actually avoided; if no expensive action can be named, do not call it. Use System 2 when risk, uncertainty, irreversibility, scope, or the contract changes. Read the system_one descriptor. Shadow advice never controls the action. Return decision_receipts for claimed calls; no receipt means no claimed use. Agent-supplied evidence cannot be verified.
-Treat assigned_role, goal, acceptance, constraints, verification, including each invariant, and quality_bar as the producer's stage contract. Do not change them silently. Run every applicable verification command and invariant check, and report exact results in checks; a required failure prevents outcome complete. If the contract is unsafe, inconsistent, or impossible, return blocked or changes_requested with evidence. The validator decides the verdict independently.
-Source comments explain code only. Never put task or milestone IDs, status, TODO/FIXME items, plans, progress, deferred work, or handover notes in source comments. Return such information through deferred_work in the result envelope.
-Use the Code4Me Technical English profile for all technical and operational communication. Use short active-voice sentences, one action or idea per sentence, consistent terms, and explicit actors, artifacts, and expected results. Do not use idioms or vague references. Preserve code, commands, paths, logs, error messages, and quotations exactly.
-Toolbox: Basic Memory=past decisions and lessons; CodeGraph=exact structure; CCC=semantic source discovery; Context Mode=large derived or non-source output; narrow native reads when cheaper.`;
+export const PRODUCER_GUIDANCE = "Code4Me producer check.\nLoad the installed code4me skill. Capture original intent, consult Basic Memory, and choose direct work or a bounded runnable draft only when uncertainty warrants it. Delegate building to an eligible room or native subagent and reserve independent cross-vendor validation. Keep the main context for coordination. Confirm effective settings after controls and preserve stage-specific results. A challenge permits finishing, never production acceptance. Use System One only to eliminate named expensive work. Recover required Headroom originals through /v1/retrieve/<hash> and read original_content.";
+export const ENVELOPE_GUIDANCE = "Code4Me task envelope detected.\nLoad the installed code4me skill and its Incoming worker contract; return blocked if unavailable. Read original intent, context_refs, and supplied Basic Memory references before planning. Execute only the assigned v4 stage here; delegation is forbidden. A draft proves its declared claim, a read-only challenge checks direction, and final verify requires correctness and intent alignment. Keep finding IDs and return truthful checks, tool_evidence, resolutions, decision_receipts, memory_candidates, and deferred_work with matching IDs and exact target. Retrieve required Headroom originals at /v1/retrieve/<hash> and read original_content; a marker is not evidence. Before expensive exploration, consider System One context shortlisting or probe selection using the provider reference. Source comments explain code only. Follow the Code4Me Technical English profile. After an accepted Crowded result send, end the turn without polling; native results return normally for the producer to join.";
+export const INVALID_GUIDANCE = "Code4Me task contract unavailable or invalid. Return blocked. Load the current code4me skill and request a code4me-ntg/v4 task with type task, required_skill code4me, delegation forbidden, task_id, stage_id, and goal. Do not translate legacy IDs or execute an unsupported envelope.";
 
 const SOURCE_EXTENSIONS = /\.(?:c|cc|cpp|cs|go|h|hpp|java|js|jsx|kt|mjs|py|rb|rs|sh|swift|ts|tsx)(?:$|[\s"'])/i;
 
+function envelopeHeader(text) {
+  try {
+    const value = JSON.parse(text);
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  } catch {
+    return Object.fromEntries([...text.matchAll(/^(protocol|type|required_skill|task_id|stage_id|delegation|goal):\s*(.*?)\s*$/gm)]
+      .map(([, key, value]) => [key, value.replace(/^(["'])(.*)\1$/, "$2")]));
+  }
+}
+
 export function isCode4MeEnvelope(text) {
-  return /\btask_id\s*:/i.test(text)
-    && /\bdelegation\s*:\s*forbidden\b/i.test(text)
-    && /\bgoal\s*:/i.test(text);
+  const header = envelopeHeader(text);
+  return header.protocol === "code4me-ntg/v4" && header.type === "task"
+    && header.required_skill === "code4me" && header.delegation === "forbidden"
+    && typeof header.task_id === "string" && header.task_id.trim().length > 0
+    && typeof header.stage_id === "string" && header.stage_id.trim().length > 0
+    && typeof header.goal === "string" && header.goal.trim().length > 0;
+}
+
+function looksLikeTask(text) {
+  const header = envelopeHeader(text);
+  if (header.type === "result") return false;
+  return header.required_skill === "code4me"
+    || (typeof header.protocol === "string" && /^code4me-ntg\/v\d+$/.test(header.protocol));
 }
 
 export function isProducerPrompt(text) {
-  return !isCode4MeEnvelope(text)
+  return !looksLikeTask(text)
     && (/(?:^|\s)crowd:/i.test(text)
       || /\b(?:code4me|build|implement|fix|repair|refactor|audit|validate|test|investigate|review)\b/i.test(text));
 }
@@ -36,7 +46,10 @@ export function isProducerPrompt(text) {
 function textContent(value) {
   if (typeof value === "string") return value;
   if (Array.isArray(value)) return value.map(textContent).join("\n");
-  if (value && typeof value === "object") return Object.values(value).map(textContent).join("\n");
+  if (value && typeof value === "object") {
+    if (value.required_skill === "code4me") return JSON.stringify(value);
+    return Object.values(value).map(textContent).join("\n");
+  }
   return "";
 }
 
@@ -85,7 +98,7 @@ async function main() {
     const text = textContent(payload);
     const guidance = isCode4MeEnvelope(text)
       ? ENVELOPE_GUIDANCE
-      : isProducerPrompt(text) ? PRODUCER_GUIDANCE : null;
+      : looksLikeTask(text) ? INVALID_GUIDANCE : isProducerPrompt(text) ? PRODUCER_GUIDANCE : null;
     process.stdout.write(JSON.stringify(output(
       "UserPromptSubmit",
       guidance,

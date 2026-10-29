@@ -2,6 +2,12 @@
 
 Build the smallest context pack that lets the assigned member work correctly.
 
+Carry the original request, intent, current phase, exact target, and relevant
+decisions. Point to the current implementation worth copying when older patterns
+conflict, with a reason it is authoritative. Include rejected approaches only
+when their evidence prevents likely rework. Challenge and verify receive the
+original request as well as the producer's interpretation.
+
 ## Project instructions
 
 At the repository root, read `AGENTS.md` and `CLAUDE.md` when present. For each
@@ -32,7 +38,7 @@ languages.
 | Windows API/target, `.ps1`, `.cmd`, `.bat`, `cfg(windows)` | `windows.md` |
 | Unix API/target, shell scripts, permissions, signals, PTYs | `unix.md` |
 
-Add each selected path under this directory to `context_refs` for `work`,
-`repair`, and `verify` stages. A polyglot or cross-platform task may select more
+Add each selected path under this directory to `context_refs` for `implement`,
+`draft`, `challenge`, `finish`, `repair`, and `verify` stages. A polyglot or cross-platform task may select more
 than one. If no signal matches, use project guidance and current source only;
 do not guess a language or environment.

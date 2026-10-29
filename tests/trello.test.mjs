@@ -85,24 +85,18 @@ test("Crowded recipe pins the Node package for macOS and Windows", () => {
   );
 });
 
-test("Producer and Status integrate Trello without making Status mutating", () => {
-  for (const rule of [
-    "`.code4me/trello.json` exists",
-    "Trello absence never blocks Code4Me",
-    "card moved to Done never bypasses",
-    "task_board_linked",
-    "trello_synced",
-  ]) {
-    assert.ok(producer.includes(rule), `missing producer integration: ${rule}`);
+test("Trello uses current event correlation and discoverable integration references", () => {
+  const events = [...trello.matchAll(/```json\n([\s\S]*?)\n```/g)].slice(1)
+    .flatMap((match) => match[1].trim().split("\n").map(JSON.parse));
+  assert.deepEqual(events.map((event) => event.type), ["task_board_linked", "task_change_requested", "task_cancel_requested", "trello_synced"]);
+  for (const event of events) {
+    assert.equal(event.v, 4);
+    assert.ok(event.board_id);
+    assert.ok(event.ts);
+    if (event.type !== "trello_synced") {
+      assert.ok(event.milestone_id && event.task_id && event.card_id);
+    }
   }
-
-  for (const rule of [
-    "`task_board_linked`",
-    "`task_change_requested`",
-    "`task_cancel_requested`",
-    "latest `trello_synced` event",
-    "never call Trello or attempt synchronization",
-  ]) {
-    assert.ok(status.includes(rule), `missing Status integration: ${rule}`);
-  }
+  assert.ok(producer.includes("../code4me-trello/SKILL.md"));
+  assert.ok(status.includes("Never call Trello or attempt synchronization"));
 });

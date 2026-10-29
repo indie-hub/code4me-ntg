@@ -7,6 +7,26 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-29
+
+### Breaking
+
+- Require protocol/event v4. Existing projects must explicitly preserve old logs
+  and carry unresolved work into a fresh log after confirming no work is in flight.
+  See `docs/migrate-to-v4-prompt.md` for an operator migration prompt.
+
+### Changed
+
+- Replace classification ceremony with original intent and adaptive direct or
+  runnable-draft routes, including independent challenge and final validation.
+- Use protocol/event v4 only, with explicit logical task and dispatch-stage IDs;
+  older active projects need explicit carryover without rewriting history.
+- Preserve finding resolutions and intent alignment across review rounds.
+- Promote scoped evidence-backed memory and recurring lessons into useful context,
+  capabilities, or executable checks; target System One at expensive exploration.
+- Align Status, Housekeeping, Audit, Trello, and shorter vendor reminders with
+  the current contract and outcome-based metrics.
+
 ## [0.29.0] - 2026-10-15
 
 ### Changed

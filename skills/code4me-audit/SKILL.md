@@ -1,102 +1,85 @@
 ---
 name: code4me-audit
-description: Run blind cross-vendor code audits for evidence-backed bugs, security risks, performance problems, maintainability hazards, and test gaps without modifying project files. Use when the user asks Code4Me to audit, inspect, review for defects or vulnerabilities, assess code quality, or produce a ranked code-risk report.
+description: Run evidence-backed blind cross-vendor code audits with focused review perspectives and stable finding resolutions. Use when the user asks Code4Me to audit code quality, defects, security, resilience, or maintainability without changing product files.
 ---
 
 # Code4Me Audit
 
-Audit project code without changing it. Finding nothing is a valid result.
+Audit read-only. Prefer the requested scope, otherwise the current diff or a
+stated bounded source scope. Exclude generated/dependency/build output unless
+it is the subject. Finding nothing is valid; do not invent risk or style complaints.
 
-## Workflow
+Read relevant project standards, original intent when available, and Basic
+Memory decisions. Use [the core workflow](../code4me/SKILL.md) and
+[the current contract](../code4me/references/task-contract.md). Record one task
+with producer-synthesizer and up to two blind auditors, not a permanent team.
+Audit tasks do not manufacture a product-validation pass or modify source.
 
-1. Read the project instructions. Use the user's requested paths and categories.
-   If paths are omitted, prefer the current diff; if the worktree is clean,
-   derive the smallest relevant source scope and state it. If categories are
-   omitted, inspect bugs, security, performance, maintainability, and test gaps.
-2. Search Basic Memory for relevant invariants, prior failures, and accepted
-   conventions. Treat current source as authoritative.
-3. Inspect exact symbols and callers with CodeGraph, use CCC for fuzzy source
-   discovery, and use narrow native reads when cheaper. Exclude generated,
-   vendored, dependency, build-output, and lock files unless explicitly scoped.
-4. Prefer precision over recall. Report only a concrete failure mode or
-   engineering risk supported by a tight file and line range. Do not report
-   style preferences, generic hardening advice, or possibilities without an
-   affected input, sequence, boundary, or maintenance consequence.
-5. Read the sibling [Code4Me skill](../code4me/SKILL.md) and use its current
-   classification, roster, envelope, event-log, checkpoint, and memory rules.
-   Record the audit as one milestone task with a producer-synthesizer and up to
-   two auditor roles. Inside Crowded, always dispatch at least one eligible peer
-   auditor. Treat the roster's normalized `vendor` field as model-provider
-   identity; never infer it from room name or guest.
-6. Run exactly two blind passes when possible:
-   - Prefer two ready peer rooms with distinct, known `vendor` values.
-   - With one suitable peer whose vendor differs from the producer, dispatch
-     that peer and complete the producer's own pass before accepting its result.
-   - Otherwise use the available peer and a second available pass, but degrade
-     the coverage label honestly. A recycled context is not a new vendor.
-   - If no peer exists, perform one local pass and label it `single-vendor` or
-     `unknown`; do not pretend the audit was cross-vendor.
-7. Give every delegated pass the same scope, categories, acceptance criteria,
-   context references, memory references, model tier, and effort. Use stage IDs
-   `<root>-audit-1` and `<root>-audit-2`, `stage: audit`, Doorbell role `auditor`,
-   `delegation: forbidden`, and an explicit read-only constraint. Dispatch both
-   peer passes before accepting either result. Never include one auditor's
-   findings in the other's envelope. The operational event log and validated
-   Basic Memory writes are allowed; audited project files are not.
-8. After all available blind passes finish, validate every finding against the
-   current file. Remove duplicates, unsupported claims, and out-of-scope items.
-   Cluster findings by root cause and failure mode, not wording alone. Preserve
-   `vendors_checked` and `vendors_agreed`; silence is not an explicit rejection.
-   Independent convergence raises confidence but never replaces source evidence.
-   Do not replace a blind pass with a primed verification pass.
-9. When two blind passes complete with distinct known vendors, append
-   `task_validated` after synthesis; the cross-vendor passes are the independent
-   validation. For degraded single-vendor or unknown coverage, checkpoint the
-   audit as `unvalidated` instead of claiming full completion.
-10. Rank accepted findings by severity, then confidence. Do not edit source,
-   tests, configuration, or documentation, and do not create patches. A later
-   user request may hand a selected finding to the normal Code4Me workflow.
+## Focused blind passes
 
-## Finding shape
+Select only perspectives warranted by the change: correctness/data integrity,
+security/privacy, resilience/performance, maintainability, or interaction/QA.
+Give each a concrete question. Perspectives do not require a different agent
+per category. Use CodeGraph in indexed repos, CCC for fuzzy discovery, and narrow
+native reads. Inspect connected boundaries, not only the diff.
 
-Return each finding with:
+Use two blind vendor-distinct passes when possible. Inside Crowded dispatch an
+eligible peer auditor whenever one exists. Prefer two ready rooms of distinct
+known normalized vendors. With one peer whose vendor differs from the producer,
+complete the producer's own pass before accepting the peer result. Otherwise use
+available independent contexts and label degraded vendor coverage honestly.
+A recycled context is not another vendor. With no peer, one local pass is valid
+and explicitly single-vendor or unknown.
+
+Give passes the same scope, standards, intent, evidence, and comparable model
+capacity/effort. Never share one pass's findings with the other before both
+finish; dispatch available peer passes together. Use unique stage IDs with
+stage audit, Doorbell role auditor, delegation forbidden, and read-only scope.
+Native subagents join normally; Crowded sends yield as the core requires.
+
+## Findings and responses
+
+Support each finding with location, affected input or sequence, consequence,
+and source/runtime evidence. An uncertain claim is needs_context, not a fact.
+Separate required failures of the contract from advisory improvements. A severity
+label alone does not authorize inventing a new acceptance requirement.
 
 ```yaml
 id: A-001
-category: bugs | security | performance | maintainability | test_gaps
-severity: CRITICAL | MAJOR | MINOR
-confidence: high | medium | low
-file: <project-relative path>
-line_range: <single line or inclusive range>
-summary: <specific defect or risk and its consequence>
-evidence: <relevant code and why it supports the claim>
-failure_scenario: <affected input, sequence, boundary, or concrete consequence>
-vendors_checked: [<normalized vendor>]
-vendors_agreed: [<normalized vendor>]
-agreement: <agreeing passes>/<completed passes>
+perspective: correctness | security | resilience | maintainability | interaction
+priority: required | advisory
+severity: critical | major | minor
+location: <path and line>
+summary: <consequence>
+evidence: <source or observed behavior>
+failure_scenario: <affected input or sequence>
+status: open | resolved | reopened
+vendors_checked: []
+vendors_agreed: []
 validation: supported | needs_context
 ```
 
-Use report-local sequential IDs. Omit rejected findings from the ranked list and
-mention their count in the synthesis summary. Lower confidence rather than
-inventing context. Performance findings require a plausible hot path and
-complexity or measurement evidence; maintainability findings require a concrete
-change or failure risk rather than taste.
+Synthesize by root cause and failure mode. Validate claims against current source;
+remove unsupported duplicates. Silence is not explicit disagreement. Count vendor
+coverage from completed passes, never room names or model labels. Convergence
+raises confidence but is not proof.
 
-Set overall `vendor_coverage` to `cross-vendor` only when two completed blind
-passes have distinct, non-`unknown` vendors. Set it to `single-vendor` when all
-completed known passes share one vendor, and `unknown` when provider identity is
-insufficient. Never count a room name, guest program, model name, or cleared
-context as proof of vendor diversity.
+For a follow-up review preserve finding IDs and author resolutions (fixed,
+refuted, deferred). Verify each response independently. Reopen a regression with
+its original ID; do not reissue supported resolved findings. Fresh blind discovery
+and later resolution checking are different activities. A deferral cannot waive
+required acceptance without the appropriate explicit decision.
 
-## Report
+## Report and learning
 
-Return one compact report containing:
+Return scope, perspectives, accepted ranked findings, rejected/unresolved counts,
+checks, limitations, and an overall changes_requested or no_supported_findings
+verdict. Distinguish required from advisory findings. Report cross-vendor only
+when two completed passes have distinct known vendors; otherwise single-vendor
+or unknown. No findings does not mean defect-free.
 
-- audited scope, categories, and important exclusions;
-- ranked accepted findings with every field above;
-- vendor coverage and synthesis summary, including rejected or unresolved counts;
-- checks performed and limitations;
-- `No supported findings` when the accepted list is empty.
-
-Do not claim the codebase is defect-free merely because this audit found none.
+Return supported scoped memory candidates with sources and conditions. A recurring
+finding may justify better context, a capability, or a reliable executable check;
+propose that improvement instead of appending another universal warning. Do not
+apply fixes or policy changes during an audit. The producer may promote supported
+knowledge under the core memory rules.

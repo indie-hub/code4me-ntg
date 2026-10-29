@@ -1,185 +1,86 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-
 import Code4Me from "../.opencode/plugins/code4me.js";
+import { isCode4MeEnvelope, ENVELOPE_GUIDANCE, PRODUCER_GUIDANCE, INVALID_GUIDANCE } from "../hooks/nudge.mjs";
 
 const hook = fileURLToPath(new URL("../hooks/nudge.mjs", import.meta.url));
-
+const contract = readFileSync(new URL("../skills/code4me/references/task-contract.md", import.meta.url), "utf8");
+const [task, result] = [...contract.matchAll(/```json\n([\s\S]*?)\n```/g)].map((m) => JSON.parse(m[1]));
 function run(mode, payload) {
-  const result = spawnSync(process.execPath, [hook, mode], {
-    input: JSON.stringify(payload),
-    encoding: "utf8",
-  });
-  assert.equal(result.status, 0, result.stderr);
-  return JSON.parse(result.stdout);
+  const response = spawnSync(process.execPath, [hook, mode], { input: JSON.stringify(payload), encoding: "utf8" });
+  assert.equal(response.status, 0, response.stderr);
+  return JSON.parse(response.stdout);
+}
+const guidance = (prompt) => run("envelope", { prompt }).hookSpecificOutput?.additionalContext;
+async function openCodePrompt() {
+  let callback;
+  await Code4Me.setup({ session: { async hook(name, fn) { assert.equal(name, "prompt"); callback = fn; } } });
+  return async (text) => { const event = { prompt: { text } }; await callback(event); return event.prompt.text; };
 }
 
-const envelope = `protocol: code4me-ntg/v3
-required_skill: code4me
-delivery: asynchronous
-wait_policy: passive
-milestone_id: M1
-task_id: M1-T1
-stage_id: M1-T1-work-1
-assigned_role: implementer
-producer: room-1
-worker: room-2
-delegation: forbidden
-goal: fix the parser
-verification:
-  commands: [node --test]
-  evidence: [test output]
-reply_to:
-  transport: crowded
-memory:
-  status: used
-  refs: [memory://project/parser]`;
-
-test("incoming envelopes enforce the Code4Me worker contract", () => {
-  const output = run("envelope", { prompt: envelope });
-  const hookOutput = output.hookSpecificOutput;
-  assert.equal(hookOutput.hookEventName, "UserPromptSubmit");
-  assert.match(hookOutput.additionalContext, /Basic Memory/);
-  assert.match(hookOutput.additionalContext, /delegation is forbidden/);
-  assert.match(hookOutput.additionalContext, /load and follow the installed code4me skill/i);
-  assert.match(hookOutput.additionalContext, /Incoming worker contract/);
-  assert.match(hookOutput.additionalContext, /return blocked/i);
-  assert.match(hookOutput.additionalContext, /every supplied context_refs entry/i);
-  assert.match(hookOutput.additionalContext, /conditional language or platform guidance/i);
-  assert.match(hookOutput.additionalContext, /tool_evidence/);
-  assert.match(hookOutput.additionalContext, /reply_to\.transport is crowded/i);
-  assert.match(hookOutput.additionalContext, /do not launch a background waiter/i);
-  assert.match(hookOutput.additionalContext, /reply_to\.transport is native/i);
-  assert.match(hookOutput.additionalContext, /producer must join the native subagent/i);
-  assert.match(hookOutput.additionalContext, /Source comments explain code only/);
-  assert.match(hookOutput.additionalContext, /deferred_work in the result envelope/);
-  assert.match(hookOutput.additionalContext, /same milestone, task, and stage IDs/);
-  assert.match(hookOutput.additionalContext, /Actually open every supplied memory:\/\/ reference/);
-  assert.match(hookOutput.additionalContext, /For every task, make one targeted Basic Memory search/);
-  assert.match(hookOutput.additionalContext, /memory\.searched true/);
-  assert.match(hookOutput.additionalContext, /Always return memory_candidates/);
-  assert.match(hookOutput.additionalContext, /Use worker System 1 only when it can eliminate a named expensive action/);
-  assert.match(hookOutput.additionalContext, /Record avoids and whether it was actually avoided/);
-  assert.match(hookOutput.additionalContext, /if no expensive action can be named, do not call it/i);
-  assert.match(hookOutput.additionalContext, /Use System 2 when risk, uncertainty, irreversibility, scope, or the contract changes/);
-  assert.match(hookOutput.additionalContext, /Read the system_one descriptor/);
-  assert.match(hookOutput.additionalContext, /Shadow advice never controls the action/);
-  assert.match(hookOutput.additionalContext, /Return decision_receipts for claimed calls/);
-  assert.match(hookOutput.additionalContext, /Agent-supplied evidence cannot be verified/);
-  assert.match(hookOutput.additionalContext, /verification, including each invariant, and quality_bar/);
-  assert.match(hookOutput.additionalContext, /Run every applicable verification command and invariant check/);
-  assert.match(hookOutput.additionalContext, /Run every applicable verification command/);
-  assert.match(hookOutput.additionalContext, /required failure prevents outcome complete/);
-  assert.match(hookOutput.additionalContext, /validator decides the verdict independently/i);
-  assert.match(hookOutput.additionalContext, /Code4Me Technical English profile/);
-  assert.match(hookOutput.additionalContext, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
-  assert.equal("permissionDecision" in hookOutput, false);
-  assert.equal(
-    run("envelope", {
-      prompt: envelope
-        .replace("code4me-ntg/v3", "code4me-ntg/v2")
-        .replace("milestone_id: M1\n", "")
-        .replace("task_id: M1-T1\nstage_id: M1-T1-work-1", "task_id: M1-T1-work-1\nparent_task_id: M1-T1"),
-    }).hookSpecificOutput.hookEventName,
-    "UserPromptSubmit",
-  );
-  const producer = run("envelope", { prompt: "fix the parser" });
-  assert.match(producer.hookSpecificOutput.additionalContext, /Code4Me producer check/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /Crowded roster and native subagent availability/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /must not validate/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /consult Basic Memory, make one targeted search/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /Use System 1 to recommend task shape/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /Discover any callable System One provider/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /default it to shadow mode/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /A System One call should eliminate expensive work/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /record avoids plus avoided/);
-  assert.match(producer.hookSpecificOutput.additionalContext, /declaration alone does not prove use/i);
-  assert.match(producer.hookSpecificOutput.additionalContext, /Use System 2 before consequential or uncertain decisions/);
-  assert.deepEqual(run("envelope", { prompt: "hello" }), {});
+test("current JSON and YAML tasks reach the worker without altering the task", async () => {
+  const apply = await openCodePrompt();
+  const yaml = "protocol: code4me-ntg/v4\ntype: task\nrequired_skill: code4me\ntask_id: T1\nstage_id: T1-implement-1\ndelegation: forbidden\ngoal: fix the parser";
+  for (const prompt of [JSON.stringify(task), yaml]) {
+    assert.equal(isCode4MeEnvelope(prompt), true);
+    assert.equal(guidance(prompt), ENVELOPE_GUIDANCE);
+    const enriched = await apply(prompt);
+    assert.equal(enriched, prompt + "\n\n" + ENVELOPE_GUIDANCE);
+    assert.equal(await apply(enriched), enriched);
+    assert.equal("permissionDecision" in run("envelope", { prompt }).hookSpecificOutput, false);
+  }
+  assert.equal(guidance(task), ENVELOPE_GUIDANCE);
 });
 
-test("vendor prompt hooks carry recovery and handoff guidance once", async () => {
-  let promptHook;
-  await Code4Me.setup({ session: { async hook(_name, callback) { promptHook = callback; } } });
-  for (const prompt of [envelope, "fix the parser"]) {
-    const event = { prompt: { text: prompt } };
-    await promptHook(event);
-    const first = event.prompt.text;
-    await promptHook(event);
-    assert.equal(event.prompt.text, first);
-    const native = run("envelope", { prompt }).hookSpecificOutput.additionalContext;
-    for (const guidance of [native, first]) {
-      assert.ok(guidance.includes("/v1/retrieve/<hash>"));
-      assert.ok(guidance.includes("original_content"));
-      if (prompt === envelope) {
-        assert.ok(guidance.includes("shortlist evidence or choose a discriminating probe"));
-      } else {
-        assert.ok(guidance.includes("confirm effective model and effort"));
-        assert.ok(guidance.includes("Preserve accepted results by task and stage"));
-      }
-    }
+test("all current stages use the same contract and result IDs are preserved", async () => {
+  const apply = await openCodePrompt();
+  for (const stage of ["implement", "draft", "challenge", "finish", "repair", "verify", "audit", "research"]) {
+    const prompt = JSON.stringify({ ...task, stage, stage_id: `T1-${stage}-1` });
+    assert.equal(guidance(prompt), ENVELOPE_GUIDANCE);
+    assert.equal(await apply(prompt), prompt + "\n\n" + ENVELOPE_GUIDANCE);
+  }
+  assert.notEqual(guidance(JSON.stringify(result)), INVALID_GUIDANCE);
+});
+
+test("unsupported and incomplete tasks get blocked guidance instead of producer work", async () => {
+  const apply = await openCodePrompt();
+  for (const changed of [{ protocol: "code4me-ntg/v3" }, { protocol: "code4me-ntg/v2" },
+    { stage_id: null }, { task_id: " " }, { goal: null }, { delegation: "allowed" }, { type: "unknown" }]) {
+    const prompt = JSON.stringify({ ...task, ...changed });
+    assert.equal(isCode4MeEnvelope(prompt), false);
+    assert.equal(guidance(prompt), INVALID_GUIDANCE);
+    const enriched = await apply(prompt);
+    assert.equal(enriched, prompt + "\n\n" + INVALID_GUIDANCE);
+    assert.equal(await apply(enriched), enriched);
   }
 });
 
-test("only broad source fallbacks receive advisory guidance", () => {
-  const broad = run("source", {
-    tool_name: "Read",
-    tool_input: { file_path: "/project/src/parser.rs" },
-  });
-  assert.match(broad.hookSpecificOutput.additionalContext, /CodeGraph/);
-  assert.equal("permissionDecision" in broad.hookSpecificOutput, false);
-  assert.deepEqual(run("source", {
-    tool_name: "Read",
-    tool_input: { file_path: "/project/src/parser.rs", offset: 20, limit: 30 },
-  }), {});
+test("producer prompts receive identical short guidance; casual prompts are untouched", async () => {
+  const apply = await openCodePrompt();
+  for (const prompt of ["fix the parser", "crowd: add an editor", "use code4me to investigate",
+    "update code4me-ntg/v3 to the current contract"]) {
+    assert.equal(guidance(prompt), PRODUCER_GUIDANCE);
+    const enriched = await apply(prompt);
+    assert.equal(enriched, prompt + "\n\n" + PRODUCER_GUIDANCE);
+    assert.equal(await apply(enriched), enriched);
+  }
+  for (const prompt of ["hello", "thank you", ""]) {
+    assert.deepEqual(run("envelope", { prompt }), {});
+    assert.equal(await apply(prompt), prompt);
+  }
+  assert.ok(ENVELOPE_GUIDANCE.length < 2200);
+  assert.ok(PRODUCER_GUIDANCE.length < 1500);
 });
 
-test("OpenCode appends worker or producer guidance when applicable", async () => {
-  let promptHook;
-  await Code4Me.setup({
-    session: {
-      async hook(name, callback) {
-        assert.equal(name, "prompt");
-        promptHook = callback;
-      },
-    },
-  });
-  assert.equal(Code4Me.id, "code4me.ntg");
-
-  const runPrompt = async (text) => {
-    const event = { prompt: { text } };
-    await promptHook(event);
-    return event.prompt.text;
-  };
-
-  const message = await runPrompt(envelope);
-  assert.match(message, /Code4Me task envelope detected/);
-  assert.match(message, /Source comments explain code only/);
-  assert.match(message, /deferred_work in the result envelope/);
-  assert.match(message, /Actually open every supplied memory:\/\/ reference/);
-  assert.match(message, /Always return memory_candidates/);
-  assert.match(message, /Use worker System 1 only when it can eliminate a named expensive action/);
-  assert.match(message, /Record avoids and whether it was actually avoided/);
-  assert.match(message, /Read the system_one descriptor/);
-  assert.match(message, /Return decision_receipts for claimed calls/);
-  assert.match(message, /verification, including each invariant, and quality_bar/);
-  assert.match(message, /Run every applicable verification command and invariant check/);
-  assert.match(message, /Run every applicable verification command/);
-  assert.match(message, /validator decides the verdict independently/i);
-  assert.match(message, /Code4Me Technical English profile/);
-  assert.match(message, /Preserve code, commands, paths, logs, error messages, and quotations exactly/);
-  assert.equal(await runPrompt(message), message);
-
-  const ordinary = await runPrompt("fix the parser");
-  assert.match(ordinary, /Code4Me producer check/);
-  assert.match(ordinary, /must not validate/);
-  assert.match(ordinary, /consult Basic Memory, make one targeted search/);
-  assert.match(ordinary, /Use System 1 to recommend task shape/);
-  assert.match(ordinary, /Discover any callable System One provider/);
-  assert.match(ordinary, /default it to shadow mode/);
-  assert.match(ordinary, /A System One call should eliminate expensive work/);
-
-  assert.equal(await runPrompt("hello"), "hello");
+test("source fallback guidance remains advisory and respects narrow reads", () => {
+  const output = run("source", { tool_name: "Read", tool_input: { file_path: "/project/src/parser.rs" } });
+  assert.match(output.hookSpecificOutput.additionalContext, /CodeGraph/);
+  assert.equal("permissionDecision" in output.hookSpecificOutput, false);
+  assert.deepEqual(run("source", { tool_name: "Read", tool_input: { file_path: "/project/src/parser.rs", offset: 20, limit: 30 } }), {});
+  const invalid = spawnSync(process.execPath, [hook, "envelope"], { input: "{bad", encoding: "utf8" });
+  assert.equal(invalid.status, 0);
+  assert.deepEqual(JSON.parse(invalid.stdout), {});
 });

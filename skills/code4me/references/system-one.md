@@ -51,6 +51,12 @@ guidance for the callable interface; do not require installing another skill.
 
 ## Worker opportunities
 
+Use the same opportunities in direct work and draft/finish phases. During a
+challenge, prioritise evidence or probe options; System One never decides that
+intent is satisfied or that production validation passed. Keep active permission
+specific to the demonstrated use case, not every call to a provider.
+
+
 Before a large context load or exploring several branches, consider one narrow
 judgment over evidence already available:
 
@@ -110,7 +116,7 @@ This field records skipped work, not its cause. When advice was overridden,
 `avoided: true` does not count as advice-followed savings. Preserve the
 disposition and explain the observed outcome briefly in `outcome_ref`.
 
-Attach producer receipts to `task_assigned`. Return worker and validator receipts
+Attach producer receipts to the relevant `dispatch`. Return worker and validator receipts
 in the matching result. Use `decision_receipts: []` when no consequential System
 One call occurred.
 
