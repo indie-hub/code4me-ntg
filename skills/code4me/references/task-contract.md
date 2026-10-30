@@ -120,6 +120,14 @@ is an equally valid alternative, with no extra file.
 For native delivery use the normal join. For Crowded supply a numeric producer
 room and exact send command using this stage ID and Doorbell role `result`.
 
+Workers, including read-only reviewers, may write their assigned result artifact;
+this does not permit product edits or writes to the producer's board/log.
+For JSON artifacts, the bundled [evidence helper](../scripts/evidence.mjs) checks
+required fields and hashes exact bytes. Use `--task TASK.json` on a result to
+check its dispatched identity. It does not prove evidence truth, eligibility,
+independence, or target freshness, and never sends or grants work. YAML remains
+allowed; the helper accepts JSON only. Native immutable artifacts remain valid.
+
 ## Result
 
 ```json

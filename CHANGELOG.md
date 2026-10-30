@@ -7,6 +7,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-30
+
+### Added
+- Opt-in Hive Mode with worker proposals and claims, isolated parallel writers,
+  peer review eligibility, and explicit native-review fallback decisions.
+- A portable, read-only JSON evidence helper for required fields, task/result
+  identity matching, and SHA-256 receipts without a Crowded dependency.
+
+### Changed
+- Bound review to acceptance and affected risks; let reviewers write their own
+  evidence artifacts and preserve Hive claims in status and handovers.
+
 ## [1.0.1] - 2026-10-29
 
 ### Fixed

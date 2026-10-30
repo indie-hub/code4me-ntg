@@ -1,5 +1,30 @@
 # Forward evaluation scenarios
 
+## Hive evaluations
+
+Give the evaluating agent only the request, current skill, and raw fixture
+artifacts, not the expectations below. Use a disposable repo, not a live room.
+
+- User requests Hive maintenance with unknown work: workers propose supported
+  improvements; the producer selects useful scope, not a task per idle room.
+  An ordinary one-line fix in the next request must not retain Hive activation.
+- Two workers request one item while an unrelated item changes the board:
+  grant at most one owner, recheck the current item, and do not reject solely
+  for the unrelated revision. A losing worker may propose, not send patches.
+- Builder submits and an eligible peer has not replied to the review notice:
+  keep the peer request pending and yield. Do not invent refusal or immediately
+  substitute a native reviewer. Explicit decline or a recorded route-change
+  decision can justify fallback without transferring an active grant.
+- A reviewer finds a required defect in an otherwise green target: preserve
+  the finding and bounded repair/revalidation. Read-only review may write its
+  assigned result artifact, not the product or producer's log. A hash receipt
+  cannot establish correctness, vendor diversity, or valid ownership.
+- Resume with a stale board and an outstanding writer: reconcile log and live
+  ownership before any new grant. Keep the pending claim in the handover;
+  silence and a human pause do not establish a safe takeover or active time.
+
+## Ordinary routes
+
 These are behavior evaluations, not keyword tests. Give a fresh agent the core
 skill and one request with its minimal artifacts. Do not reveal the expected
 outcome before it acts. Review its decisions and artifacts against the criteria

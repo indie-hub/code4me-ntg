@@ -45,6 +45,19 @@ not automatically draft failures. Proceed is not a production correctness pass.
 - Return pass only with aligned intent, every required criterion supported, and
   no open required finding. Otherwise return changes_requested or blocked.
 
+## Bounded review
+
+Start with the exact changed target, acceptance, affected call paths, and
+declared risks. Inspect connected code and independently challenge the test
+expectations. Reuse trustworthy recorded execution evidence where appropriate,
+but make your own judgment and run the probes needed to close material gaps.
+Do not turn each small change into a whole-repository audit or exhaustive
+input matrix. Widen scope only for a concrete risk or unsupported criterion.
+Stop when every required criterion has support and material findings have a
+verdict, or return the exact blocker. Cost pressure never permits skipping a
+required check or hiding a finding. Report the largest remaining gap and any
+untested limits rather than adding speculative work.
+
 ## Finding lifecycle
 
 Use stable IDs within the logical task. State perspective, required/advisory,

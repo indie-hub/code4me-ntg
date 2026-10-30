@@ -73,6 +73,9 @@ allows non-blocking exclusions or follow-ups. NOT-READY preserves the exact bloc
 or pending validation without pretending work is finished. Historical failures
 superseded by supported later decisions are history, not permanent blockers.
 
+For Hive work, preserve the board path/revision, active claims, pending
+requests, and concrete review-fallback conditions in the same checkpoint.
+
 ## Safe rotation
 
 After READY closeout only, rotate when the active log exceeds 1 MiB or 1,000

@@ -80,6 +80,19 @@ fallback reminder recommends indexed navigation or narrow reads. Rules needing
 hard enforcement belong in executable project checks and actual runtime controls.
 OpenCode's adapter lives at .opencode/plugins/code4me.js.
 
+## Optional Hive Mode
+
+Ask Code4Me to "use Hive Mode" for work that benefits from worker proposals
+and task selection. The producer keeps one compact board and grants claims;
+workers discover, build, and independently review eligible work. Ordinary
+small tasks keep the direct route. Hive Mode works with native agents or
+Crowded and does not add a scheduler, service, or protocol version.
+
+Read [the Hive workflow](skills/code4me/references/hive-mode.md). Its bundled
+Node.js evidence helper checks JSON envelope fields, matches results to tasks,
+and computes exact-file SHA-256 receipts without sending messages or writing
+coordination state. This is not proof of correct code or valid ownership.
+
 ## Optional Trello board
 
 One card spans the logical task, including draft/challenge/finish. Drafts stay

@@ -42,6 +42,10 @@ Show technical verdict and intent_alignment separately. Never infer a room is
 currently busy just because its result has not arrived.
 
 ## Integrity
+For a recorded Hive run, reconcile the checkpoint's board revision, claims,
+pending review requests, and fallback decisions with later events and targets.
+The board is a current view, not a second history; an ungranted request is not
+an outstanding writable dispatch or proof that a worker refused work.
 
 Flag malformed JSON, unsupported versions, reused stage IDs, unmatched or duplicate
 terminal results, missing task_opened, absent complete-result tool evidence,
