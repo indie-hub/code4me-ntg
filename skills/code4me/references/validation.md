@@ -14,9 +14,11 @@ or let an old pass cover later relevant edits.
 
 Recover required Headroom originals using the toolbox rule. Source summaries,
 matching replay baselines, green tests, and another agent's approval do not by
-themselves prove the intended behavior. Independently inspect the actual artifact
-and run the demonstration or relevant verification commands when possible. If
-required evidence cannot be obtained, return blocked with the exact gap.
+themselves prove intended behavior. Independently inspect the actual artifact,
+judge the test expectations, and obtain the execution evidence needed for the
+claim. Reuse trustworthy runs under the rules below; independence does not
+require repeating every command. Missing required evidence means blocked with
+the exact gap, not an invented pass.
 
 ## Challenge: should this be finished?
 
@@ -44,6 +46,54 @@ not automatically draft failures. Proceed is not a production correctness pass.
   deferred work, or handovers; report introduced violations as required findings.
 - Return pass only with aligned intent, every required criterion supported, and
   no open required finding. Otherwise return changes_requested or blocked.
+
+## Change-scoped verification
+
+Choose the smallest checks that support the claim and affected boundaries.
+In the existing verification description, say what the checks cover and what
+would require broader testing. Do not create another plan, matrix, or tracker.
+
+- During implementation, use focused unit/regression tests and affected
+  component or replay sessions, including their real prerequisites.
+- During repair, reproduce the finding and check its fix and affected callers
+  or shared behavior. Do not restart unrelated investigations.
+- At integration, run the project's required broad gate on the assembled
+  candidate. Preserve cross-component and cross-session coverage.
+- Reviewers inspect that evidence and run independent targeted probes where
+  needed. A new reviewer alone is not a reason to repeat an expensive suite.
+- For comment/documentation-only changes, inspect the diff and relevant checks;
+  do not assume harmlessness if generated code, examples, configuration, or
+  executable documentation can change behavior.
+
+Broaden testing for changes to shared state, protocols/serialization,
+persistence/write gates, security boundaries, the runner or golden baselines,
+relevant fixtures/configuration/runtime, or an uncertain impact. Relevant
+changes after a broad run require a new broad run before that gate can pass.
+A focused pass never substitutes for required integration or release coverage.
+Respect explicit project rules, including fresh independent execution when
+required. Propose a policy revision separately; do not silently override it.
+
+## Reuse execution, not judgment
+
+A reusable run has inspectable provenance: the exact command and outcome,
+tested commit plus relevant dirty-state fingerprint, covered scope, relevant
+inputs/fixtures/configuration and runtime/environment, and retained output or
+an immutable artifact reference. A bare reported PASS is not sufficient.
+Use existing result checks and evidence references; no new receipt schema.
+
+The reviewer checks those artifacts and their relevance to the current target.
+A changed HEAD alone need not invalidate unrelated focused evidence: inspect
+the intervening diff and affected dependencies, tests, fixtures, configuration,
+runtime, and stateful setup. Reuse only when that scope is demonstrably
+unchanged. Missing scope, uncertain dependencies, changed relevant inputs,
+untrusted output, or contradictory results require fresh checks or a blocker.
+
+In result checks, distinguish commands you executed from evidence you reused;
+cite its source/target and the reason it remains applicable. Do not claim you
+ran another worker's command. A clean broad run can be shared by implementer,
+integrator, and reviewer only for the covered candidate and environment, when
+project policy permits. Each reviewer still makes an independent decision on
+intent, correctness, test expectations, and open findings.
 
 ## Bounded review
 

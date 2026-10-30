@@ -128,6 +128,12 @@ check its dispatched identity. It does not prove evidence truth, eligibility,
 independence, or target freshness, and never sends or grants work. YAML remains
 allowed; the helper accepts JSON only. Native immutable artifacts remain valid.
 
+Describe focused scope and broader-test triggers in the existing verification
+commands/evidence; no extra envelope fields or tracker are required. Result
+checks distinguish execution from reused evidence, with source/target and a
+reason it remains applicable. Follow [evidence reuse](validation.md#reuse-execution-not-judgment).
+This never waives explicit project gates or missing required evidence.
+
 ## Result
 
 ```json

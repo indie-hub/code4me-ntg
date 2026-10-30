@@ -7,6 +7,17 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-30
+
+### Fixed
+
+- Scope verification to affected behavior during implementation and repair,
+  preserving required broad integration and release gates.
+- Let independent reviewers reuse traceable execution evidence without
+  repeating expensive suites solely because the reviewer changed.
+- Require explicit provenance, scope/freshness checks and truthful execution
+  attribution; keep project-specific fresh-run requirements authoritative.
+
 ## [1.1.0] - 2026-10-30
 
 ### Added

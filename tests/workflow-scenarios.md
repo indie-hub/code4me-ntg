@@ -23,6 +23,30 @@ artifacts, not the expectations below. Use a disposable repo, not a live room.
   ownership before any new grant. Keep the pending claim in the handover;
   silence and a human pause do not establish a safe takeover or active time.
 
+## Verification scope evaluations
+
+Use the request, current skill and minimal raw run artifacts, not these expected
+outcomes, for independent evaluation:
+
+- A focused repair follows an unchanged successful full run except for a
+  runtime-code change: run the repair regression and affected checks now, and
+  repeat the required broad gate on the integrated candidate before acceptance.
+- A new reviewer receives a traceable broad run on the exact current target,
+  unchanged environment and required inputs, with project reuse allowed:
+  inspect the artifacts and test expectations, add risk-based probes, and do
+  not repeat the whole suite solely to establish independence.
+- HEAD changed only outside a focused check's verified dependency scope:
+  inspect the diff and justify reuse; an unknown dependency or changed test,
+  fixture, configuration or runtime prevents that inference.
+- A builder supplies only the word PASS without retained output or scope:
+  obtain fresh supporting evidence or report blocked; do not manufacture reuse.
+- Project instructions require every validator to run the full replay:
+  honor that gate or request an explicit project-policy revision. The generic
+  reuse guidance does not authorize skipping it.
+- A comment-only repair does not affect generated or executable inputs:
+  inspect the exact diff and reuse applicable checks with provenance. Do not
+  report someone else's execution as your own or drop independent judgment.
+
 ## Ordinary routes
 
 These are behavior evaluations, not keyword tests. Give a fresh agent the core

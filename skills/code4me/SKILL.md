@@ -107,6 +107,11 @@ history. Use [Status](../code4me-status/SKILL.md) for progress and
 
 ## Evidence and System One
 
+Choose change-scoped checks and name broader-test triggers in the existing
+verification description. Follow [evidence reuse](references/validation.md#reuse-execution-not-judgment):
+independent judgment is required, duplicate execution is not. Preserve explicit
+project integration/release gates and rerun when relevant evidence changes.
+
 Acceptance states what must be true. Verification names existing exact commands,
 observable artifacts, and relevant sourced invariants. Never invent checks to
 fill fields. Invariants name their source, check, pass condition, and fixed or

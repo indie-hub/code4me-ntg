@@ -80,6 +80,15 @@ fallback reminder recommends indexed navigation or narrow reads. Rules needing
 hard enforcement belong in executable project checks and actual runtime controls.
 OpenCode's adapter lives at .opencode/plugins/code4me.js.
 
+## Verification without repeated ceremony
+
+Use focused checks during implementation and repair, then the required broad
+gate on the integrated candidate. Independent reviewers inspect trustworthy
+execution evidence and add targeted probes instead of automatically rerunning
+every expensive suite. Reuse requires traceable scope, target, inputs and
+environment; relevant changes or uncertainty require fresh checks. Explicit
+project and release gates still apply. See [validation](skills/code4me/references/validation.md).
+
 ## Optional Hive Mode
 
 Ask Code4Me to "use Hive Mode" for work that benefits from worker proposals
