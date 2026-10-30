@@ -30,6 +30,30 @@ hold, or unchanged state. Do not add a second ledger or source-code task notes.
 On resume reconcile the board with the log, actual worktrees, and live claims
 before granting work; uncertainty is not permission to duplicate a writer.
 
+## Small, review-ready slices
+
+Keep useful work flowing, not every agent busy. Prefer a small independently
+useful outcome with clear boundaries and focused checks; do not split by line
+count, arbitrary duration, or room count. Keep tightly coupled changes coherent.
+
+Expose the next eligible implementation, review, or investigation when its
+dependencies permit, rather than waiting for an unrelated whole batch.
+A submitted dependency is not accepted evidence unless its required gate has
+passed. Preserve independent validation capacity instead of giving every
+eligible reviewer implementation work.
+
+A finished or blocked worker may request another eligible slice. Report the
+blocker and preserve the current claim before requesting a new grant. Do not
+silently abandon work or edit the next slice first. Use passive Crowded delivery
+and normal native joins; never add polling to keep workers occupied.
+
+Integrate small accepted slices progressively, and use the existing
+[verification policy](validation.md#change-scoped-verification) to batch expensive
+gates on the appropriate integrated candidate. Do not run a full replay per
+slice merely because the work was split. Idle time is valid when no safe,
+useful work is available; do not create speculative chores or extra handoffs
+to improve utilization.
+
 ## Workers choose; the producer grants
 
 Send a short board-change notice to eligible workers when useful work becomes
@@ -51,6 +75,37 @@ eligibility before granting queued requests. Parallel writers require verified
 isolated worktrees, one writer per checkout; disjoint paths are not isolation.
 Do not transfer an active claim until a terminal result or confirmed stop and
 preserved unfinished state establish a safe handoff. Time alone proves neither.
+
+## Ownership of write claims
+
+A work item defines responsibility; a worktree provides isolation; a grant
+gives permission to write. Attach the checkout to the active write claim,
+not permanently to an agent. Use the existing grant fields: `worker` is the
+owner, `task_id`/`stage_id` identify the claim, `target.commit` names the
+starting revision, and `constraints` names the canonical worktree path,
+branch (or detached HEAD), and allowed edit scope. Mirror these on the board;
+do not create an ownership database or a new envelope version.
+
+Before granting, check the actual checkout, starting state, unrelated changes,
+and all active claims. One checkout has one active write owner, even when
+paths are disjoint. A blocked claim still reserves its checkout. New writable
+work needs a separate available worktree or safe closure of the old claim.
+The worker checks the grant against its actual checkout before editing and
+reports a mismatch; it does not switch to another checkout or branch by guess.
+
+Submission does not silently authorize another writer. Close or explicitly
+release the write claim before checkout reuse, preserving unfinished/unmerged
+changes, immutable results, and an exact review target. Never discard changes
+to make reuse convenient. Transfer requires a terminal result or confirmed
+quiescence and preserved state; a blocked or silent worker has not forfeited
+ownership. Recheck state before the next grant.
+
+The integration checkout also has one explicit write owner and merge scope.
+Delegate substantive integration/conflict-resolution work under that grant.
+Review is read-only against the exact assigned target and grants no write
+ownership. Unknown or conflicting ownership blocks a new write grant.
+These are coordination rules, not an OS security boundary; the evidence helper
+does not enforce filesystem access or validate live ownership.
 
 ## Review is eligible work
 

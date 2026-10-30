@@ -76,6 +76,10 @@ superseded by supported later decisions are history, not permanent blockers.
 For Hive work, preserve the board path/revision, active claims, pending
 requests, and concrete review-fallback conditions in the same checkpoint.
 
+Preserve each Hive write claim's owner, checkout, branch/detached state, base
+revision, edit scope and explicit release state in that same handover. Do not
+clean or reassign a blocked or silent worker's checkout by assumption.
+
 ## Safe rotation
 
 After READY closeout only, rotate when the active log exceeds 1 MiB or 1,000

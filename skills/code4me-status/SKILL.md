@@ -42,6 +42,12 @@ Show technical verdict and intent_alignment separately. Never infer a room is
 currently busy just because its result has not arrived.
 
 ## Integrity
+
+For Hive write claims, compare owner, canonical checkout, branch/detached state,
+base revision and edit scope with actual state. Flag overlapping owners or an
+unknown release; a blocked claim still reserves its checkout. Read-only review
+is not a write owner. Report useful ready work and blockers, not idle-agent
+counts as a quality or productivity score.
 For a recorded Hive run, reconcile the checkpoint's board revision, claims,
 pending review requests, and fallback decisions with later events and targets.
 The board is a current view, not a second history; an ungranted request is not

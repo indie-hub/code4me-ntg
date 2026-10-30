@@ -102,6 +102,12 @@ Node.js evidence helper checks JSON envelope fields, matches results to tasks,
 and computes exact-file SHA-256 receipts without sending messages or writing
 coordination state. This is not proof of correct code or valid ownership.
 
+Hive favors small, review-ready slices and useful ready work, not maximum
+agent occupancy. Each active write claim owns its checkout and edit scope;
+blocked claims retain ownership, integration has one writer, and checkout
+reuse requires explicit release with changes and review evidence preserved.
+This is coordination guidance, not automatic filesystem enforcement.
+
 ## Optional Trello board
 
 One card spans the logical task, including draft/challenge/finish. Drafts stay

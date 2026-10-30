@@ -134,6 +134,14 @@ checks distinguish execution from reused evidence, with source/target and a
 reason it remains applicable. Follow [evidence reuse](validation.md#reuse-execution-not-judgment).
 This never waives explicit project gates or missing required evidence.
 
+For Hive write grants, identify ownership using existing fields: `worker`
+is the owner, IDs identify the active claim, `target.commit` is the starting
+revision, and `constraints` states the canonical worktree, branch/detached state,
+and editable scope. Check the actual checkout before editing. Read-only review
+does not grant write ownership. See [Hive claims](hive-mode.md#ownership-of-write-claims).
+No new fields or protocol version are required; the evidence helper checks
+envelope structure and identity, not checkout ownership or filesystem access.
+
 ## Result
 
 ```json

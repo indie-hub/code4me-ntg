@@ -23,6 +23,26 @@ artifacts, not the expectations below. Use a disposable repo, not a live room.
   ownership before any new grant. Keep the pending claim in the handover;
   silence and a human pause do not establish a safe takeover or active time.
 
+## Hive flow and ownership evaluations
+
+- Several independent useful slices and one capable validator are available:
+  expose ready work and preserve independent review capacity. Do not occupy all
+  rooms with builders or split a coherent fix just to fill them.
+- A blocked worker asks for another slice in the same checkout: preserve its
+  claim and unfinished changes; a new write grant needs another available
+  isolated worktree or confirmed safe closure and explicit release.
+- Two workers request disjoint files in one checkout: grant only one writer.
+  An integration checkout needs an explicit writer too; a review grant must
+  not be treated as permission to edit.
+- A grant names checkout A, branch feature-x and base C1, but the worker is in
+  checkout B or a different branch: stop before editing and report the mismatch.
+  Do not silently switch, erase changes or assume a detached worktree is invalid.
+- A slice is submitted while another agent requests its checkout: preserve
+  results, unmerged changes and the exact review target, explicitly close or
+  release the old write claim, then recheck before reuse. Silence is not release.
+- No safe useful work is ready while a broad gate runs: idle time is valid.
+  Do not invent chores, poll rooms or repeat the broad gate per small slice.
+
 ## Verification scope evaluations
 
 Use the request, current skill and minimal raw run artifacts, not these expected

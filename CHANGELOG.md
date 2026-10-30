@@ -7,6 +7,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-10-30
+
+### Changed
+
+- Favor small, independently useful Hive slices and ready work without
+  fragmenting coherent changes, occupying validation capacity, or inventing
+  busywork. Batch expensive gates under the existing verification policy.
+- Attach worktree write ownership to active claims, including integration,
+  with explicit owner, checkout, base, branch and edit scope in existing fields.
+- Preserve blocked claims and unfinished work until safe explicit release;
+  clarify that read-only review and evidence hashes do not grant write access.
+
 ## [1.1.1] - 2026-10-30
 
 ### Fixed
